@@ -1,69 +1,112 @@
-from Autodesk.Revit.DB import*
-from Autodesk.Revit.UI import*
-from Autodesk.Revit.Attributes import*
-from Autodesk.Revit.UI.Selection import ObjectType
-from Autodesk.Revit.DB import Transaction, BuiltInParameter, Element, Level, MEPCurve, ElementId, FamilyInstance\
-    , FilteredElementCollector
-from pyrevit.forms import WPFWindow
-import rpw
-from rpw import revit
-from pypevitmep.event import CustomizableEvent
+# coding: utf8
 
-__doc__ = "Change selected elements level without moving it"
-__title__ = "Section Anchor Bolt"
+__doc__ = """Create sections from selected linear objects (eg. walls)
+SHIFT-CLICK to display options"""
+__title__ = "CreateSectionFrom"
 __author__ = "Cyril Waechter"
-uidoc = __revit__.ActiveUIDocument
-doc = uidoc.Document
-doc = revit.doc
-uidoc = revit.uidoc
-def delete_elements(locp1,locp2):
-    t = Transaction (doc,"Move center to center other element")
-    t.Start()
-    Loc = locp1.Point
-    Locnew = locp2.Point
-    locp1.Point = Locnew
-    t.Commit()
-def INTHU():
-    print ("ONLY TEXT")
 
+from Autodesk.Revit.DB import Document, Line, FilteredElementCollector, ViewFamilyType, ViewFamily, Element, \
+    ViewSection, Transform, BoundingBoxXYZ, XYZ, BuiltInParameter
+from Autodesk.Revit.UI import UIDocument
+from Autodesk.Revit import Exceptions
 
-class RotateElementHandler(IExternalEventHandler):
-    """Input : function or method. Execute input in a IExternalEventHandler"""
-    # __init__ is used to make function from outside of the class to be executed by the handler. \
-    # Instructions could be simply written under Execute method only
-    def __init__(self, do_this):
-        self.do_this = do_this
-    # Execute method run in Revit API environment.
-    # noinspection PyPep8Naming, PyUnusedLocal
-    def Execute(self, application):
-        try:
-            self.do_this()
-        except InvalidOperationException:
-            # If you don't catch this exeption Revit may crash.
-            print "InvalidOperationException catched"
-    # noinspection PyMethodMayBeStatic, PyPep8Naming
-    def GetName(self):
-        return "Execute an function or method in a IExternalHandler"
-# Create handler instances. Same class (2 instance) is used to call 2 different method.
-around_itself_handler = RotateElementHandler(delete_elements())
-# Create ExternalEvent instance which pass these handlers
-around_itself_event = ExternalEvent.Create(around_itself_handler)
+from pyrevit import script, forms
+import rpw
 
+uidoc = rpw.revit.uidoc  # type: UIDocument
+doc = rpw.revit.doc  # type: Document
+logger = script.get_logger()
 
-class ReferenceLevelSelection(WPFWindow):
-    """
-    GUI used to select a reference level from a list or an object
-    """
-    def __init__(self, xaml_file_name):
-        WPFWindow.__init__(self, xaml_file_name)
-    # noinspection PyUnusedLocal
-    def from_object_click1(self, sender, e):
-        self.pick1 = uidoc.Selection.PickObject(ObjectType.Element)
-    # noinspection PyUnusedLocal
-    def from_object_click2(self, sender, e):
-        self.pick2 = uidoc.Selection.PickObject(ObjectType.Element)   
-    def from_object_click_Ok(self, sender, e):
+class SectionTypeSelection(forms.WPFWindow):
+    def __init__(self):
+        forms.WPFWindow.__init__(self, "SectionTypeSelection.xaml")
+
+        self.combob_selector.DataContext = \
+            [vt for vt in FilteredElementCollector(doc).OfClass(ViewFamilyType) if vt.ViewFamily == ViewFamily.Section]
+
+        self.selected_type = None
+    def select_click(self, sender, e):
+        self.selected_type = self.combob_selector.SelectedItem
         self.Close()
-        around_itself_event.Raise()
-ReferenceLevelSelection('ReferenceLevelSelection.xaml').Show()
-#PipeTypeSelectionForm('PipeTypeSelection.xaml').Show()
+
+    def show_dialog(self):
+        self.ShowDialog()
+        if self.selected_type:
+            return self.selected_type
+        else:
+            import sys
+            sys.exit()
+
+section_type = SectionTypeSelection().show_dialog()
+
+# Retrieve parameters from config file
+_config = script.get_config()
+prefix = _config.get_option('prefix', 'Mur')
+depth_offset = float(_config.get_option('depth_offset', '1'))
+height_offset = float(_config.get_option('height_offset', '1'))
+width_offset = float(_config.get_option('width_offset', '1'))
+
+sections = []
+
+for element_id in uidoc.Selection.GetElementIds():
+    element = doc.GetElement(element_id)  # type: Element
+
+    # Determine if element can be used to create a section
+    try:
+        curve = element.Location.Curve
+        if not isinstance(curve, Line):
+            raise AttributeError
+    except AttributeError:
+        logger.info("{} has no Line Curve to guide section creation".format(element))
+        continue
+
+    # Create a BoundingBoxXYZ oriented parallel to the element
+    curve_transform = curve.ComputeDerivatives(0.5, True)
+
+    origin = curve_transform.Origin
+    wall_direction = curve_transform.BasisX.Normalize()  # type: XYZ
+    up = XYZ.BasisZ
+    section_direction = wall_direction.CrossProduct(up)
+    right = up.CrossProduct(section_direction)
+
+    transform = Transform.Identity
+    transform.Origin = origin
+    transform.BasisX = wall_direction
+    transform.BasisY = up
+    transform.BasisZ = section_direction
+
+    section_box = BoundingBoxXYZ()
+    section_box.Transform = transform
+
+    # Try to retrieve element height, width and lenght
+    try:
+        el_depth =  element.WallType.Width
+    except AttributeError:
+        el_depth = 2
+
+    el_width = curve.Length
+
+    el_bounding_box = element.get_BoundingBox(None)
+    z_min = el_bounding_box.Min.Z
+    z_max = el_bounding_box.Max.Z
+    el_height = z_max - z_min
+
+    # Set BoundingBoxXYZ's boundaries
+    section_box.Min = XYZ(-el_width / 2 - width_offset,
+                          -height_offset,
+                          -el_depth / 2 - depth_offset)
+    section_box.Max = XYZ(el_width / 2 + width_offset,
+                          el_height + height_offset,
+                          el_depth / 2 + depth_offset)
+
+    # Append necessary parameters to create sections in a list
+    sections.append({"box": section_box,
+                     "suffix": element.get_Parameter(BuiltInParameter.DOOR_NUMBER).AsString()
+                     })
+with rpw.db.Transaction("Create sections", doc):
+    for section in sections:
+        section_view = ViewSection.CreateSection(doc, section_type.Id, section["box"])
+        try:
+            section_view.Name = "{} {}".format(prefix, section["suffix"])
+        except Exceptions.ArgumentException:
+            logger.info("Failed to rename view {}. Desired name already exist.".format(section_view.Name))
