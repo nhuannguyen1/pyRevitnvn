@@ -61,5 +61,3 @@ class CreateSectionOptions(forms.WPFWindow):
 
 options_gui = CreateSectionOptions().show_dialog()
 
-
-
