@@ -6,7 +6,7 @@ __title__ = "CreateSectionFrom"
 __author__ = "Cyril Waechter"
 
 from Autodesk.Revit.DB import Document, Line, FilteredElementCollector, ViewFamilyType, ViewFamily, Element, \
-    ViewSection, Transform, BoundingBoxXYZ, XYZ, BuiltInParameter,Transaction
+    ViewSection, Transform, BoundingBoxXYZ, XYZ, BuiltInParameter,Transaction, View
 from Autodesk.Revit.UI import UIDocument
 from Autodesk.Revit import Exceptions
 from Autodesk.Revit.UI.Selection import *
@@ -46,4 +46,7 @@ Point2 = XYZ(picked_bb_max.X +X_Right,picked_bb_max.Y + Y_Up,0)
 ViewParent = doc.ActiveView
 ViewParentid = ViewParent.Id
 view = ViewSection.CreateCallout (doc,ViewParentid,ViewFamilyTypeId,Point1,Point2)
+ColViews = FilteredElementCollector(doc).OfClass(View)
+for ColView in ColViews:
+view.Name = "Anchor Detail 1"
 t.Commit()
