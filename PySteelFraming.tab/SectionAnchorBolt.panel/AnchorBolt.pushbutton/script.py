@@ -17,7 +17,7 @@ doc = rpw.revit.doc  # type: Document
 logger = script.get_logger()
 
 
-def Rename(Inputparameter,selected_type):
+def Rename(Inputparameter1,Inputparameter2,selected_type):
     collectors = FilteredElementCollector(doc).OfClass(ViewFamilyType)
     _config = script.get_config()
     prefix = _config.get_option('prefix', 'Mur')
@@ -39,8 +39,24 @@ def Rename(Inputparameter,selected_type):
         ViewParent = doc.ActiveView
         ViewParentid = ViewParent.Id
         view = ViewSection.CreateCallout (doc,ViewParentid,selected_type.Id,Point1,Point2)
-        view.Name = Inputparameter
+        Inputparameter2 = str(Inputparameter2)
+        InputparameterTotal = Inputparameter1 + Inputparameter2
+        Inputparameter2 = int(Inputparameter2)
+        ColViews = FilteredElementCollector(doc).OfClass(View)
+        a=0
+        for colview in ColViews:
+            if colview.Name == InputparameterTotal:
+                a += 1
+            if a==0:
+                a = 0
+            else:
+                a
+            
+        view.Name = Inputparameter1 + str(int(Inputparameter2) + int(a))
+        Inputparameter2 =Inputparameter2 + a + 1
+        
     t.Commit()
+
 class SectionTypeSelection(forms.WPFWindow):
     def __init__(self):
         forms.WPFWindow.__init__(self, "SectionTypeSelection.xaml")
@@ -48,12 +64,12 @@ class SectionTypeSelection(forms.WPFWindow):
         self.combob_selector.DataContext = \
             [vt for vt in FilteredElementCollector(doc).OfClass(ViewFamilyType) if vt.FamilyName == "Structural Plan"]
         self.selected_type = None
-       
     def Button_Click(self, sender, e):
         self.selected_type = self.combob_selector.SelectedItem
         self.Close()
-        self.Input_Parameter = self.Input_Parameter.Text
-        Rename(self.Input_Parameter,self.selected_type)
+        self.Input_Parameter1 = self.Input_Parameter1.Text
+        self.Input_Parameter2 = self.Input_Parameter2.Text
+        Rename(self.Input_Parameter1,self.Input_Parameter2,self.selected_type)
     def show_dialog(self):
         self.ShowDialog()
         if self.selected_type:
