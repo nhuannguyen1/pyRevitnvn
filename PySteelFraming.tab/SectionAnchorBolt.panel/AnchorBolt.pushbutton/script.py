@@ -39,24 +39,27 @@ def Rename(Inputparameter1,Inputparameter2,selected_type):
         ViewParent = doc.ActiveView
         ViewParentid = ViewParent.Id
         view = ViewSection.CreateCallout (doc,ViewParentid,selected_type.Id,Point1,Point2)
-        Inputparameter2 = str(Inputparameter2)
-        InputparameterTotal = Inputparameter1 + Inputparameter2
-        Inputparameter2 = int(Inputparameter2)
-        ColViews = FilteredElementCollector(doc).OfClass(View)
-        a=0
+        #Inputparameter2 = str(int(Inputparameter2)+ 1)
+        view.Name = RenameNameView (Inputparameter1,Inputparameter2)
+        Inputparameter2 = str(int(Inputparameter2)+ 1)
+    t.Commit()
+def RenameNameView(Inputparameter1,Inputparameter2):
+    InputparameterTotal = Inputparameter1 + Inputparameter2
+    ColViews = FilteredElementCollector(doc).OfClass(View)
+    a=0
+    while True:
+        restart = False
         for colview in ColViews:
             if colview.Name == InputparameterTotal:
-                a += 1
-            if a==0:
-                a = 0
-            else:
-                a
-            
-        view.Name = Inputparameter1 + str(int(Inputparameter2) + int(a))
-        Inputparameter2 =Inputparameter2 + a + 1
-        
-    t.Commit()
-
+                a =+ 1
+                Inputparameter2 =int(Inputparameter2) + int(a)
+                InputparameterTotal = Inputparameter1 + str(Inputparameter2)
+                restart = True
+                break
+        if not restart:
+            break
+    print (InputparameterTotal)
+    return InputparameterTotal
 class SectionTypeSelection(forms.WPFWindow):
     def __init__(self):
         forms.WPFWindow.__init__(self, "SectionTypeSelection.xaml")
