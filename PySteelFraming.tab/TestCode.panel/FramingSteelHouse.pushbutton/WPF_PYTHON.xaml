@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Title="WPF_PYTHON"
+	Height="300"
+	Width="300">
+	<Grid>
+		<Button
+			Content="Button"
+			ClickMode="Press"
+			x:Name="button1"
+			Click="button1_Click"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="90,45,0,0"
+			Width="75"
+			Height="23"
+			RenderTransformOrigin="0.5,0.5" />
+	</Grid>
+</Window>
