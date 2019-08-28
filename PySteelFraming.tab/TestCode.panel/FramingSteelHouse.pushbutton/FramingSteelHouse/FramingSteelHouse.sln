@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "FramingSteelHouse", "FramingSteelHouse\FramingSteelHouse.pyproj", "{CE6CCC65-8E9D-471C-A82C-BC430CD64278}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE6CCC65-8E9D-471C-A82C-BC430CD64278}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE6CCC65-8E9D-471C-A82C-BC430CD64278}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {519A995E-07C0-4350-AC0C-1048609B4896}
+	EndGlobalSection
+EndGlobal
