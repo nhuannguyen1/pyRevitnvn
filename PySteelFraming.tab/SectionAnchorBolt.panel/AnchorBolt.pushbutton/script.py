@@ -15,8 +15,6 @@ import rpw
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 logger = script.get_logger()
-
-
 def Rename(Inputparameter1,Inputparameter2,selected_type):
     collectors = FilteredElementCollector(doc).OfClass(ViewFamilyType)
     _config = script.get_config()
@@ -58,7 +56,6 @@ def RenameNameView(Inputparameter1,Inputparameter2):
                 break
         if not restart:
             break
-    print (InputparameterTotal)
     return InputparameterTotal
 class SectionTypeSelection(forms.WPFWindow):
     def __init__(self):

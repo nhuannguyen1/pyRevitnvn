@@ -31,17 +31,16 @@ def export_config_length(lenght):
 class CreateSectionOptions(forms.WPFWindow):
     def __init__(self):
         forms.WPFWindow.__init__(self, "CreateSectionOptions.xaml")
-        self.set_image_source(self.diagram_img, "diagram.png")
-
+        #self.set_image_source(self.diagram_img, "diagram.png")
         self.tblock_units.Text = "All length in {}".format(symbol)
 
         # get parameters from config file or use default values
         self._config = script.get_config()
         self.tbox_prefix.Text = self._config.get_option('prefix', 'Mur')
-        self.tbox_X_Right.Text = import_config_length(self._config.get_option('tbox_X_Right', '1'))
-        self.tbox_X_Left.Text = import_config_length(self._config.get_option('tbox_X_Left', '1'))
-        self.tbox_Y_Up.Text = import_config_length(self._config.get_option('tbox_Y_Up', '1'))
-        self.tbox_Y_Bottom.Text = import_config_length(self._config.get_option('tbox_Y_Bottom', '1'))
+        self.tbox_X_Right.Text = import_config_length(self._config.get_option('X_Right', 1))
+        self.tbox_X_Left.Text = import_config_length(self._config.get_option('X_Left', 1))
+        self.tbox_Y_Up.Text = import_config_length(self._config.get_option('Y_Up', 1))
+        self.tbox_Y_Bottom.Text = import_config_length(self._config.get_option('Y_Bottom', 1))
 
     def save_options(self, sender, e):
         self._config.prefix = self.tbox_prefix.Text
