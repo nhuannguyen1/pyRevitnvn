@@ -1,7 +1,7 @@
 __doc__ = 'Training Revit At Itivs '
 __author__ = 'Nguyen Nhuan'
 __title__ = 'Test Code'
-from Autodesk.Revit.DB import Transaction, FilteredElementCollector,BuiltInCategory,FamilySymbol,Element,XYZ,Structure,Family,Level,BuiltInParameter,Grid,SetComparisonResult,IntersectionResultArray,UnitUtils,DisplayUnitType
+from Autodesk.Revit.DB import Transaction, FilteredElementCollector,BuiltInCategory,FamilySymbol,Element,XYZ,Structure,Family,Level,BuiltInParameter,Grid,SetComparisonResult,IntersectionResultArray,UnitUtils,DisplayUnitType,GlobalParametersManager,DoubleParameterValue
 from Autodesk.Revit.UI.Selection import ObjectType
 from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
@@ -16,18 +16,10 @@ def PlaceElement (Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled):
     t = Transaction (doc,"Place Element")
     t.Start()
     ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, Column_Typed,Base_Leveled, Structure.StructuralType.Column)
-
     paramerTopLeve = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM)
-  
     paramerTopLeve.Set(Top_Leveled.Id)
-
-    
     TopoffsetPam = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM)
-  
     TopoffsetPam.Set(0)
-
-
-
     t.Commit()
 def Getintersection (line1, line2):
     results = clr.Reference[IntersectionResultArray]()
@@ -36,6 +28,18 @@ def Getintersection (line1, line2):
 	    print('No Intesection')
     res = results.Item[0]
     return res.XYZPoint
+def ConvertToInternalUnits(UNIT):
+    ParameterValue = UnitUtils.ConvertToInternalUnits(UNIT, DisplayUnitType.DUT_MILLIMETERS)
+    return ParameterValue
+def GlobalParameter():
+    t = Transaction (doc,"Slope Element")
+    t.Start()
+    paramId = GlobalParametersManager.FindByName(doc, "Slope")
+    param = doc.GetElement(paramId) 
+    paramtype = type(param)
+    ParameterValue = UnitUtils.ConvertToInternalUnits(20, DisplayUnitType.DUT_DECIMAL_DEGREES)
+    param.SetValue (DoubleParameterValue(ParameterValue))
+    t.Commit()
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
@@ -53,6 +57,7 @@ class WPF_PYTHON(WPFWindow):
         #self.Column_Type.DataContext =self.Column_Type1
     def ok_Click (self, sender, e):
         Column_Lefted = self.Column_Left.SelectedItem
+        GlobalParameter ()
         self.Column_Type.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralColumns).OfClass(FamilySymbol) if vt.FamilyName == Column_Lefted.Name]
     def Click_To_Start(self, sender, e):  
         Base_Leveled = self.Base_Level.SelectedItem
