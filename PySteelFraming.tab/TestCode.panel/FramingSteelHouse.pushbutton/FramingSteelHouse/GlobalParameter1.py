@@ -9,23 +9,23 @@ from pyrevit.forms import WPFWindow, alert
 class Global:
     def  __init__(self, ParameterValue):
         self.ParameterValue = ParameterValue
-    def globalparameterchange(ParameterValue):
+    def globalparameterchange(self):
         t = Transaction (doc,"Slope Element")
         t.Start()
         paramId = GlobalParametersManager.FindByName(doc,"Slope")
         param = doc.GetElement(paramId) 
-        kkkk = ConvertToInternalUnits(ParameterValue)
-        ParameterValue = kkkk.DUT_DECIMAL_DEGREES()
+        kkkk = ConvertToInternalUnits1(self.ParameterValue)
+        ParameterValue = kkkk.DUT_DECIMAL_DEGREES1()
         print (ParameterValue)
         param.SetValue(DoubleParameterValue(ParameterValue))
         t.Commit()
-class ConvertToInternalUnits:
+class ConvertToInternalUnits1:
     def  __init__(self, ParameterValue):
         self.ParameterValue = ParameterValue
-    def DUT_MILLIMETERS(self):
+    def DUT_MILLIMETERS1(self):
         ParameterValue = UnitUtils.ConvertToInternalUnits(self.ParameterValue, DisplayUnitType.DUT_MILLIMETERS)
         return ParameterValue
-    def DUT_DECIMAL_DEGREES(self):
+    def DUT_DECIMAL_DEGREES1(self):
         print (self.ParameterValue)
         ParameterValue = UnitUtils.ConvertToInternalUnits(self.ParameterValue, DisplayUnitType.DUT_DECIMAL_DEGREES)
         return ParameterValue
