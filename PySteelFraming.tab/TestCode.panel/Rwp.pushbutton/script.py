@@ -20,4 +20,4 @@ class WPF_PYTHON(WPFWindow):
     def button1_Click(self, sender, event):
         #ext_event.Raise()
         clicked()
-WPF_PYTHON = WPF_PYTHON('WPF_PYTHON.xaml').Show()
+WPF_PYTHON = WPF_PYTHON('WPF_PYTHON.xaml').ShowDialog()
