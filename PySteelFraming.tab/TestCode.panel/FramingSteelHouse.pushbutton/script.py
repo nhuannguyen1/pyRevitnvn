@@ -10,17 +10,19 @@ from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import clr
 import rpw
-from GlobalParameter1 import Global,ConvertToInternalUnits1
+from GlobalParameter4 import Global,ConvertToInternalUnits1
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
 
 #Get Family Symbol
 
-def PlaceElement (Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled):
+def PlaceElement (Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_Type):
     t = Transaction (doc,"Place Element")
     t.Start()
     ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, Column_Typed,Base_Leveled, Structure.StructuralType.Column)
+    a= Global (Slope_Type)
+    a.globalparameterchange(ColumnCreate)
     paramerTopLeve = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM)
     paramerTopLeve.Set(Top_Leveled.Id)
     TopoffsetPam = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM)
@@ -61,9 +63,8 @@ class WPF_PYTHON(WPFWindow):
         
         # create slope 
         Slope_T = float(self.Slope.Text)
-        a = Global(Slope_T)
-        a.globalparameterchange()
+        
         # place column to project 
-        PlaceElement(Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled)
+        PlaceElement(Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_T)
         self.Close()
 WPF_PYTHON = WPF_PYTHON('WPF_PYTHON.xaml').ShowDialog()
