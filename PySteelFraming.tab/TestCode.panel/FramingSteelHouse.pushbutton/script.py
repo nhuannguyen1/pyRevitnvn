@@ -70,10 +70,6 @@ class WPF_PYTHON(WPFWindow):
         Base_Leveled_Point =XYZ (Getcondination.X,Getcondination.Y,(LEVEL_ELEV_Base_Level))
         # create slope 
         Slope_T = float(self.Slope.Text)
-
-        Plate_Connection_Type_Lefted = self.Plate_Connection_Type_Left.SelectedItem
-        print (Plate_Connection_Type_Lefted)
-        XYZConnection = XYZ (2,2,2)
         # place column to project 
         PlaceElement(Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_T)
         #plate Element to host 
