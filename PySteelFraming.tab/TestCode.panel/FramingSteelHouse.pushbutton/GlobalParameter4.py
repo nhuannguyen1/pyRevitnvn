@@ -12,8 +12,6 @@ class Global:
     def globalparameterchange(self,TypeElement):
         #t = Transaction (doc,"Slope Element")
         #t.Start()
-        
-
         paramId = GlobalParametersManager.FindByName(doc,"Slope")
         param = doc.GetElement(paramId) 
         kkkk = ConvertToInternalUnits1(self.ParameterValue)
@@ -33,20 +31,3 @@ class ConvertToInternalUnits1:
         #print (self.ParameterValue)
         ParameterValue = UnitUtils.ConvertToInternalUnits(self.ParameterValue, DisplayUnitType.DUT_DECIMAL_DEGREES)
         return ParameterValue
-    
-
-
-"""
-def ConvertToInternalUnits(UNIT):
-    ParameterValue = UnitUtils.ConvertToInternalUnits(UNIT, DisplayUnitType.DUT_MILLIMETERS)
-    return ParameterValue
-def GlobalParameter():
-    t = Transaction (doc,"Slope Element")
-    t.Start()
-    paramId = GlobalParametersManager.FindByName(doc, "Slope")
-    param = doc.GetElement(paramId) 
-    paramtype = type(param)
-    ParameterValue = UnitUtils.ConvertToInternalUnits(20, DisplayUnitType.DUT_DECIMAL_DEGREES)
-    param.SetValue (DoubleParameterValue(ParameterValue))
-    t.Commit()
-"""
