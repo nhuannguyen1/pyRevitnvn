@@ -21,13 +21,30 @@ def PlaceElement (Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope
     t = Transaction (doc,"Place Element")
     t.Start()
     ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, Column_Typed,Base_Leveled, Structure.StructuralType.Column)
-    a= Global (Slope_Type)
+    a= Global(Slope_Type)
     a.globalparameterchange(ColumnCreate)
     paramerTopLeve = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM)
     paramerTopLeve.Set(Top_Leveled.Id)
     TopoffsetPam = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM)
     TopoffsetPam.Set(0)
     t.Commit()
+
+
+def CreateElementHost (Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_Type):
+    t = Transaction (doc,"Place Element")
+    t.Start()
+    ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, Column_Typed,Base_Leveled, Structure.StructuralType.Column)
+    a= Global(Slope_Type)
+    a.globalparameterchange(ColumnCreate)
+    paramerTopLeve = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM)
+    paramerTopLeve.Set(Top_Leveled.Id)
+    TopoffsetPam = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM)
+    TopoffsetPam.Set(0)
+    t.Commit()
+
+
+
+
 def Getintersection (line1, line2):
     results = clr.Reference[IntersectionResultArray]()
     result = line1.Intersect(line2, results)
@@ -45,9 +62,22 @@ class WPF_PYTHON(WPFWindow):
         self.Girds = FilteredElementCollector(doc).OfClass(Grid)
         self.Gird_Ver.DataContext = self.Girds
         self.Gird_Hor.DataContext = self.Girds
+        # content connection
+        self.Plate_Connection_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Connections"]
+        #content rater 
+        self.Rafter_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
+        
+
     def ok_Click (self, sender, e):
         Column_Lefted = self.Column_Left.SelectedItem
         self.Column_Type.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralColumns).OfClass(FamilySymbol) if vt.FamilyName == Column_Lefted.Name]
+        #content contection 
+        Plate_Connection_Lefted = self.Plate_Connection_Left.SelectedItem
+        self.Plate_Connection_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfClass(FamilySymbol) if vt.FamilyName == Plate_Connection_Lefted.Name]
+        #content rater 
+        Rater_Type_Lefted = self.Rafter_Left.SelectedItem
+        self.Rater_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).OfClass(FamilySymbol) if vt.FamilyName == Rater_Type_Lefted.Name]
+        #content rater
     def Click_To_Start(self, sender, e):  
         Base_Leveled = self.Base_Level.SelectedItem
         Top_Leveled = self.Top_Level.SelectedItem

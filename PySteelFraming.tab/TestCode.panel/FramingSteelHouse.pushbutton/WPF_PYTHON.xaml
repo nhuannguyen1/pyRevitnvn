@@ -1,8 +1,8 @@
 <Window 
        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-       Title="FramingSteelHouse" Height="356.818" Width="334.061">
-    <StackPanel Margin="0,-26,-8,1">
+       Title="FramingSteelHouse" Height="393.639" Width="356.999">
+    <StackPanel Margin="0,-26,-8,-1">
         <TextBlock Text="Member Left" Margin="0 30 0 0 " HorizontalAlignment="Center" VerticalAlignment ="Center"/>
 
         <Grid Margin="0 10 0 0 ">
@@ -17,6 +17,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
                 <!--Collum left-->
             </Grid.RowDefinitions>
             <ComboBox x:Name="Column_Left" HorizontalAlignment="Center" ItemsSource="{Binding}"  DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Column="0" Text="Colum Left" Width="72" Height="24" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
@@ -24,11 +26,18 @@
             <ComboBox x:Name="Column_Type"  HorizontalAlignment="Center" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Column="2" Text="Colum Left" Width="50" Height="24" VerticalContentAlignment="Center" RenderTransformOrigin="0.76,0.503"/>
             <ComboBox x:Name="Base_Level" HorizontalAlignment="Center" VerticalAlignment="Center"  ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True"  Margin="0,0,0,0" Grid.Column="3"  Text="Base Level" Width="62" Height="24"/>
             <ComboBox x:Name="Top_Level" HorizontalAlignment="Center" VerticalAlignment ="Center"  ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True"  Margin="0,0,0,0" Grid.Column="4" Text="Top Level" Width="63" Height="24"/>
-
-
-            <ComboBox x:Name="Gird_Ver" HorizontalAlignment="Center"  ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True"  VerticalAlignment="Center"  Margin="0,10,0,0" Grid.Column="0" Grid.Row="1" Text="Gird Ver" Width="72"/>
-            <ComboBox x:Name="Gird_Hor" HorizontalAlignment="Center"  ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True"  VerticalAlignment="Center"  Margin="0,10,0,0" Grid.Column="2" Grid.Row="1" Text="Gird Hor" Width="75"/>
-            <TextBox x:Name="Slope" HorizontalAlignment ="Center" TextAlignment="Center" VerticalAlignment="Center"  Margin="0,10,0,0" Grid.Column="3" Grid.Row ="1" Height="24" Text="Slope"/>
+            <!--Plate Connection-->
+            <ComboBox x:Name="Plate_Connection_Left" HorizontalAlignment="Center" ItemsSource="{Binding}"  DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True" VerticalAlignment="Center" Margin="0,10,0,0" Grid.Column="0" Grid.Row="1" Text="Plate Left" Width="72" Height="24" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+            <Button x:Name="ok_Click_Connection_Left" Click="ok_Click" Content="OK" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="1"  VerticalContentAlignment="Center" Margin="0,10,0,0"/>
+            <ComboBox x:Name="Plate_Connection_Type_Left"  HorizontalAlignment="Center" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True" VerticalAlignment="Center" Margin="0,10,0,0" Grid.Column="2" Grid.Row="1" Text="Plate Left" Width="50" Height="24" VerticalContentAlignment="Center" RenderTransformOrigin="0.76,0.503"/>
+            <!--Rafer Connection -->
+            <ComboBox x:Name="Rafter_Left" HorizontalAlignment="Center" ItemsSource="{Binding}"  DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True" VerticalAlignment="Center" Margin="0,10,0,0" Grid.Column="0" Grid.Row="2" Text="Rafter Left" Width="72" Height="24" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+            <Button x:Name="ok_Click_Left" Click="ok_Click" Content="OK" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="2"  VerticalContentAlignment="Center" Margin="0,10,0,0"/>
+            <ComboBox x:Name="Rater_Type_Left"  HorizontalAlignment="Center" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True" VerticalAlignment="Center" Margin="0,10,0,0" Grid.Column="2" Grid.Row="2" Text="Rafter Left" Width="50" Height="24" VerticalContentAlignment="Center" RenderTransformOrigin="0.76,0.503"/>
+            <!--Grid and Slope -->
+            <ComboBox x:Name="Gird_Ver" HorizontalAlignment="Center"  ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True"  VerticalAlignment="Center"  Margin="0,10,0,0" Grid.Column="0" Grid.Row="3" Text="Gird Ver" Width="72"/>
+            <ComboBox x:Name="Gird_Hor" HorizontalAlignment="Center"  ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True"  VerticalAlignment="Center"  Margin="0,10,0,0" Grid.Column="2" Grid.Row="3" Text="Gird Hor" Width="75"/>
+            <TextBox x:Name="Slope" HorizontalAlignment ="Center" TextAlignment="Center" VerticalAlignment="Center"  Margin="0,10,0,0" Grid.Column="3" Grid.Row ="3" Height="24" Text="10"/>
         </Grid>
         <TextBlock Text="Member Right" Margin="0 30 0 0 " HorizontalAlignment="Center" VerticalAlignment ="Center"/>
         <Grid Margin="0 40 0 0">
@@ -57,7 +66,7 @@
 
 
         </Grid>
-        <Button x:Name ="Click_To_Start" Click="Click_To_Start" Margin="100 50 100 100" Content="Start" Height="20"/>
+        <Button x:Name ="Click_To_Start" Click="Click_To_Start" Margin="100 20 100 100" Content="Start" Height="20"/>
 
     </StackPanel>
 </Window> 
