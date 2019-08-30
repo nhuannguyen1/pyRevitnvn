@@ -10,7 +10,7 @@ from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import clr
 import rpw
-from GlobalParameter4 import Global,ConvertToInternalUnits1
+from GlobalParameter import Global,ConvertToInternalUnits1
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
@@ -20,13 +20,21 @@ from pyrevit.forms import WPFWindow, alert
 def PlaceElement (Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_Type):
     t = Transaction (doc,"Place Element")
     t.Start()
-    ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, Column_Typed,Base_Leveled, Structure.StructuralType.Column)
+    ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, Column_Typed,Base_Leveled, Structure.StructuralType.NonStructural)
     a= Global(Slope_Type)
     a.globalparameterchange(ColumnCreate)
     paramerTopLeve = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM)
     paramerTopLeve.Set(Top_Leveled.Id)
     TopoffsetPam = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM)
     TopoffsetPam.Set(0)
+    t.Commit()
+def PlaceElementRafter (Base_Leveled,Base_Leveled_Point,ELementsymbol,Slope_Type):
+    t = Transaction (doc,"Place Element Framing")
+    t.Start()
+    Elementinstance = doc.Create.NewFamilyInstance(Base_Leveled_Point, ELementsymbol,Base_Leveled, Structure.StructuralType.NonStructural)
+    print (Elementinstance)
+    a= Global(Slope_Type)
+    a.globalparameterchange(Elementinstance)
     t.Commit()
 def Getintersection (line1, line2):
     results = clr.Reference[IntersectionResultArray]()
@@ -45,16 +53,17 @@ class WPF_PYTHON(WPFWindow):
         self.Girds = FilteredElementCollector(doc).OfClass(Grid)
         self.Gird_Ver.DataContext = self.Girds
         self.Gird_Hor.DataContext = self.Girds
+        self.Level_Rater_Type_Left.DataContext = self.levels
         # content connection
-        self.Plate_Connection_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Connections"]
+        #self.Plate_Connection_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Connections"]
         #content rater 
         self.Rafter_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
     def ok_Click (self, sender, e):
         Column_Lefted = self.Column_Left.SelectedItem
         self.Column_Type.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralColumns).OfClass(FamilySymbol) if vt.FamilyName == Column_Lefted.Name]
         #content contection 
-        Plate_Connection_Lefted = self.Plate_Connection_Left.SelectedItem
-        self.Plate_Connection_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfClass(FamilySymbol) if vt.FamilyName == Plate_Connection_Lefted.Name]
+        #Plate_Connection_Lefted = self.Plate_Connection_Left.SelectedItem
+        #self.Plate_Connection_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfClass(FamilySymbol) if vt.FamilyName == Plate_Connection_Lefted.Name]
         #content rater 
         Rater_Type_Lefted = self.Rafter_Left.SelectedItem
         self.Rater_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).OfClass(FamilySymbol) if vt.FamilyName == Rater_Type_Lefted.Name]
@@ -64,6 +73,8 @@ class WPF_PYTHON(WPFWindow):
         Gird_Vered = self.Gird_Ver.SelectedItem
         Gird_Hored = self.Gird_Hor.SelectedItem
         Column_Typed =self.Column_Type.SelectedItem
+        Rater_Type_Lefted = self.Rater_Type_Left.SelectedItem
+        Level_Rater_Type_Lefted =self.Level_Rater_Type_Left.SelectedItem
         LEVEL_ELEV_Base_Level= Top_Leveled.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
         LEVEL_ELEV_Base_Level = UnitUtils.ConvertToInternalUnits(LEVEL_ELEV_Base_Level, DisplayUnitType.DUT_MILLIMETERS)
         Getcondination =  Getintersection (Gird_Vered.Curve,Gird_Hored.Curve)
@@ -72,6 +83,8 @@ class WPF_PYTHON(WPFWindow):
         Slope_T = float(self.Slope.Text)
         # place column to project 
         PlaceElement(Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_T)
-        #plate Element to host 
+        #plate Element rafter 
+        Point_Level = XYZ (0,0,0)
+        PlaceElementRafter(Level_Rater_Type_Lefted,Point_Level,Rater_Type_Lefted,Slope_T)
         self.Close()
 WPF_PYTHON = WPF_PYTHON('WPF_PYTHON.xaml').ShowDialog()

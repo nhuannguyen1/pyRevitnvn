@@ -27,18 +27,17 @@
             <ComboBox x:Name="Base_Level" HorizontalAlignment="Center" VerticalAlignment="Center"  ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True"  Margin="0,0,0,0" Grid.Column="3"  Text="Base Level" Width="62" Height="24"/>
             <ComboBox x:Name="Top_Level" HorizontalAlignment="Center" VerticalAlignment ="Center"  ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True"  Margin="0,0,0,0" Grid.Column="4" Text="Top Level" Width="63" Height="24"/>
             <!--Plate Connection-->
-            <ComboBox x:Name="Plate_Connection_Left" HorizontalAlignment="Center" ItemsSource="{Binding}"  DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True" VerticalAlignment="Center" Margin="0,10,0,0" Grid.Column="0" Grid.Row="1" Text="Plate Left" Width="72" Height="24" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <ComboBox x:Name="Plate_Connection_Type_Left"  HorizontalAlignment="Center" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True" VerticalAlignment="Center" Margin="0,10,0,0" Grid.Column="2" Grid.Row="1" Text="Plate Left" Width="50" Height="24" VerticalContentAlignment="Center" RenderTransformOrigin="0.76,0.503"/>
             <!--Rafer Connection -->
-            <ComboBox x:Name="Rafter_Left" HorizontalAlignment="Center" ItemsSource="{Binding}"  DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True" VerticalAlignment="Center" Margin="0,10,0,0" Grid.Column="0" Grid.Row="2" Text="Rafter Left" Width="72" Height="24" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <ComboBox x:Name="Rater_Type_Left"  HorizontalAlignment="Center" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True" VerticalAlignment="Center" Margin="0,10,0,0" Grid.Column="2" Grid.Row="2" Text="Rafter Left" Width="50" Height="24" VerticalContentAlignment="Center" RenderTransformOrigin="0.76,0.503"/>
+            <ComboBox x:Name="Rafter_Left" HorizontalAlignment="Center" ItemsSource="{Binding}"  DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True" VerticalAlignment="Center" Margin="0,10,0,0" Grid.Column="0" Grid.Row="1" Text="Rafter Left" Width="72" Height="24" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+            <ComboBox x:Name="Rater_Type_Left"  HorizontalAlignment="Center" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True" VerticalAlignment="Center" Margin="0,10,0,0" Grid.Column="2" Grid.Row="1" Text="Rafter Left" Width="50" Height="24" VerticalContentAlignment="Center" RenderTransformOrigin="0.76,0.503"/>
+            <ComboBox x:Name="Level_Rater_Type_Left"  HorizontalAlignment="Center" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True" VerticalAlignment="Center" Margin="0,10,0,0" Grid.Column="3" Grid.Row="1" Text="Rafter Left" Width="50" Height="24" VerticalContentAlignment="Center" RenderTransformOrigin="0.76,0.503"/>
             <!--Grid and Slope -->
             <ComboBox x:Name="Gird_Ver" HorizontalAlignment="Center"  ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True"  VerticalAlignment="Center"  Margin="0,10,0,0" Grid.Column="0" Grid.Row="3" Text="Gird Ver" Width="72"/>
             <ComboBox x:Name="Gird_Hor" HorizontalAlignment="Center"  ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name" SelectedValue="{Binding Name}" IsEditable="True"  VerticalAlignment="Center"  Margin="0,10,0,0" Grid.Column="2" Grid.Row="3" Text="Gird Hor" Width="75"/>
             <TextBox x:Name="Slope" HorizontalAlignment ="Center" TextAlignment="Center" VerticalAlignment="Center"  Margin="0,10,0,0" Grid.Column="3" Grid.Row ="3" Height="24" Text="10"/>
         </Grid>
         <TextBlock Text="Member Right" Margin="0 30 0 0 " HorizontalAlignment="Center" VerticalAlignment ="Center"/>
-        <Grid Margin="0 40 0 0">
+        <Grid Margin="0 30 0 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80*"/>
                 <ColumnDefinition Width="20*"/>
@@ -68,6 +67,3 @@
 
     </StackPanel>
 </Window> 
-
-
-
