@@ -31,8 +31,10 @@ class ConvertToInternalUnits1:
         #print (self.ParameterValue)
         ParameterValue = UnitUtils.ConvertToInternalUnits(self.ParameterValue, DisplayUnitType.DUT_DECIMAL_DEGREES)
         return ParameterValue
-def GetParameterFromSubElement (ElementInstance):
-    Slope = ElementInstance.LookupParameter('Slope').AsDouble()
+def GetParameterFromSubElement (ElementInstance,Slope):
+    Slope = UnitUtils.ConvertToInternalUnits(Slope, DisplayUnitType.DUT_DECIMAL_DEGREES)
+    print (Slope)
+    #Slope1 = ElementInstance.LookupParameter('Slope').AsDouble()
     Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
 
     ElementType =  doc.GetElement(ElementInstance.GetTypeId())
@@ -43,19 +45,48 @@ def GetParameterFromSubElement (ElementInstance):
     Tw1 = ElementType.LookupParameter('Tw1').AsDouble() 
     Tw2 = ElementType.LookupParameter('Tw2').AsDouble() 
     A = ElementType.LookupParameter('A').AsDouble() 
-
-
+    print ("A is",A)
     Pl_Total =math.cos(Slope) * Pl_Right * 2
+    print ("Pl_Right is :",math.cos(Slope))
+    
+    print ("Pl_Right is :",UnitUtils.ConvertFromInternalUnits (Pl_Right, DisplayUnitType.DUT_MILLIMETERS))
+
+    print ("Pl_Total is :",UnitUtils.ConvertFromInternalUnits (Pl_Total, DisplayUnitType.DUT_MILLIMETERS))
+
+
     v34u = math.cos(Slope) * Tw2_Rafter
+
+    print ("v34u is :",UnitUtils.ConvertFromInternalUnits (v34u, DisplayUnitType.DUT_MILLIMETERS))
+
     V24u = v34u + A
+
+    print ("V24u is :",UnitUtils.ConvertFromInternalUnits (V24u, DisplayUnitType.DUT_MILLIMETERS))
+
+
     H13r = Tw2 - (math.tan(Slope) * V24u)
+
+    print ("H13r is :",UnitUtils.ConvertFromInternalUnits (H13r, DisplayUnitType.DUT_MILLIMETERS))
+    
     V4u = math.tan(Slope) * H13r
+    print ("V4u is :",UnitUtils.ConvertFromInternalUnits (V4u, DisplayUnitType.DUT_MILLIMETERS))
+
+
+
     H13r_L = H13r - math.tan(Slope) * Tf
+
+
+    print ("H13r_L is :",UnitUtils.ConvertFromInternalUnits (H13r_L, DisplayUnitType.DUT_MILLIMETERS))
+
     h_n = H13r_L - Tw1 / 2 + Pl_Total
     G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
     V34 = v34u - V4u
     h_t = V34 + G2_V1
-    h_n = UnitUtils.ConvertFromInternalUnits (h_n, DisplayUnitType.DUT_MILLIMETERS)
-    h_t = UnitUtils.ConvertFromInternalUnits (h_t, DisplayUnitType.DUT_MILLIMETERS)
-    print (h_n)
-    print (h_t)
+    h_n1 = UnitUtils.ConvertFromInternalUnits (h_n, DisplayUnitType.DUT_MILLIMETERS)
+    h_t1 = UnitUtils.ConvertFromInternalUnits (h_t, DisplayUnitType.DUT_MILLIMETERS)
+    Slope1 = UnitUtils.ConvertFromInternalUnits (Slope, DisplayUnitType.DUT_MILLIMETERS)
+    print (h_n1)
+    print (h_t1)
+    #print (Slope)
+    print (Slope1)
+
+    return [h_n,h_t]

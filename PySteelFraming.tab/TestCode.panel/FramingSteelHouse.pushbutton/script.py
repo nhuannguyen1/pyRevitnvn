@@ -23,7 +23,7 @@ def PlaceElement (Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope
     ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, Column_Typed,Base_Leveled, Structure.StructuralType.NonStructural)
 
 
-    LIST = GetParameterFromSubElement(ColumnCreate)
+    LIST = GetParameterFromSubElement(ColumnCreate,Slope_Type)
     #H_n = GetParameterFromSubElement(ColumnCreate,'H_n').AsDouble()
     #H_n_Slope = GetParameterFromSubElement(ColumnCreate,'Slope')
     a= Global(Slope_Type)
@@ -32,6 +32,11 @@ def PlaceElement (Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope
     paramerTopLeve.Set(Top_Leveled.Id)
     TopoffsetPam = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM)
     TopoffsetPam.Set(0)
+
+    H_t = LIST[1]
+    H_n = LIST[0]
+
+    Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
 
     PlaceElementRafter(Level_Rater_Type_Lefted,Point_Level,Rater_Type_Lefted,Slope_Type)
 
