@@ -6,6 +6,7 @@ import rpw
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
+import math 
 class Global:
     def  __init__(self, ParameterValue):
         self.ParameterValue = ParameterValue
@@ -17,9 +18,7 @@ class Global:
         kkkk = ConvertToInternalUnits1(self.ParameterValue)
         ParameterValue = kkkk.DUT_DECIMAL_DEGREES1()
         param.SetValue(DoubleParameterValue(ParameterValue))
-
         Slope = TypeElement.LookupParameter('Slope')
-        print (Slope)
         Slope.AssociateWithGlobalParameter(param.Id)
         #t.Commit()
 class ConvertToInternalUnits1:
@@ -32,3 +31,31 @@ class ConvertToInternalUnits1:
         #print (self.ParameterValue)
         ParameterValue = UnitUtils.ConvertToInternalUnits(self.ParameterValue, DisplayUnitType.DUT_DECIMAL_DEGREES)
         return ParameterValue
+def GetParameterFromSubElement (ElementInstance):
+    Slope = ElementInstance.LookupParameter('Slope').AsDouble()
+    Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
+
+    ElementType =  doc.GetElement(ElementInstance.GetTypeId())
+
+    Tw2_Rafter = ElementType.LookupParameter('Tw2_WF_R').AsDouble()
+    
+    Tf = ElementType.LookupParameter('Tf').AsDouble()
+    Tw1 = ElementType.LookupParameter('Tw1').AsDouble() 
+    Tw2 = ElementType.LookupParameter('Tw2').AsDouble() 
+    A = ElementType.LookupParameter('A').AsDouble() 
+
+
+    Pl_Total =math.cos(Slope) * Pl_Right * 2
+    v34u = math.cos(Slope) * Tw2_Rafter
+    V24u = v34u + A
+    H13r = Tw2 - (math.tan(Slope) * V24u)
+    V4u = math.tan(Slope) * H13r
+    H13r_L = H13r - math.tan(Slope) * Tf
+    h_n = H13r_L - Tw1 / 2 + Pl_Total
+    G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
+    V34 = v34u - V4u
+    h_t = V34 + G2_V1
+    h_n = UnitUtils.ConvertFromInternalUnits (h_n, DisplayUnitType.DUT_MILLIMETERS)
+    h_t = UnitUtils.ConvertFromInternalUnits (h_t, DisplayUnitType.DUT_MILLIMETERS)
+    print (h_n)
+    print (h_t)

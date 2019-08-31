@@ -10,29 +10,22 @@ from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import clr
 import rpw
-from GlobalParameter1 import Global,ConvertToInternalUnits1,GetParameterFromSubElement
+from GlobalParameter2 import Global,ConvertToInternalUnits1,GetParameterFromSubElement
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
 
 #Get Family Symbol
 
-def PlaceElement (Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_Type,Level_Rater_Type_Lefted,Rater_Type_Lefted,Getcondination):
+def PlaceElement (Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_Type,Level_Rater_Type_Lefted,Rater_Type_Lefted,Getcondination,LEVEL_ELEV_Base_Level):
     t = Transaction (doc,"Place Element")
     t.Start()
     ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, Column_Typed,Base_Leveled, Structure.StructuralType.NonStructural)
-    H_t = GetParameterFromSubElement(ColumnCreate,'H_t')
-    H_n = GetParameterFromSubElement(ColumnCreate,'H_n')
-    Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
 
-    """
-    subElements = ColumnCreate.GetSubComponentIds()
 
-    for subElement in subElements:
-        ele = doc.GetElement(subElement)
-        TestParameter = ele.LookupParameter('H_t')
-        print (TestParameter.AsDouble())
-    """
+    LIST = GetParameterFromSubElement(ColumnCreate)
+    #H_n = GetParameterFromSubElement(ColumnCreate,'H_n').AsDouble()
+    #H_n_Slope = GetParameterFromSubElement(ColumnCreate,'Slope')
     a= Global(Slope_Type)
     a.globalparameterchange(ColumnCreate)
     paramerTopLeve = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM)
@@ -88,13 +81,13 @@ class WPF_PYTHON(WPFWindow):
         Rater_Type_Lefted = self.Rater_Type_Left.SelectedItem
         Level_Rater_Type_Lefted =self.Level_Rater_Type_Left.SelectedItem
         LEVEL_ELEV_Base_Level= Top_Leveled.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
-        LEVEL_ELEV_Base_Level = UnitUtils.ConvertToInternalUnits(LEVEL_ELEV_Base_Level, DisplayUnitType.DUT_MILLIMETERS)
+        #LEVEL_ELEV_Base_Level = UnitUtils.ConvertToInternalUnits(LEVEL_ELEV_Base_Level, DisplayUnitType.DUT_MILLIMETERS)
         Getcondination =  Getintersection (Gird_Vered.Curve,Gird_Hored.Curve)
         Base_Leveled_Point =XYZ (Getcondination.X,Getcondination.Y,(LEVEL_ELEV_Base_Level))
         # create slope 
         Slope_T = float(self.Slope.Text)
         # place column to project 
-        PlaceElement(Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_T,Level_Rater_Type_Lefted,Rater_Type_Lefted,Getcondination)
+        PlaceElement(Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_T,Level_Rater_Type_Lefted,Rater_Type_Lefted,Getcondination,LEVEL_ELEV_Base_Level)
         #plate Element rafter 
         self.Close()
 WPF_PYTHON = WPF_PYTHON('WPF_PYTHON.xaml').ShowDialog()

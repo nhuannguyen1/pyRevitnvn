@@ -12,10 +12,6 @@ pick = uidoc.Selection.PickObject(ObjectType.Element)
 eleid = pick.ElementId
 ele = doc.GetElement(eleid)
 # Get paramenter
-param = ele.LookupParameter("Slope")
-paramdef = param.Definition
-ParameterName = paramdef.Name
-ParameterType = paramdef.UnitType
-parameterBuiltinParameter = paramdef.BuiltInParameter
+param = ele.LookupParameter("H_n")
 print (ele)
-print (param.AsDouble())
+print (param)
