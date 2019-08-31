@@ -10,19 +10,17 @@ from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import clr
 import rpw
-from GlobalParameter2 import Global,ConvertToInternalUnits1,GetParameterFromSubElement
+from GlobalParameter2 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,setparameterfromvalue
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
 
 #Get Family Symbol
 
-def PlaceElement (Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_Type,Level_Rater_Type_Lefted,Rater_Type_Lefted,Getcondination,LEVEL_ELEV_Base_Level):
+def PlaceElement (Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_Type,Level_Rater_Type_Lefted,Rater_Type_Lefted,Getcondination,LEVEL_ELEV_Base_Level,Length_Rater_Lefted):
     t = Transaction (doc,"Place Element")
     t.Start()
     ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, Column_Typed,Base_Leveled, Structure.StructuralType.NonStructural)
-
-
     LIST = GetParameterFromSubElement(ColumnCreate,Slope_Type)
     #H_n = GetParameterFromSubElement(ColumnCreate,'H_n').AsDouble()
     #H_n_Slope = GetParameterFromSubElement(ColumnCreate,'Slope')
@@ -38,14 +36,13 @@ def PlaceElement (Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope
 
     Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
 
-    PlaceElementRafter(Level_Rater_Type_Lefted,Point_Level,Rater_Type_Lefted,Slope_Type)
-
-
+    PlaceElementRafter(Level_Rater_Type_Lefted,Point_Level,Rater_Type_Lefted,Slope_Type,Length_Rater_Lefted)
     t.Commit()
-def PlaceElementRafter (Base_Leveled,Base_Leveled_Point,ELementsymbol,Slope_Type):
+def PlaceElementRafter (Base_Leveled,Base_Leveled_Point,ELementsymbol,Slope_Type,Length_Rater_Lefted):
     Elementinstance = doc.Create.NewFamilyInstance(Base_Leveled_Point, ELementsymbol,Base_Leveled, Structure.StructuralType.NonStructural)
     a= Global(Slope_Type)
     a.globalparameterchange(Elementinstance)
+    setparameterfromvalue(Elementinstance,'Length',Length_Rater_Lefted)
 def Getintersection (line1, line2):
     results = clr.Reference[IntersectionResultArray]()
     result = line1.Intersect(line2, results)
@@ -91,8 +88,11 @@ class WPF_PYTHON(WPFWindow):
         Base_Leveled_Point =XYZ (Getcondination.X,Getcondination.Y,(LEVEL_ELEV_Base_Level))
         # create slope 
         Slope_T = float(self.Slope.Text)
+        #Create length 
+        Length_Rater_Lefted = float(self.Length_Rater_Left.Text)
+        Length_Rater_Lefted = UnitUtils.ConvertToInternalUnits(Length_Rater_Lefted, DisplayUnitType.DUT_MILLIMETERS)
         # place column to project 
-        PlaceElement(Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_T,Level_Rater_Type_Lefted,Rater_Type_Lefted,Getcondination,LEVEL_ELEV_Base_Level)
+        PlaceElement(Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_T,Level_Rater_Type_Lefted,Rater_Type_Lefted,Getcondination,LEVEL_ELEV_Base_Level,Length_Rater_Lefted)
         #plate Element rafter 
         self.Close()
 WPF_PYTHON = WPF_PYTHON('WPF_PYTHON.xaml').ShowDialog()
