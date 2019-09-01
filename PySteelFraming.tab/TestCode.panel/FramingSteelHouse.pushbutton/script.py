@@ -55,6 +55,7 @@ def Getintersection (line1, line2):
 	    print('No Intesection')
     res = results.Item[0]
     return res.XYZPoint
+<<<<<<< HEAD
 def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n):
     t = Transaction(doc, 'Write an external file.')
     t.Start()
@@ -71,6 +72,8 @@ def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Ra
     readFile.close()
     writeFile.close()
     t.Commit()
+=======
+>>>>>>> parent of 1487996... addd
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
@@ -95,6 +98,7 @@ class WPF_PYTHON(WPFWindow):
         #content rater 
         Rafter_Family_Lefted = self.Rafter_Left.SelectedItem
         self.Rater_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).OfClass(FamilySymbol) if vt.FamilyName == Rafter_Family_Lefted.Name]
+    
     def Ok_Next(self, sender, e):
    
         Cout_Continue = int(self.InputNumberLeft.Text)
@@ -105,8 +109,23 @@ class WPF_PYTHON(WPFWindow):
         Length_Rater_Lefted_n = float(self.Length_Rater_Left.Text)
         # = UnitUtils.ConvertToInternalUnits(Length_Rater_Lefted_n, DisplayUnitType.DUT_MILLIMETERS)
 
-        #chuoi1 = str(Cout_Continue) + ',' + str(Rafter_Family_Lefted.Name) + ',' + str(Element.Name.__get__(Rafter_Type_Lefted)) + ',' + str(Length_Rater_Lefted_n) 
-        writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
+        chuoi1 = str(Cout_Continue) + ',' + str(Rafter_Family_Lefted.Name) + ',' + str(Element.Name.__get__(Rafter_Type_Lefted)) + ',' + str(Length_Rater_Lefted_n) 
+
+        t = Transaction(doc, 'Write an external file.')
+        t.Start()
+        #Set the file path
+        filepath = r'D:\sometext.csv'
+        #Delete the file if it exists.
+        if (System.IO.File.Exists(filepath) == True):
+            System.IO.File.Delete(filepath)
+        #Create the file
+        file = System.IO.StreamWriter(filepath)
+        #Write some things to the file
+        file.WriteLine(chuoi1)
+        #Close the StreamWriter
+        file.Close()
+        t.Commit()
+
     def Ok_Prevous(self, sender, e):
         Cout_Prevous = int(self.InputNumberLeft.Text)
         self.InputNumberLeft.Text =str(Cout_Prevous - 1)
