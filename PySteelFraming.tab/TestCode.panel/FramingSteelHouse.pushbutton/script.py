@@ -72,8 +72,6 @@ class WPF_PYTHON(WPFWindow):
         #Plate_Connection_Lefted = self.Plate_Connection_Left.SelectedItem
         #self.Plate_Connection_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfClass(FamilySymbol) if vt.FamilyName == Plate_Connection_Lefted.Name]
         #content rater 
-        Rater_Type_Lefted = self.Rafter_Left.SelectedItem
-        self.Rater_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).OfClass(FamilySymbol) if vt.FamilyName == Rater_Type_Lefted.Name]
     def Ok_Next(self, sender, e):
         Raffter_List = []
         Cout_Continue = int(self.InputNumberLeft.Text)
