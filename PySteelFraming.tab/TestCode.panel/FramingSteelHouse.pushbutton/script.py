@@ -56,21 +56,8 @@ def Getintersection (line1, line2):
     res = results.Item[0]
     return res.XYZPoint
 def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n):
-    t = Transaction(doc, 'Write an external file.')
-    t.Start()
-    print(str(Rafter_Family_Lefted.Name))
-    row = [str(Cout_Continue), str(Rafter_Family_Lefted.Name), str(Element.Name.__get__(Rafter_Type_Lefted)),str(Length_Rater_Lefted_n) ]
-    path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PyRevitNVN.extension\PyRevitNVN.tab\TextCodePython.panel\Text.pushbutton\sometext.csv"
-    with open(path, 'r') as readFile:
-        reader = csv.reader(readFile)
         lines = list(reader)
     lines[int(Cout_Continue)] = row
-    with open(path, 'w') as writeFile:
-        writer = csv.writer(writeFile)
-        writer.writerows(row)
-    readFile.close()
-    writeFile.close()
-    t.Commit()
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
