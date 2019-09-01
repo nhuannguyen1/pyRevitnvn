@@ -77,6 +77,9 @@ class WPF_PYTHON(WPFWindow):
         Rafter_Family_Lefted = self.Rafter_Left.SelectedItem
         self.Rater_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).OfClass(FamilySymbol) if vt.FamilyName == Rafter_Family_Lefted.Name]
     
+<<<<<<< HEAD
+>>>>>>> parent of 1487996... addd
+=======
 >>>>>>> parent of 1487996... addd
     def Ok_Next(self, sender, e):
         Raffter_List = []
@@ -108,6 +111,9 @@ class WPF_PYTHON(WPFWindow):
         file.Close()
         t.Commit()
 
+<<<<<<< HEAD
+>>>>>>> parent of 1487996... addd
+=======
 >>>>>>> parent of 1487996... addd
     def Ok_Prevous(self, sender, e):
         Cout_Prevous = int(self.InputNumberLeft.Text)
