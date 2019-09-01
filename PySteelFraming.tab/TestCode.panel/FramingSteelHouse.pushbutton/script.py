@@ -78,6 +78,9 @@ class WPF_PYTHON(WPFWindow):
         self.Rater_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).OfClass(FamilySymbol) if vt.FamilyName == Rafter_Family_Lefted.Name]
     
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 1487996... addd
+=======
 >>>>>>> parent of 1487996... addd
 =======
 >>>>>>> parent of 1487996... addd
@@ -112,6 +115,9 @@ class WPF_PYTHON(WPFWindow):
         t.Commit()
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 1487996... addd
+=======
 >>>>>>> parent of 1487996... addd
 =======
 >>>>>>> parent of 1487996... addd
