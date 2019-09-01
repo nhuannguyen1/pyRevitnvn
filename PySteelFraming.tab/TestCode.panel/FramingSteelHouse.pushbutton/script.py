@@ -79,6 +79,9 @@ class WPF_PYTHON(WPFWindow):
     
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 1487996... addd
+=======
 >>>>>>> parent of 1487996... addd
 =======
 >>>>>>> parent of 1487996... addd
@@ -116,6 +119,9 @@ class WPF_PYTHON(WPFWindow):
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 1487996... addd
+=======
 >>>>>>> parent of 1487996... addd
 =======
 >>>>>>> parent of 1487996... addd
