@@ -74,6 +74,14 @@ class WPF_PYTHON(WPFWindow):
         #content rater 
         Rater_Type_Lefted = self.Rafter_Left.SelectedItem
         self.Rater_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).OfClass(FamilySymbol) if vt.FamilyName == Rater_Type_Lefted.Name]
+    def Ok_Next(self, sender, e):
+        Raffter_List = []
+        Cout_Continue = int(self.InputNumberLeft.Text)
+        self.InputNumberLeft.Text =str(Cout_Continue + 1)
+
+    def Ok_Prevous(self, sender, e):
+        Cout_Prevous = int(self.InputNumberLeft.Text)
+        self.InputNumberLeft.Text =str(Cout_Prevous - 1)
     def Click_To_Start(self, sender, e):  
         Base_Leveled = self.Base_Level.SelectedItem
         Top_Leveled = self.Top_Level.SelectedItem
