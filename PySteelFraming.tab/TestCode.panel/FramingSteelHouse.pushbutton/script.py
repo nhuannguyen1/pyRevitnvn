@@ -55,7 +55,6 @@ def Getintersection (line1, line2):
 	    print('No Intesection')
     res = results.Item[0]
     return res.XYZPoint
-<<<<<<< HEAD
 def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n):
     t = Transaction(doc, 'Write an external file.')
     t.Start()
@@ -72,8 +71,6 @@ def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Ra
     readFile.close()
     writeFile.close()
     t.Commit()
-=======
->>>>>>> parent of 1487996... addd
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
