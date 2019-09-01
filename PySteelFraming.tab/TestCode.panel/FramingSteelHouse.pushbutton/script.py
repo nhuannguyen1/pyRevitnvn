@@ -55,6 +55,21 @@ def Getintersection (line1, line2):
 	    print('No Intesection')
     res = results.Item[0]
     return res.XYZPoint
+def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n):
+    t = Transaction(doc, 'Write an external file.')
+    t.Start()
+    row = [str(Cout_Continue), str(Rafter_Family_Lefted.Name), str(Element.Name.__get__(Rafter_Type_Lefted)),str(Length_Rater_Lefted_n) ]
+    path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PyRevitNVN.extension\PyRevitNVN.tab\TextCodePython.panel\Text.pushbutton\sometext.csv"
+    with open(path, 'r') as readFile:
+        reader = csv.reader(readFile)
+        lines = list(reader)
+    lines[int(Cout_Continue)] = row
+    with open(path, 'w') as writeFile:
+        writer = csv.writer(writeFile)
+        writer.writerows(lines)
+        readFile.close()
+        writeFile.close()
+    t.Commit()
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
@@ -79,7 +94,6 @@ class WPF_PYTHON(WPFWindow):
         #content rater 
         Rafter_Family_Lefted = self.Rafter_Left.SelectedItem
         self.Rater_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).OfClass(FamilySymbol) if vt.FamilyName == Rafter_Family_Lefted.Name]
-    
     def Ok_Next(self, sender, e):
    
         Cout_Continue = int(self.InputNumberLeft.Text)
@@ -87,27 +101,13 @@ class WPF_PYTHON(WPFWindow):
         Rafter_Family_Lefted = self.Rafter_Left.SelectedItem
         Rafter_Type_Lefted = self.Rater_Type_Left.SelectedItem
         #length 
+        print (Cout_Continue)
         Length_Rater_Lefted_n = float(self.Length_Rater_Left.Text)
         print (Length_Rater_Lefted_n)
         # = UnitUtils.ConvertToInternalUnits(Length_Rater_Lefted_n, DisplayUnitType.DUT_MILLIMETERS)
 
-        chuoi1 = str(Cout_Continue) + ',' + str(Rafter_Family_Lefted.Name) + ',' + str(Element.Name.__get__(Rafter_Type_Lefted)) + ',' + str(Length_Rater_Lefted_n) 
-
-        t = Transaction(doc, 'Write an external file.')
-        t.Start()
-        #Set the file path
-        filepath = r'D:\sometext.csv'
-        #Delete the file if it exists.
-        if (System.IO.File.Exists(filepath) == True):
-            System.IO.File.Delete(filepath)
-        #Create the file
-        file = System.IO.StreamWriter(filepath)
-        #Write some things to the file
-        file.WriteLine(chuoi1)
-        #Close the StreamWriter
-        file.Close()
-        t.Commit()
-
+        #chuoi1 = str(Cout_Continue) + ',' + str(Rafter_Family_Lefted.Name) + ',' + str(Element.Name.__get__(Rafter_Type_Lefted)) + ',' + str(Length_Rater_Lefted_n) 
+        writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
     def Ok_Prevous(self, sender, e):
         Cout_Prevous = int(self.InputNumberLeft.Text)
         self.InputNumberLeft.Text =str(Cout_Prevous - 1)
