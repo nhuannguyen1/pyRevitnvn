@@ -45,7 +45,7 @@
             <TextBox x:Name="Length_Rater_Left"  HorizontalAlignment="Center" VerticalAlignment="Center" Margin="9,10,3,0" Grid.Column="4" Text="6000" Width="50" Height="24" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.76,0.503"/>
             <Button x:Name="Click_Change_Left" Click="Ok_Prevous" Content="Prevous" HorizontalContentAlignment="Center" Grid.Column="5" VerticalContentAlignment="Center" Margin="18,10,47,0" Grid.ColumnSpan="2"/>
             <Button x:Name="Click_Change_Left_Pre" Click="Ok_Next" Content="Next" HorizontalContentAlignment="Center" Grid.Column="6" VerticalContentAlignment="Center" Margin="5,10,4,0"/>
-            <TextBlock x:Name="InputNumberLeft" HorizontalAlignment="Center" Margin="5,10,5,0" Grid.Column="7" Text="1" Width="50" Height="24" TextAlignment="Center" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display" Cursor="None" TextWrapping="WrapWithOverflow" OpacityMask="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}"/>
+            <TextBlock x:Name="InputNumberLeft" HorizontalAlignment="Center" Margin="5,10,5,0" Grid.Column="7" Text="0" Width="50" Height="24" TextAlignment="Center" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display" Cursor="None" TextWrapping="WrapWithOverflow" OpacityMask="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}"/>
 
         </Grid>
 
