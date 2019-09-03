@@ -4,7 +4,7 @@ __title__ = 'Test Code'
 from Autodesk.Revit.DB import Transaction, FilteredElementCollector,\
 BuiltInCategory,FamilySymbol,Element,XYZ,Structure,Family,Level,BuiltInParameter,\
 Grid,SetComparisonResult,IntersectionResultArray,UnitUtils,DisplayUnitType,\
-GlobalParametersManager,DoubleParameterValue,FamilyInstance
+GlobalParametersManager,DoubleParameterValue,FamilyInstance,ElementId
 from Autodesk.Revit.UI.Selection import ObjectType
 from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
@@ -52,19 +52,39 @@ def Getintersection (line1, line2):
     res = results.Item[0]
     return res.XYZPoint
 lines =[]
+path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PyRevitNVN.extension\PyRevitNVN.tab\TextCodePython.panel\Text.pushbutton\sometext.csv"
 def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n):
     t = Transaction(doc, 'Write an external file.')
     t.Start()
     #row = [[str(Cout_Continue), str(Rafter_Family_Lefted.Name), str(Element.Name.__get__(Rafter_Type_Lefted)),str(Length_Rater_Lefted_n) ]]
-    path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PyRevitNVN.extension\PyRevitNVN.tab\TextCodePython.panel\Text.pushbutton\sometext.csv"
+    #path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PyRevitNVN.extension\PyRevitNVN.tab\TextCodePython.panel\Text.pushbutton\sometext.csv"
     #row = [['Person', 'Age'], ['Peter', '22'], ['Jasmine', '21'], ['Sam', '24']]
-    row = [str(Cout_Continue), str(Rafter_Family_Lefted.Name), str(Element.Name.__get__(Rafter_Type_Lefted)),str(Length_Rater_Lefted_n) ]
-    with open(path, 'a') as csvFile:
-        writer = csv.writer(csvFile)
-        writer.writerow(row)
-    csvFile.close()
+    #row = [str(Cout_Continue), str(Rafter_Family_Lefted.Id), str(Element.Name.__get__(Rafter_Type_Lefted)),str(Length_Rater_Lefted_n) ]
+    row = [str(Cout_Continue), str(Rafter_Family_Lefted.Id), Rafter_Type_Lefted.Id,str(Length_Rater_Lefted_n) ]
+    with open(path, 'r') as readFile:
+        a = sum (1 for row in readFile)
+    if a == 0:
+        with open(path, 'a') as csvFile:
+            writer = csv.writer(csvFile)
+            writer.writerow(row)
+        csvFile.close()
+    elif Cout_Continue <= a:
+        with open(path, 'r') as readFile:
+            reader = csv.reader(readFile)
+            lines = list(reader)
+            lines[2] = row
+        readFile.close()
+        with open(path, 'w') as writeFile:
+            writer = csv.writer(writeFile)
+            writer.writerows(lines)
+        writeFile.close()
+    else:
+        with open(path, 'w') as writeFile:
+            writer = csv.writer(writeFile)
+            writer.writerows(row)
+    #readFile.close()
+        writeFile.close()
     t.Commit()
-
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
@@ -101,13 +121,16 @@ class WPF_PYTHON(WPFWindow):
     def Ok_Prevous(self, sender, e):
         Cout_Prevous = int(self.InputNumberLeft.Text)
         self.InputNumberLeft.Text =str(Cout_Prevous - 1)
-
-
-
-
-
-
-        self.InputNumberLeft.Text =str(Cout_Prevous - 1)
+        with open(path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            for row in readcsv:
+                if int(row[0]) == Cout_Prevous:
+                    Rafter_Family_Lefted = doc.GetElement(ElementId(int(row[1])))
+                    self.Column_Type.DataContext = Rafter_Family_Lefted
+                    Rafter_Type_Lefted = doc.GetElement(ElementId(int(row[2])))
+                    Length_Rater_Lefted_n = float (row[3])
+                    self.Length_Rater_Left.Text = str (Length_Rater_Lefted_n)
+        csvFile.close()
     def Click_To_Start(self, sender, e):  
         Base_Leveled = self.Base_Level.SelectedItem
         Top_Leveled = self.Top_Level.SelectedItem
