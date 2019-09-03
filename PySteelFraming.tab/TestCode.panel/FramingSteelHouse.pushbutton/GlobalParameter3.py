@@ -81,12 +81,14 @@ def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Ra
             writer = csv.writer(csvFile)
             writer.writerow(row)
         csvFile.close()
+        
     else:
         with open(path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
             for row in readcsv:
                 if int(row[0]) == Cout_Continue:
-                    GetDataContent (row)
+                    ElementArr = Getcontentdata(row)
+                    return ElementArr
         csvFile.close()
         """
         with open(path, 'r') as readFile:
@@ -100,12 +102,17 @@ def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Ra
         readFile.close()
         """
     t.Commit()
-def GetDataContent (arrDatacontenttxt):
-    Count_Contiue =int(arrDatacontenttxt[0])
-    Rafter_Family_Lefted = doc.GetElement(ElementId(int(arrDatacontenttxt[1]))
-    Rafter_Family_Lefted1 = doc.GetElement(ElementId(int(arrDatacontenttxt[2]))
-
-    Rafter_Type_Lefted = doc.GetElement(ElementId(int(arrDatacontenttxt[2])))
-    Length_Rater_Lefted_n = float (arrDatacontenttxt[3])
-    GetDataContent = [Count_Contiue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n]
-return GetDataContent
+def Getcontentdata (count_Continue,path):
+    with open(path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            for row in readcsv:
+                if int(row[0]) == count_Continue:
+                    arr = []
+                    count_Continue = int(row[0])
+                    Rafter_Family_Lefted = doc.GetElement(ElementId(int(row[1])))
+                    Rafter_Type_Lefted = doc.GetElement(ElementId(int(row[2])))
+                    Length_Rater_Lefted_n = float (row[3])
+                    arr = [count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n]
+    csvFile.close()
+    return arr
+    
