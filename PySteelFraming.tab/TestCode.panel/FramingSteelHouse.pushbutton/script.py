@@ -96,7 +96,6 @@ class WPF_PYTHON(WPFWindow):
             self.Level_Rater_Type_Left.DataContext = arr[2]
             self.Length_Rater_Left.Text = str(arr[3])
             print ("Arr is",arr)
-
         #Cout_Continue_keep = Cout_Continue - 1
         self.InputNumberLeft.Text = str(Count_continue + 1)
         self.InputNumberLeft_other.Text = str (Count_continue)

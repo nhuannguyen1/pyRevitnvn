@@ -98,7 +98,7 @@ def count_csv(path):
     readFile.close
     return a
 def Return_Row (Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n):
-    return  [str(Cout_Continue), str(Rafter_Family_Lefted.Id), Rafter_Type_Lefted.Id,str(Length_Rater_Lefted_n)]
+    return  [str(Cout_Continue), str(Rafter_Family_Lefted.Id), str(Rafter_Type_Lefted.Id),str(Length_Rater_Lefted_n)]
 def InputDataChangeToCSV(count_Continue,path,row_input):
     with open(path, 'r') as readFile:
         reader = csv.reader(readFile)
