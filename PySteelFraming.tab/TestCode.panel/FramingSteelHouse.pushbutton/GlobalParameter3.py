@@ -69,8 +69,7 @@ def GetParameterFromSubElement (ElementInstance,Slope):
 def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
     Tw2_Rafter.Set(setvalue)
-def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n):
-    path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PyRevitNVN.extension\PyRevitNVN.tab\TextCodePython.panel\Text.pushbutton\sometext.csv"
+def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n,path,a):
     t = Transaction(doc, 'Write an external file.')
     t.Start()
     row = [str(Cout_Continue), str(Rafter_Family_Lefted.Id), Rafter_Type_Lefted.Id,str(Length_Rater_Lefted_n) ]
@@ -81,26 +80,6 @@ def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Ra
             writer = csv.writer(csvFile)
             writer.writerow(row)
         csvFile.close()
-        
-    else:
-        with open(path) as csvFile:
-            readcsv =csv.reader(csvFile, delimiter=',')
-            for row in readcsv:
-                if int(row[0]) == Cout_Continue:
-                    ElementArr = Getcontentdata(row)
-                    return ElementArr
-        csvFile.close()
-        """
-        with open(path, 'r') as readFile:
-            reader = csv.reader(readFile)
-            lines = list(reader)
-            lines[Cout_Continue] = row
-        with open(path, 'w') as writeFile:
-            writer = csv.writer(writeFile)
-            writer.writerows(lines)
-        writeFile.close()
-        readFile.close()
-        """
     t.Commit()
 def Getcontentdata (count_Continue,path):
     with open(path) as csvFile:
@@ -115,4 +94,8 @@ def Getcontentdata (count_Continue,path):
                     arr = [count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n]
     csvFile.close()
     return arr
-    
+def count_csv(path):
+    with open(path, 'r') as readFile:
+        a = sum (1 for row in readFile)
+    readFile.close
+    return a

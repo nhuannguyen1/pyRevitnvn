@@ -10,7 +10,7 @@ from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import clr
 import rpw
-from GlobalParameter3 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,setparameterfromvalue,writefilecsv,Getcontentdata
+from GlobalParameter1 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,setparameterfromvalue,writefilecsv,Getcontentdata,count_csv,Return_Row
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
@@ -77,21 +77,36 @@ class WPF_PYTHON(WPFWindow):
         Rafter_Family_Lefted = self.Rafter_Left.SelectedItem
         self.Rater_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).OfClass(FamilySymbol) if vt.FamilyName == Rafter_Family_Lefted.Name]
     def Ok_Next(self, sender, e):
-        Cout_Continue = int(self.InputNumberLeft.Text)
-        self.InputNumberLeft.Text =str(Cout_Continue + 1)
+        Count_continue = int(self.InputNumberLeft.Text)
         Rafter_Family_Lefted = self.Rafter_Left.SelectedItem
         Rafter_Type_Lefted = self.Rater_Type_Left.SelectedItem
         #length 
         Length_Rater_Lefted_n = float(self.Length_Rater_Left.Text)
         # = UnitUtils.ConvertToInternalUnits(Length_Rater_Lefted_n, DisplayUnitType.DUT_MILLIMETERS)
-        RowStr = writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
+        #count row in csv
+        count_dem = count_csv(path)
+        if count_dem == 0 or Count_continue >= count_dem:
+            writefilecsv(Count_continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n,path,count_dem)
         # test display default 
-        arr = Getcontentdata(Cout_Continue,path)
+        else:
+            Return_Row1 = Return_Row(Count_continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
+            print ("Return_Row is",Return_Row1)
+            arr = Getcontentdata(Count_continue,path)
+            self.Column_Type.DataContext = arr[1]
+            self.Level_Rater_Type_Left.DataContext = arr[2]
+            self.Length_Rater_Left.Text = str(arr[3])
+            print ("Arr is",arr)
 
+        #Cout_Continue_keep = Cout_Continue - 1
+        self.InputNumberLeft.Text = str(Count_continue + 1)
+        self.InputNumberLeft_other.Text = str (Count_continue)
     def Ok_Prevous(self, sender, e):
         Cout_Prevous = int(self.InputNumberLeft.Text)
         self.InputNumberLeft.Text =str(Cout_Prevous - 1)
         arr = Getcontentdata(Cout_Prevous,path)
+        self.Column_Type.DataContext = arr[1]
+        self.Level_Rater_Type_Left.DataContext = arr[2]
+        self.Length_Rater_Left.Text = str(arr[3])
     def Click_To_Start(self, sender, e):  
         Base_Leveled = self.Base_Level.SelectedItem
         Top_Leveled = self.Top_Level.SelectedItem

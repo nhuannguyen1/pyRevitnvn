@@ -69,43 +69,43 @@ def GetParameterFromSubElement (ElementInstance,Slope):
 def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
     Tw2_Rafter.Set(setvalue)
-def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n):
-    path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PyRevitNVN.extension\PyRevitNVN.tab\TextCodePython.panel\Text.pushbutton\sometext.csv"
+def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n,path,a):
     t = Transaction(doc, 'Write an external file.')
     t.Start()
     row = [str(Cout_Continue), str(Rafter_Family_Lefted.Id), Rafter_Type_Lefted.Id,str(Length_Rater_Lefted_n) ]
-    with open(path, 'r') as readFile:
-        a = sum (1 for row in readFile)
     if a == 0 or Cout_Continue >= a:
         with open(path, 'a') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerow(row)
         csvFile.close()
-    else:
-        with open(path) as csvFile:
+    t.Commit()
+def Getcontentdata (count_Continue,path):
+    with open(path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
             for row in readcsv:
-                if int(row[0]) == Cout_Continue:
-                    GetDataContent (row)
-        csvFile.close()
-        """
-        with open(path, 'r') as readFile:
-            reader = csv.reader(readFile)
-            lines = list(reader)
-            lines[Cout_Continue] = row
-        with open(path, 'w') as writeFile:
-            writer = csv.writer(writeFile)
-            writer.writerows(lines)
-        writeFile.close()
-        readFile.close()
-        """
-    t.Commit()
-def GetDataContent (arrDatacontenttxt):
-    Count_Contiue =int(arrDatacontenttxt[0])
-    Rafter_Family_Lefted = doc.GetElement(ElementId(int(arrDatacontenttxt[1]))
-    Rafter_Family_Lefted1 = doc.GetElement(ElementId(int(arrDatacontenttxt[2]))
-
-    Rafter_Type_Lefted = doc.GetElement(ElementId(int(arrDatacontenttxt[2])))
-    Length_Rater_Lefted_n = float (arrDatacontenttxt[3])
-    GetDataContent = [Count_Contiue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n]
-return GetDataContent
+                if int(row[0]) == count_Continue:
+                    arr = []
+                    count_Continue = int(row[0])
+                    Rafter_Family_Lefted = doc.GetElement(ElementId(int(row[1])))
+                    Rafter_Type_Lefted = doc.GetElement(ElementId(int(row[2])))
+                    Length_Rater_Lefted_n = float (row[3])
+                    arr = [count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n]
+    csvFile.close()
+    return arr
+def count_csv(path):
+    with open(path, 'r') as readFile:
+        a = sum (1 for row in readFile)
+    readFile.close
+    return a
+def Return_Row (Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n):
+    return  [str(Cout_Continue), str(Rafter_Family_Lefted.Id), Rafter_Type_Lefted.Id,str(Length_Rater_Lefted_n)]
+def InputDataChangeToCSV(count_Continue,path,row_input):
+    with open(path, 'r') as readFile:
+        reader = csv.reader(readFile)
+        lines = list(reader)
+        lines[count_Continue] = row_input
+    with open(path, 'w') as writeFile:
+        writer = csv.writer(writeFile)
+        writer.writerows(lines)
+    writeFile.close()
+    readFile.close()
