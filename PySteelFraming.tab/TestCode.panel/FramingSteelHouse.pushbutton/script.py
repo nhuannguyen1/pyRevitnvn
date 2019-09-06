@@ -116,7 +116,7 @@ class WPF_PYTHON(WPFWindow):
             Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
             print(Return_Row1)
             
-            arr = Getcontentdata ((Count_Continue+1),path)
+            arr = Getcontentdata ((Count_Continue + 1),path)
             self.Column_Type.DataContext = arr[1]
             self.Level_Rater_Type_Left.DataContext = arr[2]
             self.Length_Rater_Left.Text = str(arr[3])
