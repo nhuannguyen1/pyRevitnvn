@@ -4,6 +4,7 @@ from Autodesk.Revit.DB import Transaction, FilteredElementCollector,\
     UnitUtils,DisplayUnitType,GlobalParametersManager,DoubleParameterValue,ElementId
 import rpw
 import csv
+from pyrevit import script
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
@@ -69,26 +70,16 @@ def GetParameterFromSubElement (ElementInstance,Slope):
 def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
     Tw2_Rafter.Set(setvalue)
-def writefilecsv(Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n,path,a):
+def writefilecsv(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n,path,a):
     t = Transaction(doc, 'Write an external file.')
     t.Start()
-    row = [str(Cout_Continue), str(Rafter_Family_Lefted.Id), Rafter_Type_Lefted.Id,str(Length_Rater_Lefted_n) ]
-    if a == 0 or Cout_Continue >= a:
-        with open(path, 'a') as csvFile:
-            writer = csv.writer(csvFile)
-            writer.writerow(row)
-        csvFile.close()
+    row = [str(Count_Continue), str(Rafter_Family_Lefted.Id), Rafter_Type_Lefted.Id,str(Length_Rater_Lefted_n) ]
+    with open(path, 'a') as csvFile:
+        writer = csv.writer(csvFile)
+        writer.writerow(row)
+    csvFile.close()
     t.Commit()
-def Getcontentdata (count_Continue,path,row):
-    with open(path, 'r') as readFile:
-        reader = csv.reader(readFile)
-        lines = list(reader)
-        lines[count_Continue] = row
-    with open(path, 'w') as writeFile:
-        writer = csv.writer(writeFile)
-        writer.writerows(lines)
-    writeFile.close()
-    readFile.close()
+def Getcontentdata (count_Continue,path):
     with open(path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
             for row in readcsv:
@@ -107,4 +98,28 @@ def count_csv(path):
     readFile.close
     return a
 def Return_Row (Cout_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n):
-    return  [str(Cout_Continue), str(Rafter_Family_Lefted.Id), Rafter_Type_Lefted.Id,str(Length_Rater_Lefted_n)]
+    return  [str(Cout_Continue), str(Rafter_Family_Lefted.Id), str(Rafter_Type_Lefted.Id),str(Length_Rater_Lefted_n)]
+def InputDataChangeToCSV(count_Continue,path,row_input):
+    with open(path, 'r') as readFile:
+        reader = csv.reader(readFile)
+        lines = list(reader)
+        lines[count_Continue] = row_input
+    with open(path, 'w') as writeFile:
+        writer = csv.writer(writeFile)
+        writer.writerows(lines)
+    writeFile.close()
+    readFile.close()
+def GetDataFirstRow(path):
+    with open(path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            for row in readcsv:
+                if int(row[0]) == 0:
+                    return row
+    csvFile.close()
+def GetcontentdataStr (count_Continue,path):
+    with open(path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            for row in readcsv:
+                if int(row[0]) == count_Continue:
+                    return row
+    csvFile.close()
