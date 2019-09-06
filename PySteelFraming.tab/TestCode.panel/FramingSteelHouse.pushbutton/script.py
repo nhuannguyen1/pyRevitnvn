@@ -62,14 +62,18 @@ class WPF_PYTHON(WPFWindow):
         self.Gird_Hor.DataContext = self.Girds
         self.Level_Rater_Type_Left.DataContext = self.levels
         #  # get parameters from config file or use default values
+        
         self._config = script.get_config()
         inputNumber = GetDataFirstRow(path)
         self.Rafter_Left.Text = self._config.get_option('prefix', inputNumber[1])
         self.Rater_Type_Left.Text = self._config.get_option('prefix', inputNumber[2])
         self.Length_Rater_Left.Text = self._config.get_option('prefix', inputNumber[3])
+        
         self._config.prefix = self.Length_Rater_Left.Text
         self._config.prefix = self.Rafter_Left.Text
         self._config.prefix = self.Rater_Type_Left.Text
+    
+
         # content connection
         #self.Plate_Connection_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Connections"]
         #content rater 
@@ -80,44 +84,49 @@ class WPF_PYTHON(WPFWindow):
         Rafter_Family_Lefted = self.Rafter_Left.SelectedItem
         self.Rater_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).OfClass(FamilySymbol) if vt.FamilyName == Rafter_Family_Lefted.Name]
     def Ok_Next(self, sender, e):
-        a= int(self.InputNumberLeft_other.Text)
-        if a==0:
-            Count_continue = int(self.InputNumberLeft.Text)
-        else:
-            Count_continue = (int(self.InputNumberLeft.Text) + 1)
-            #Count_continue = Count_continue + 1
-            #Count_continue = int(self.InputNumberLeft.Text)
-        self.InputNumberLeft.Text = str (Count_continue)
+        Count_Continue = int(self.InputNumberLeft.Text)
         count_dem = count_csv(path)
-        a= int(self.InputNumberLeft_other.Text)
-  
-        if count_dem == 0 or Count_continue >= count_dem:
+        if count_dem == 0 or Count_Continue >= count_dem:
             Rafter_Family_Lefted = self.Rafter_Left.SelectedItem
             Rafter_Type_Lefted = self.Rater_Type_Left.SelectedItem
             Length_Rater_Lefted_n = float(self.Length_Rater_Left.Text)
-            writefilecsv(Count_continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n,path,count_dem)
-            self.InputNumberLeft.Text = str (int(Count_continue + 1))
-            self.InputNumberLeft_other.Text = str (Count_continue)
+            writefilecsv(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n,path,count_dem)
+            self.InputNumberLeft.Text = str (int(Count_Continue + 1))
+            self.InputNumberLeft_other.Text = str (Count_Continue)
         else:
-            if Count_continue == 0 & a == 0:
-                Count_continue =0
-                self.InputNumberLeft.Text = str (int(Count_continue))
-                self.InputNumberLeft_other.Text = str ("1")
-            else:
-                self.InputNumberLeft.Text = str (int(Count_continue + 1))
-                self.InputNumberLeft_other.Text = str (Count_continue)
+            #if Count_continue == 0 & a == 0:
+            #    Count_continue =0
+            #    self.InputNumberLeft.Text = str (int(Count_continue))
+            #    self.InputNumberLeft_other.Text = str ("1")
+            #else:
+            #   self.InputNumberLeft.Text = str (int(Count_continue + 1))
+            #    self.InputNumberLeft_other.Text = str (Count_continue)
                 #Count_continue = Count_continue + 1
-            Rafter_Family_Lefted = self.Rafter_Left.SelectedItem
-            Rafter_Type_Lefted = self.Rater_Type_Left.SelectedItem
-            Length_Rater_Lefted_n = float(self.Length_Rater_Left.Text)
-            Return_Row1 = Return_Row(Count_continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
-            arr = Getcontentdata (Count_continue,path)
-            print (Count_continue)
-            print (arr)
+            """
+            arr = Getcontentdata (Count_Continue,path)
             self.Column_Type.DataContext = arr[1]
             self.Level_Rater_Type_Left.DataContext = arr[2]
             self.Length_Rater_Left.Text = str(arr[3])
-            #InputDataChangeToCSV(Count_continue,path,Return_Row1)
+            """
+
+            Rafter_Family_Lefted = self.Rafter_Left.SelectedItem
+            Rafter_Type_Lefted = self.Rater_Type_Left.SelectedItem
+            Length_Rater_Lefted_n = float(self.Length_Rater_Left.Text)
+            print (Length_Rater_Lefted_n)
+            Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
+            print(Return_Row1)
+            
+            arr = Getcontentdata ((Count_Continue+1),path)
+            self.Column_Type.DataContext = arr[1]
+            self.Level_Rater_Type_Left.DataContext = arr[2]
+            self.Length_Rater_Left.Text = str(arr[3])
+            
+            #print (Count_Continue)
+            Return_RowData = GetcontentdataStr(Count_Continue,path)
+            print (Return_RowData)
+            InputDataChangeToCSV(Count_Continue,path,Return_Row1)
+            self.InputNumberLeft.Text = str (int(Count_Continue + 1))
+            self.InputNumberLeft_other.Text = str (Count_Continue)
 
         """
         GetArr = GetcontentdataStr (Count_continue,path)
