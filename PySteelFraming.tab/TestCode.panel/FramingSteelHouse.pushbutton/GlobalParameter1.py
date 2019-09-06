@@ -123,7 +123,6 @@ def GetcontentdataStr (count_Continue,path):
                 if int(row[0]) == count_Continue:
                     return row
     csvFile.close()
-
 class DataFromCSV:
     def  __init__(self, Count, FamilyCol, FamilyColType,Base_Level_Col,Top_Level_Col,FamilyRafter,FamilyRafterType,LevelRafter,Length_Rafter,Thinkess_Plate,path,Gird1,Gird2,Slope):
         self.Count = Count
@@ -159,8 +158,8 @@ class DataFromCSV:
                     Rafter_Family_Lefted = doc.GetElement(ElementId(int(row[1])))
                     Rafter_Type_Lefted = doc.GetElement(ElementId(int(row[2])))
                     Length_Rater_Lefted_n = float (row[3])
-                    arr = [self.Count, self.FamilyCol, self.FamilyColType,self.Base_Level_Col,self.Top_Level_Col,Rafter_Family_Lefted,Rafter_Type_Lefted,\
-                        self.LevelRafter,Length_Rater_Lefted_n,self.Thinkess_Plate,self.path,self.Gird1,self.Gird2,self.Slope]
+                    arr = [self.Count,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n]
+                    # arr = [self.Count, self.FamilyCol, self.FamilyColType,self.Base_Level_Col,self.Top_Level_Col,Rafter_Family_Lefted,Rafter_Type_Lefted,\
                     #arr = [self.Count,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n]
         csvFile.close()
         return arr
@@ -188,6 +187,7 @@ class DataFromCSV:
                 if int(row[0]) == self.Count:
                     return row
         csvFile.close()
+    
 
     
 

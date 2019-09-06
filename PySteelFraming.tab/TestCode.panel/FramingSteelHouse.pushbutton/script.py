@@ -84,32 +84,41 @@ class WPF_PYTHON(WPFWindow):
         self.Rater_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).OfClass(FamilySymbol) if vt.FamilyName == Rafter_Family_Lefted.Name]
     def Ok_Next(self, sender, e):
         Count_Continue = int(self.InputNumberLeft.Text)
-        count_dem = count_csv(path)
+        DataFromdem = DataFromCSV(None,None,None,None,None,None,None,None,None,None,path,None,None,None)
+        count_dem = DataFromdem.count_csv()
+        #count_dem = count_csv(path)
         if count_dem == 0 or Count_Continue >= count_dem:
             #add
             Rafter_Family_Lefted = self.Rafter_Left.SelectedItem
             Rafter_Type_Lefted = self.Rater_Type_Left.SelectedItem
             Length_Rater_Lefted_n = float(self.Length_Rater_Left.Text)
-            writefilecsv(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n,path,count_dem)
+            DataFromCSV_1 = DataFromCSV(Count_Continue,None,None,None,None,Rafter_Family_Lefted,Rafter_Type_Lefted,None,Length_Rater_Lefted_n,None,path,None,None,None)
+            DataFromCSV_1.writefilecsv(count_dem)
+            #writefilecsv(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n,path,count_dem)
             self.InputNumberLeft.Text = str (int(Count_Continue + 1))
             self.InputNumberLeft_other.Text = str (Count_Continue)
         else:
             Rafter_Family_Lefted = self.Rafter_Left.SelectedItem
             Rafter_Type_Lefted = self.Rater_Type_Left.SelectedItem
             Length_Rater_Lefted_n = float(self.Length_Rater_Left.Text)
-            print (Length_Rater_Lefted_n)
-            Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
-            print(Return_Row1)
             
-            arr = Getcontentdata ((Count_Continue + 1),path)
+            DataFromCSV_1 = DataFromCSV(Count_Continue,None,None,None,None,Rafter_Family_Lefted,Rafter_Type_Lefted,None,Length_Rater_Lefted_n,None,path,None,None,None)
+            Return_Row1 =DataFromCSV_1.Return_Row()
+            print (Return_Row1)
+            #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
+            DataFromCSV_1 = DataFromCSV(Count_Continue + 1,None,None,None,None,Rafter_Family_Lefted,Rafter_Type_Lefted,None,Length_Rater_Lefted_n,None,path,None,None,None)
+            arr = DataFromCSV_1.Getcontentdata()
+            print (arr)
+            #arr = Getcontentdata ((Count_Continue + 1),path)
             self.Column_Type.DataContext = arr[1]
             self.Level_Rater_Type_Left.DataContext = arr[2]
             self.Length_Rater_Left.Text = str(arr[3])
             
             #print (Count_Continue)
-            Return_RowData = GetcontentdataStr(Count_Continue,path)
-            print (Return_RowData)
-            InputDataChangeToCSV(Count_Continue,path,Return_Row1)
+            #Return_RowData = GetcontentdataStr(Count_Continue,path)
+            DataFromCSV_1 = DataFromCSV(Count_Continue,None,None,None,None,Rafter_Family_Lefted,Rafter_Type_Lefted,None,Length_Rater_Lefted_n,None,path,None,None,None)
+            DataFromCSV_1.InputDataChangeToCSV(Return_Row1)
+            #InputDataChangeToCSV(Count_Continue,path,Return_Row1)
             self.InputNumberLeft.Text = str (int(Count_Continue + 1))
             self.InputNumberLeft_other.Text = str (Count_Continue)
     def Ok_Prevous(self, sender, e):
