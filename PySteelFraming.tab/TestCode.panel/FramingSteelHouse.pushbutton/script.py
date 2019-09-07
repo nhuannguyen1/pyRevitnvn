@@ -10,7 +10,7 @@ from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import clr
 import rpw
-from GlobalParameter3 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
+from GlobalParameter5 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
     setparameterfromvalue,writefilecsv,Getcontentdata,count_csv,Return_Row,GetDataFirstRow,GetcontentdataStr,InputDataChangeToCSV,DataFromCSV
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
@@ -83,55 +83,41 @@ class WPF_PYTHON(WPFWindow):
         Plate_Pted = float(self.Plate_Pt.Text)
         # Plate_Pted = self.Plate_Pt.SelectedItem
         LevelRafter = self.Level_Rater_Type_Left.SelectedItem
-        Length_Rater_Lefted_n = float(self.Length_Rater_Left.Text)
+        Length_Rater_Lefted_n = self.Length_Rater_Left.Text
         Gird_Vered = self.Gird_Ver.SelectedItem
         Gird_Hored = self.Gird_Hor.SelectedItem
         Sloped = float(self.Slope.Text)
+        #print (count_dem)
+        #print (Count_Continue)
         if count_dem == 0 or Count_Continue >= count_dem:
-            #add
             DataFromCSV_1 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
-                #def  __init__(self, Count, FamilyCol, FamilyColType,Base_Level_Col,Top_Level_Col,FamilyRafter,FamilyRafterType,LevelRafter,Length_Rafter,Thinkess_Plate,path,Gird1,Gird2,Slope):
             DataFromCSV_1.writefilecsv(count_dem)
-            #writefilecsv(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n,path,count_dem)
-            self.InputNumberLeft.Text = str (int(Count_Continue + 1))
-            self.InputNumberLeft_other.Text = str (Count_Continue)
         else:
-            DataFromCSV_1 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
-            Return_Row1 =DataFromCSV_1.Return_Row()
+            DataFromCSV_2 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
+            Return_Row1 =DataFromCSV_2.Return_Row()
             print (Return_Row1)
-            
             #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
             DataFromCSV_DATA = DataFromCSV(Count_Continue + 1,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
-
             arr = DataFromCSV_DATA.Getcontentdata()
-
-            self.Column_Left.DataContext = arr[1]
-            self.Column_Type.DataContext = arr[2]
-            self.Base_Level.DataContext = str(arr[3])
-            """
-            self.Base_Level.Text = str(arr[3])
-            """
-            self.Top_Level.DataContext = arr[4]
-            self.Rafter_Left.DataContext = arr[5]
-            self.Rater_Type_Left.DataContext = str(arr[6])
-            self.Level_Rater_Type_Left.DataContext = str(arr[7])
-
+            #print (arr)  
+            self.Column_Left.SelectedItem = arr[1]
+            self.Column_Type.SelectedItem = arr[2]
+            self.Base_Level.SelectedItem = (arr[3])
+            self.Top_Level.SelectedItem = arr[4]
+            self.Rafter_Left.SelectedItem = arr[5]
+            self.Rater_Type_Left.SelectedItem = (arr[6])
+            self.Level_Rater_Type_Left.SelectedItem = (arr[7])
             self.Length_Rater_Left.Text = str(arr[8])
-
             self.Plate_Pt.Text = str(arr[9])
-
-            self.Gird_Hor.DataContext = str(arr[11])
-            self.Gird_Ver.DataContext = str (arr[12])
-        
+            self.Gird_Hor.SelectedItem = str(arr[11])
+            self.Gird_Ver.SelectedItem = str (arr[12])
             self.Slope.Text =  str(arr[13])
-
             #print (Count_Continue)
             #Return_RowData = GetcontentdataStr(Count_Continue,path)
-            #DataFromCSV_1 = DataFromCSV(Count_Continue,None,None,None,None,Rafter_Family_Lefted,Rafter_Type_Lefted,None,Length_Rater_Lefted_n,None,path,None,None,None)
-            DataFromCSV_1.InputDataChangeToCSV(Return_Row1)
+            DataFromCSV_DATA = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
+            DataFromCSV_DATA.InputDataChangeToCSV(Return_Row1)
             #InputDataChangeToCSV(Count_Continue,path,Return_Row1)
-            self.InputNumberLeft.Text = str (int(Count_Continue + 1))
-            self.InputNumberLeft_other.Text = str (Count_Continue)
+        self.InputNumberLeft.Text = str (int(Count_Continue + 1))        
     def Ok_Prevous(self, sender, e):
         Cout_Prevous = int(self.InputNumberLeft.Text)
         self.InputNumberLeft.Text =str(Cout_Prevous - 1)

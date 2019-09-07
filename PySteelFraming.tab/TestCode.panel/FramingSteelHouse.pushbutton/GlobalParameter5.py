@@ -156,10 +156,18 @@ class DataFromCSV:
                 if int(row[0]) == self.Count:
                     arr = []
                     self.Count = int(row[0])
+                    Column_Left = doc.GetElement(ElementId(int(row[1])))
+                    FamilyColType = doc.GetElement(ElementId(int(row[2])))
+                    Base_Level_Col = doc.GetElement(ElementId(int(row[3])))
+                    Top_Level_Col = doc.GetElement(ElementId(int(row[4])))
                     Rafter_Family_Lefted = doc.GetElement(ElementId(int(row[5])))
                     Rafter_Type_Lefted = doc.GetElement(ElementId(int(row[6])))
+                    LevelRafter =  Rafter_Type_Lefted = doc.GetElement(ElementId(int(row[7])))
                     Length_Rater_Lefted_n = float (row[8])
-                    arr = [self.Count, self.FamilyCol.Id, self.FamilyColType.Id,self.Base_Level_Col.Id,self.Top_Level_Col.Id,Rafter_Family_Lefted,Rafter_Type_Lefted,self.LevelRafter.Id,Length_Rater_Lefted_n,self.Thinkess_Plate,self.path,self.Gird1,self.Gird2,self.Slope]
+                    Thinkess_Plate = float (row[9])
+                    Gird1 = doc.GetElement(ElementId(int(row[11])))
+                    Gird2 = doc.GetElement(ElementId(int(row[12])))
+                    arr = [self.Count, Column_Left, FamilyColType,Base_Level_Col,Top_Level_Col,Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Thinkess_Plate,self.path,Gird1,Gird2,self.Slope]
         csvFile.close()
         return arr
     def count_csv(self):
