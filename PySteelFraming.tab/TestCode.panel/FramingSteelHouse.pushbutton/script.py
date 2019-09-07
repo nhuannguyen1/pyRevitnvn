@@ -10,8 +10,8 @@ from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import clr
 import rpw
-from GlobalParameter5 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
-    setparameterfromvalue,writefilecsv,Getcontentdata,count_csv,Return_Row,GetDataFirstRow,GetcontentdataStr,InputDataChangeToCSV,DataFromCSV
+from GlobalParameter7 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
+    setparameterfromvalue,writefilecsv,Getcontentdata,count_csv,Return_Row,GetDataFirstRow,GetcontentdataStr,InputDataChangeToCSV,DataFromCSV,PlaceElementTotal
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
@@ -143,7 +143,6 @@ class WPF_PYTHON(WPFWindow):
         Length_Rater_Lefted = float(self.Length_Rater_Left.Text)
         Length_Rater_Lefted = UnitUtils.ConvertToInternalUnits(Length_Rater_Lefted, DisplayUnitType.DUT_MILLIMETERS)
         # place column to project 
-        PlaceElement(Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_T,Level_Rater_Type_Lefted,Rater_Type_Lefted,Getcondination,LEVEL_ELEV_Base_Level,Length_Rater_Lefted)
-        #plate Element rafter 
+        PlaceElementTotal (Base_Leveled,Base_Leveled_Point,Column_Typed,Top_Leveled,Slope_T,Level_Rater_Type_Lefted,Rater_Type_Lefted,Getcondination,LEVEL_ELEV_Base_Level,Length_Rater_Lefted)
         self.Close()
 WPF_PYTHON = WPF_PYTHON('WPF_PYTHON.xaml').ShowDialog()
