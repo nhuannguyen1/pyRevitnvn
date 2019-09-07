@@ -62,9 +62,6 @@ def GetParameterFromSubElement (ElementInstance,Slope):
     G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
     V34 = v34u - V4u
     h_t = V34 + G2_V1
-    h_n1 = UnitUtils.ConvertFromInternalUnits (h_n, DisplayUnitType.DUT_MILLIMETERS)
-    h_t1 = UnitUtils.ConvertFromInternalUnits (h_t, DisplayUnitType.DUT_MILLIMETERS)
-    Slope1 = UnitUtils.ConvertFromInternalUnits (Slope, DisplayUnitType.DUT_MILLIMETERS)
     return [h_n,h_t]
 def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
@@ -205,18 +202,20 @@ class DataFromCSV:
         t = Transaction (doc,"Place Element")
         t.Start()
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,self.Base_Level_Col, Structure.StructuralType.NonStructural)
-        LIST = GetParameterFromSubElement(ColumnCreate,self.Slope)
+        #LIST = GetParameterFromSubElement(ColumnCreate,self.Slope)
         a= Global(self.Slope)
         a.globalparameterchange(ColumnCreate)
         paramerTopLeve = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM)
         paramerTopLeve.Set(self.Top_Level_Col.Id)
         TopoffsetPam = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM)
         TopoffsetPam.Set(0)
+        LIST = GetParameterFromSubElement(ColumnCreate,self.Slope)
         H_t = LIST[1]
         H_n = LIST[0]
         Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
         PlaceElementRafter(Point_Level,self.FamilyRafterType,self.LevelRafter,self.Length_Rafter,self.Slope)
         t.Commit()
+
 def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type):
     Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)
     a= Global(Slope_Type)
