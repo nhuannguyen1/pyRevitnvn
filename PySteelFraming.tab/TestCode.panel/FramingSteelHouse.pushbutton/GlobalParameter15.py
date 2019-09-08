@@ -34,10 +34,57 @@ class ConvertToInternalUnits1:
         #print (self.ParameterValue)
         ParameterValue = UnitUtils.ConvertToInternalUnits(self.ParameterValue, DisplayUnitType.DUT_DECIMAL_DEGREES)
         return ParameterValue
-def GetParameterFromSubElement (ElementInstance,Slope,Count,Length_Rafter):
-
+def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird1,Gird2):
+    Arr_Point_Type_Length = []
+    ArrTotal = []
     Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
-    #Slope1 = ElementInstance.LookupParameter('Slope').AsDouble()
+    Getcondination =  Getintersection (Gird1.Curve,Gird2.Curve)
+    LIST =  GetHt_Hn (ElementInstance,Slope)
+    H_t = LIST[1]
+    H_n = LIST[0]
+    with open(path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            for row in readcsv:
+                print (row)
+                DataFromCSV_DATA = DataFromCSV(int(row[0]),None,None,None,None,None,Rafter_Type_Lefted,None,Length_Rafter,None,path,None,None,None)
+                arr = DataFromCSV_DATA.Getcontentdata()
+                #print (arr)
+                Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
+                Arr_Point_Type_Length=[Point_Level,arr[6],arr[8]]
+                print (Arr_Point_Type_Length)
+                H_n = H_n + Length_Rafter * math.cos(Slope)
+                H_t = H_t + Length_Rafter * math.sin(Slope)
+                ArrTotal.append(Arr_Point_Type_Length)
+            return ArrTotal
+    csvFile.close()
+def GetHt_Hn (ElementInstance,Slope):
+    print ("Slope", Slope)
+    """
+    Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
+    Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
+    ElementType =  doc.GetElement(ElementInstance.GetTypeId())
+    Tw2_Rafter = ElementType.LookupParameter('Tw2_WF_R').AsDouble()
+    Tf = ElementType.LookupParameter('Tf').AsDouble()
+    Tw1 = ElementType.LookupParameter('Tw1').AsDouble() 
+    Tw2 = ElementType.LookupParameter('Tw2').AsDouble() 
+    A = ElementType.LookupParameter('A').AsDouble() 
+    Pl_Total =math.cos(Slope) * Pl_Right * 2
+    v34u = math.cos(Slope) * Tw2_Rafter
+    V24u = v34u + A
+    H13r = Tw2 - (math.tan(Slope) * V24u)
+    V4u = math.tan(Slope) * H13r
+    H13r_L = H13r - math.tan(Slope) * Tf
+    h_n = H13r_L - Tw1 / 2 + Pl_Total
+    G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
+    V34 = v34u - V4u
+    h_t = V34 + G2_V1
+
+    h_n1 = UnitUtils.ConvertFromInternalUnits (h_n, DisplayUnitType.DUT_MILLIMETERS)
+    h_t1 = UnitUtils.ConvertFromInternalUnits (h_t, DisplayUnitType.DUT_MILLIMETERS)
+
+    """
+    Slope = UnitUtils.ConvertToInternalUnits(Slope, DisplayUnitType.DUT_DECIMAL_DEGREES)
+    print ("Slope is",Slope)
     Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
 
     ElementType =  doc.GetElement(ElementInstance.GetTypeId())
@@ -62,7 +109,14 @@ def GetParameterFromSubElement (ElementInstance,Slope,Count,Length_Rafter):
     G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
     V34 = v34u - V4u
     h_t = V34 + G2_V1
+    h_n1 = UnitUtils.ConvertFromInternalUnits (h_n, DisplayUnitType.DUT_MILLIMETERS)
+    h_t1 = UnitUtils.ConvertFromInternalUnits (h_t, DisplayUnitType.DUT_MILLIMETERS)
+    Slope1 = UnitUtils.ConvertFromInternalUnits (Slope, DisplayUnitType.DUT_DECIMAL_DEGREES)
+    #Slope1 = UnitUtils.ConvertFromInternalUnits (Slope, DisplayUnitType.DUT_MILLIMETERS)
+    print ("hn is",h_n1, "ht is",h_t1, "slope is ",Slope1)
     return [h_n,h_t]
+    
+
 def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
     Tw2_Rafter.Set(setvalue)
@@ -88,6 +142,7 @@ def Getcontentdata (count_Continue,path):
                     arr = [count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n]
     csvFile.close()
     return arr
+
 def count_csv(path):
     with open(path, 'r') as readFile:
         a = sum (1 for row in readFile)
@@ -199,8 +254,8 @@ class DataFromCSV:
         LEVEL_ELEV_Base_Level= self.Top_Level_Col.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
         Getcondination =  Getintersection (self.Gird1.Curve,self.Gird2.Curve)
         Base_Leveled_Point =XYZ (Getcondination.X,Getcondination.Y,(LEVEL_ELEV_Base_Level))
-        t = Transaction (doc,"Place Element")
-        t.Start()
+        #t = Transaction (doc,"Place Element")
+        #t.Start()
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,self.Base_Level_Col, Structure.StructuralType.NonStructural)
         #LIST = GetParameterFromSubElement(ColumnCreate,self.Slope)
         a= Global(self.Slope)
@@ -209,18 +264,15 @@ class DataFromCSV:
         paramerTopLeve.Set(self.Top_Level_Col.Id)
         TopoffsetPam = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM)
         TopoffsetPam.Set(0)
-        t.Commit()
+        #t.Commit()
         return ColumnCreate
-    def GetCondinationOfRafter(self,ColumnCreate):
-        #LEVEL_ELEV_Base_Level= self.Top_Level_Col.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
-        Getcondination =  Getintersection (self.Gird1.Curve,self.Gird2.Curve)
-        #Base_Leveled_Point =XYZ (Getcondination.X,Getcondination.Y,(LEVEL_ELEV_Base_Level))
-        LIST = GetParameterFromSubElement(ColumnCreate,self.Slope,self.Count,self.Length_Rafter)
-        H_t = LIST[1]
-        H_n = LIST[0]
-        Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
-        PlaceElementRafter(Point_Level,self.FamilyRafterType,self.LevelRafter,self.Length_Rafter,self.Slope)
-
+    def PlaceElementRafterFather(self,ColumnCreate):
+        #GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird1,Gird2):
+        Point_Levels = GetParameterFromSubElement (ColumnCreate,self.FamilyRafterType,self.Slope,self.Length_Rafter,self.path,self.Gird1,self.Gird2)
+        print ("Arr Total is ",Point_Levels)
+        for Point_Level,FamilyRafterType,Length_Rafter in Point_Levels:
+            Length_Rafter = UnitUtils.ConvertToInternalUnits(float(Length_Rafter), DisplayUnitType.DUT_MILLIMETERS)
+            PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope)
 def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type):
     Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)
     a= Global(Slope_Type)

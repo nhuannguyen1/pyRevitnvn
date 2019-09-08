@@ -10,7 +10,7 @@ from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import clr
 import rpw
-from GlobalParameter10 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
+from GlobalParameter16 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
     setparameterfromvalue,writefilecsv,Getcontentdata,count_csv,Return_Row,GetDataFirstRow,GetcontentdataStr,InputDataChangeToCSV,DataFromCSV
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
@@ -93,12 +93,16 @@ class WPF_PYTHON(WPFWindow):
         self.Level_Rater_Type_Left.DataContext = arr[2]
         self.Length_Rater_Left.Text = str(arr[3])
     def Click_To_Start(self, sender, e):
-        DataFromdem = DataFromCSV(None,None,None,None,None,None,None,None,None,None,path,None,None,None)
-        count_dems = DataFromdem.count_csv()
-        for count_dem in range (count_dems):
-            DataFromdem = DataFromCSV(count_dem,None,None,None,None,None,None,None,None,None,path,None,None,None)
+            DataFromdem = DataFromCSV(int(0),None,None,None,None,None,None,None,None,None,path,None,None,None)
             arr = DataFromdem.Getcontentdata()
-            DataFromdem = DataFromCSV(count_dem,arr[1],arr[2],(arr[3]),arr[4], arr[5],arr[6],arr[7],str(arr[8]),str(arr[9]),path,(arr[11]),(arr[12]),arr[13])
-            DataFromdem.PlaceElement()
+            dem = DataFromdem.count_csv()
+      
+            DataFromdem = DataFromCSV(int(0),arr[1],arr[2],(arr[3]),arr[4], arr[5],arr[6],arr[7],str(arr[8]),str(arr[9]),path,(arr[11]),(arr[12]),arr[13])
+       
+            t = Transaction (doc,"Place Element")
+            t.Start()
+            CreateColumn = DataFromdem.PlaceElement()
+            DataFromdem.PlaceElementRafterFather(CreateColumn)
+            t.Commit()
             #def  __init__(self, Count, FamilyCol, FamilyColType,Base_Level_Col,Top_Level_Col,FamilyRafter,FamilyRafterType,LevelRafter,Length_Rafter,Thinkess_Plate,path,Gird1,Gird2,Slope):
 WPF_PYTHON = WPF_PYTHON('WPF_PYTHON.xaml').ShowDialog()

@@ -34,30 +34,36 @@ class ConvertToInternalUnits1:
         #print (self.ParameterValue)
         ParameterValue = UnitUtils.ConvertToInternalUnits(self.ParameterValue, DisplayUnitType.DUT_DECIMAL_DEGREES)
         return ParameterValue
-def GetParameterFromSubElement (ElementInstance,Slope,Count,Length_Rafter):
+def GetParameterFromSubElement (ElementInstance,Slope,Length_Rafter,path,Gird1,Gird2):
+    Arr_Point_Level = []
+    Getcondination =  Getintersection (Gird1.Curve,Gird2.Curve)
+    with open(path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            for row in readcsv:
+                LIST =  GetHt_Hn (ElementInstance,Slope)
+                H_t = LIST[1]
+                H_n = LIST[0]
+                Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
+                Arr_Point_Level.append(Point_Level) 
+                
+               
+    csvFile.close()
 
+def GetHt_Hn (ElementInstance,Slope):
     Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
-    #Slope1 = ElementInstance.LookupParameter('Slope').AsDouble()
     Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
-
     ElementType =  doc.GetElement(ElementInstance.GetTypeId())
-
     Tw2_Rafter = ElementType.LookupParameter('Tw2_WF_R').AsDouble()
-    
     Tf = ElementType.LookupParameter('Tf').AsDouble()
     Tw1 = ElementType.LookupParameter('Tw1').AsDouble() 
     Tw2 = ElementType.LookupParameter('Tw2').AsDouble() 
     A = ElementType.LookupParameter('A').AsDouble() 
-  
     Pl_Total =math.cos(Slope) * Pl_Right * 2
     v34u = math.cos(Slope) * Tw2_Rafter
     V24u = v34u + A
     H13r = Tw2 - (math.tan(Slope) * V24u)
-    
     V4u = math.tan(Slope) * H13r
-
     H13r_L = H13r - math.tan(Slope) * Tf
-
     h_n = H13r_L - Tw1 / 2 + Pl_Total
     G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
     V34 = v34u - V4u
@@ -215,7 +221,7 @@ class DataFromCSV:
         #LEVEL_ELEV_Base_Level= self.Top_Level_Col.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
         Getcondination =  Getintersection (self.Gird1.Curve,self.Gird2.Curve)
         #Base_Leveled_Point =XYZ (Getcondination.X,Getcondination.Y,(LEVEL_ELEV_Base_Level))
-        LIST = GetParameterFromSubElement(ColumnCreate,self.Slope,self.Count,self.Length_Rafter)
+        LIST = GetParameterFromSubElement(ColumnCreate,self.Slope,self.Length_Rafter)
         H_t = LIST[1]
         H_n = LIST[0]
         Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
