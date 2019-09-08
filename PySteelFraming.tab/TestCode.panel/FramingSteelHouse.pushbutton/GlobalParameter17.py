@@ -43,22 +43,37 @@ def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_
     Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
     H_t = LIST[1]
     H_n = LIST[0]
+
+    H_t0 = LIST[1]
+    H_n0 = LIST[0]
+    
     with open(path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
             for row in readcsv:
-         
                 DataFromCSV_DATA = DataFromCSV(int(row[0]),None,None,None,None,None,Rafter_Type_Lefted,None,Length_Rafter,None,path,None,None,None)
+                
                 arr = DataFromCSV_DATA.Getcontentdata()
-                #print (arr)
                 Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
                 Arr_Point_Type_Length=[Point_Level,arr[6],arr[8]]
-                print (Arr_Point_Type_Length)
-                H_n = H_n + Length_Rafter * math.cos(Slope)
-                H_t = H_t + Length_Rafter * math.sin(Slope)
-                ArrTotal.append(Arr_Point_Type_Length)
+                
+                Length_Rafter = arr[8]
+                print ("length rapter is",Length_Rafter)
+                Length_Rafter = UnitUtils.Convert(Length_Rafter,DisplayUnitType.DUT_MILLIMETERS, DisplayUnitType.DUT_DECIMAL_FEET)
+
+                #print ("length rapter is 1",Length_Rafter1)
+
+                if row[0]==0:
+                    H_n = H_n + Length_Rafter * math.cos(Slope)
+                    H_t = H_t + Length_Rafter * math.sin(Slope)
+                    ArrTotal.append(Arr_Point_Type_Length)
+                else:
+                    H_n = H_n + Length_Rafter * math.cos(Slope)
+                    H_t = H_t + Length_Rafter * math.sin(Slope)
+                    ArrTotal.append(Arr_Point_Type_Length)
             return ArrTotal
     csvFile.close()
 def GetHt_Hn (ElementInstance,Slope):
+
     Slope = UnitUtils.ConvertToInternalUnits(Slope, DisplayUnitType.DUT_DECIMAL_DEGREES)
 
     Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
@@ -89,7 +104,7 @@ def GetHt_Hn (ElementInstance,Slope):
     h_t1 = UnitUtils.ConvertFromInternalUnits (h_t, DisplayUnitType.DUT_MILLIMETERS)
     Slope1 = UnitUtils.ConvertFromInternalUnits (Slope, DisplayUnitType.DUT_DECIMAL_DEGREES)
     #Slope1 = UnitUtils.ConvertFromInternalUnits (Slope, DisplayUnitType.DUT_MILLIMETERS)
-    print ("hn is",h_n1, "ht is",h_t1, "slope is ",Slope1)
+
     return [h_n,h_t]
     
 
