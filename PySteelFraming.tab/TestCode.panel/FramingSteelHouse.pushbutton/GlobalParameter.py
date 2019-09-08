@@ -4,6 +4,7 @@ from Autodesk.Revit.DB import Transaction, FilteredElementCollector,\
     UnitUtils,DisplayUnitType,GlobalParametersManager,DoubleParameterValue,ElementId
 import rpw
 import csv
+import clr
 from pyrevit import script
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
@@ -33,9 +34,48 @@ class ConvertToInternalUnits1:
         #print (self.ParameterValue)
         ParameterValue = UnitUtils.ConvertToInternalUnits(self.ParameterValue, DisplayUnitType.DUT_DECIMAL_DEGREES)
         return ParameterValue
-def GetParameterFromSubElement (ElementInstance,Slope):
+def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird1,Gird2):
+    Arr_Point_Type_Length = []
+    ArrTotal = []
+    #Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
+    Getcondination =  Getintersection (Gird1.Curve,Gird2.Curve)
+    LIST =  GetHt_Hn (ElementInstance,Slope)
+    Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
+    H_t = LIST[1]
+    H_n = LIST[0]
+
+    H_t0 = LIST[1]
+    H_n0 = LIST[0]
+    
+    with open(path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            for row in readcsv:
+                DataFromCSV_DATA = DataFromCSV(int(row[0]),None,None,None,None,None,Rafter_Type_Lefted,None,Length_Rafter,None,path,None,None,None)
+                
+                arr = DataFromCSV_DATA.Getcontentdata()
+                Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
+                Arr_Point_Type_Length=[Point_Level,arr[6],arr[8]]
+                
+                Length_Rafter = arr[8]
+                print ("length rapter is",Length_Rafter)
+                Length_Rafter = UnitUtils.Convert(Length_Rafter,DisplayUnitType.DUT_MILLIMETERS, DisplayUnitType.DUT_DECIMAL_FEET)
+
+                #print ("length rapter is 1",Length_Rafter1)
+
+                if row[0]==0:
+                    H_n = H_n + Length_Rafter * math.cos(Slope)
+                    H_t = H_t + Length_Rafter * math.sin(Slope)
+                    ArrTotal.append(Arr_Point_Type_Length)
+                else:
+                    H_n = H_n + Length_Rafter * math.cos(Slope)
+                    H_t = H_t + Length_Rafter * math.sin(Slope)
+                    ArrTotal.append(Arr_Point_Type_Length)
+            return ArrTotal
+    csvFile.close()
+def GetHt_Hn (ElementInstance,Slope):
+
     Slope = UnitUtils.ConvertToInternalUnits(Slope, DisplayUnitType.DUT_DECIMAL_DEGREES)
-    #Slope1 = ElementInstance.LookupParameter('Slope').AsDouble()
+
     Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
 
     ElementType =  doc.GetElement(ElementInstance.GetTypeId())
@@ -62,11 +102,12 @@ def GetParameterFromSubElement (ElementInstance,Slope):
     h_t = V34 + G2_V1
     h_n1 = UnitUtils.ConvertFromInternalUnits (h_n, DisplayUnitType.DUT_MILLIMETERS)
     h_t1 = UnitUtils.ConvertFromInternalUnits (h_t, DisplayUnitType.DUT_MILLIMETERS)
-    Slope1 = UnitUtils.ConvertFromInternalUnits (Slope, DisplayUnitType.DUT_MILLIMETERS)
-    print (h_n1)
-    print (h_t1)
-    print (Slope1)
+    Slope1 = UnitUtils.ConvertFromInternalUnits (Slope, DisplayUnitType.DUT_DECIMAL_DEGREES)
+    #Slope1 = UnitUtils.ConvertFromInternalUnits (Slope, DisplayUnitType.DUT_MILLIMETERS)
+
     return [h_n,h_t]
+    
+
 def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
     Tw2_Rafter.Set(setvalue)
@@ -92,6 +133,7 @@ def Getcontentdata (count_Continue,path):
                     arr = [count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n]
     csvFile.close()
     return arr
+
 def count_csv(path):
     with open(path, 'r') as readFile:
         a = sum (1 for row in readFile)
@@ -123,3 +165,115 @@ def GetcontentdataStr (count_Continue,path):
                 if int(row[0]) == count_Continue:
                     return row
     csvFile.close()
+class DataFromCSV:
+    def  __init__(self, Count, FamilyCol, FamilyColType,Base_Level_Col,Top_Level_Col,FamilyRafter,FamilyRafterType,LevelRafter,Length_Rafter,Thinkess_Plate,path,Gird1,Gird2,Slope):
+        self.Count = Count
+        self.FamilyCol = FamilyCol
+        self.FamilyColType = FamilyColType
+        self.Base_Level_Col = Base_Level_Col
+        self.Top_Level_Col = Top_Level_Col
+        self.FamilyRafter = FamilyRafter
+        self.FamilyRafterType = FamilyRafterType
+        self.LevelRafter = LevelRafter
+        self.Length_Rafter = Length_Rafter
+        self.Thinkess_Plate = Thinkess_Plate
+        self.path = path
+        self.Gird1 = Gird1
+        self.Gird2 = Gird2
+        self.Slope = Slope
+    def writefilecsv(self,a):
+        t = Transaction(doc, 'Write an external file.')
+        t.Start()
+        #row = [str(self.Count), str(self.FamilyRafterType.Id), self.FamilyRafterType.Id,str(self.Length_Rafter) ]
+        row = [self.Count, self.FamilyCol.Id, self.FamilyColType.Id,self.Base_Level_Col.Id,self.Top_Level_Col.Id,\
+            self.FamilyRafter.Id,self.FamilyRafterType.Id,self.LevelRafter.Id,self.Length_Rafter,\
+                self.Thinkess_Plate,self.path,self.Gird1.Id,self.Gird2.Id,self.Slope]
+        with open(self.path, 'a') as csvFile:
+            writer = csv.writer(csvFile)
+            writer.writerow(row)
+        csvFile.close()
+        t.Commit()
+    def Getcontentdata (self):
+        with open(self.path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            for row in readcsv:
+                if int(row[0]) == self.Count:
+                    arr = []
+                    self.Count = int(row[0])
+                    Column_Left = doc.GetElement(ElementId(int(row[1])))
+                    FamilyColType = doc.GetElement(ElementId(int(row[2])))
+                    Base_Level_Col = doc.GetElement(ElementId(int(row[3])))
+                    Top_Level_Col = doc.GetElement(ElementId(int(row[4])))
+                    Rafter_Family_Lefted = doc.GetElement(ElementId(int(row[5])))
+                    Rafter_Type_Lefted = doc.GetElement(ElementId(int(row[6])))
+                    LevelRafter = doc.GetElement(ElementId(int(row[7])))
+                    Length_Rater_Lefted_n = float (row[8])
+                    Thinkess_Plate = float (row[9])
+                    Gird1 = doc.GetElement(ElementId(int(row[11])))
+                    Gird2 = doc.GetElement(ElementId(int(row[12])))
+                    Slope = float (row[13])
+                    arr = [self.Count, Column_Left, FamilyColType,Base_Level_Col,Top_Level_Col,Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Thinkess_Plate,self.path,Gird1,Gird2,Slope]
+        csvFile.close()
+        return arr
+    def count_csv(self):
+        with open(self.path, 'r') as readFile:
+            a = sum (1 for row in readFile)
+        readFile.close
+        return a
+    def Return_Row (self):
+        return  [str(self.Count), str(self.FamilyCol.Id), str(self.FamilyColType.Id),str(self.Base_Level_Col.Id),str(self.Top_Level_Col.Id),\
+                    str(self.FamilyRafter.Id),str(self.FamilyRafterType.Id),str(self.LevelRafter.Id),str(self.Length_Rafter),str(self.Thinkess_Plate),str(self.path),str(self.Gird1.Id),str(self.Gird2.Id),str(self.Slope)]
+    def InputDataChangeToCSV(self,row_input):
+        with open(self.path, 'r') as readFile:
+            reader = csv.reader(readFile)
+            lines = list(reader)
+            lines[self.Count] = row_input
+        with open(self.path, 'w') as writeFile:
+            writer = csv.writer(writeFile)
+            writer.writerows(lines)
+        writeFile.close()
+        readFile.close()
+    def GetcontentdataStr (self):
+        with open(self.path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            for row in readcsv:
+                if int(row[0]) == self.Count:
+                    return row
+        csvFile.close()
+    def PlaceElement (self):
+        self.Length_Rafter = (UnitUtils.ConvertToInternalUnits(float(self.Length_Rafter), DisplayUnitType.DUT_MILLIMETERS))
+        LEVEL_ELEV_Base_Level= self.Top_Level_Col.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
+        Getcondination =  Getintersection (self.Gird1.Curve,self.Gird2.Curve)
+        Base_Leveled_Point =XYZ (Getcondination.X,Getcondination.Y,(LEVEL_ELEV_Base_Level))
+        #t = Transaction (doc,"Place Element")
+        #t.Start()
+        ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,self.Base_Level_Col, Structure.StructuralType.NonStructural)
+        #LIST = GetParameterFromSubElement(ColumnCreate,self.Slope)
+        a= Global(self.Slope)
+        a.globalparameterchange(ColumnCreate)
+        paramerTopLeve = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM)
+        paramerTopLeve.Set(self.Top_Level_Col.Id)
+        TopoffsetPam = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM)
+        TopoffsetPam.Set(0)
+        #t.Commit()
+        return ColumnCreate
+    def PlaceElementRafterFather(self,ColumnCreate):
+        print ("slope self",self.Slope)
+        #GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird1,Gird2):
+        Point_Levels = GetParameterFromSubElement (ColumnCreate,self.FamilyRafterType,self.Slope,self.Length_Rafter,self.path,self.Gird1,self.Gird2)
+        print ("Arr Total is ",Point_Levels)
+        for Point_Level,FamilyRafterType,Length_Rafter in Point_Levels:
+            Length_Rafter = UnitUtils.ConvertToInternalUnits(float(Length_Rafter), DisplayUnitType.DUT_MILLIMETERS)
+            PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope)
+def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type):
+    Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)
+    a= Global(Slope_Type)
+    a.globalparameterchange(Elementinstance)
+    setparameterfromvalue(Elementinstance,'Length',Length_Rater_Lefted)
+def Getintersection (line1, line2):
+    results = clr.Reference[IntersectionResultArray]()
+    result = line1.Intersect(line2, results)
+    if result != SetComparisonResult.Overlap:
+	    print('No Intesection')
+    res = results.Item[0]
+    return res.XYZPoint
