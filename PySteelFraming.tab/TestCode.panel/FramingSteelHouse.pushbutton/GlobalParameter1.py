@@ -106,8 +106,6 @@ def GetHt_Hn (ElementInstance,Slope):
     #Slope1 = UnitUtils.ConvertFromInternalUnits (Slope, DisplayUnitType.DUT_MILLIMETERS)
 
     return [h_n,h_t]
-    
-
 def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
     Tw2_Rafter.Set(setvalue)
@@ -170,7 +168,7 @@ def GetDataFirstRow(path):
                     Gird1 = doc.GetElement(ElementId(int(row[11])))
                     Gird2 = doc.GetElement(ElementId(int(row[12])))
                     Slope = float (row[13])
-                    arr = [Count, Column_Left, FamilyColType,Base_Level_Col,Top_Level_Col,Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Thinkess_Plate,self.path,Gird1,Gird2,Slope]
+                    arr = [Count, Column_Left, FamilyColType,Base_Level_Col,Top_Level_Col,Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Thinkess_Plate,path,Gird1,Gird2,Slope]
         csvFile.close()
         return arr
 def GetcontentdataStr (count_Continue,path):

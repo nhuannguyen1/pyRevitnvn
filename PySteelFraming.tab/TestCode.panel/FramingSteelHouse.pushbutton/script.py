@@ -23,7 +23,31 @@ path = r"C:\Users\nhuan.nguyen\Desktop\sometext.csv"
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
-        self.Column_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Columns"]
+        DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None)
+        count_dem = DataFromdem.count_csv()
+        print (count_dem)
+        if count_dem !=  0:
+            self._config = script.get_config()
+            GetDataFirst = DataFromdem.Getcontentdata()
+            print (GetDataFirst)
+            Column_Left_Config = self._config.get_option('prefix', GetDataFirst[1].Name)
+            self.Column_Type.SelectedItem = self._config.get_option('prefix', GetDataFirst[2])
+            self.Base_Level.SelectedItem = self._config.get_option('prefix', GetDataFirst[3])
+            self.Top_Level.SelectedItem = self._config.get_option('prefix', GetDataFirst[4])
+            self.Rafter_Left.SelectedItem = self._config.get_option('prefix', GetDataFirst[5])
+            self.Rater_Type_Left.SelectedItem = self._config.get_option('prefix', GetDataFirst[6])
+            self.Level_Rater_Type_Left.SelectedItem = self._config.get_option('prefix', GetDataFirst[7])
+            self.Length_Rater_Left.Text = self._config.get_option('prefix', str(GetDataFirst[8]))
+            self.Plate_Pt.Text = self._config.get_option('prefix', str(GetDataFirst[9]))
+            self.Gird_Hor.SelectedItem = self._config.get_option('prefix', (GetDataFirst[11]))
+            self.Gird_Ver.SelectedItem = self._config.get_option('prefix', str(GetDataFirst[12]))
+            self.Slope.Text = self._config.get_option('prefix', str(GetDataFirst[13]))
+            self.Column_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.Name ==Column_Left_Config]
+        else:
+            self.Column_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Columns"]
+        #self.Column_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.Name == "3611a.Column-Connection-Flange -Up-Up-VE_V02"]
+
+
         self.levels = FilteredElementCollector(doc).OfClass(Level)
         self.Base_Level.DataContext = self.levels
         self.Top_Level.DataContext = self.levels
@@ -31,7 +55,46 @@ class WPF_PYTHON(WPFWindow):
         self.Gird_Ver.DataContext = self.Girds
         self.Gird_Hor.DataContext = self.Girds
         self.Level_Rater_Type_Left.DataContext = self.levels
-    
+
+        # get parameters from config file or use default values
+        """
+        DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None)
+        count_dem = DataFromdem.count_csv()
+        if count_dem !=  0:
+            self._config = script.get_config()
+            GetDataFirst = DataFromdem.Getcontentdata()
+            self.Column_Left.SelectedItem = self._config.get_option('prefix', GetDataFirst[1])
+            self.Column_Type.SelectedItem = self._config.get_option('prefix', GetDataFirst[2])
+            self.Base_Level.SelectedItem = self._config.get_option('prefix', GetDataFirst[3])
+            self.Top_Level.SelectedItem = self._config.get_option('prefix', GetDataFirst[4])
+            self.Rafter_Left.SelectedItem = self._config.get_option('prefix', GetDataFirst[5])
+            self.Rater_Type_Left.SelectedItem = self._config.get_option('prefix', GetDataFirst[6])
+            self.Level_Rater_Type_Left.SelectedItem = self._config.get_option('prefix', GetDataFirst[7])
+            self.Length_Rater_Left.Text = self._config.get_option('prefix', str(GetDataFirst[8]))
+            self.Plate_Pt.Text = self._config.get_option('prefix', str(GetDataFirst[9]))
+            self.Gird_Hor.SelectedItem = self._config.get_option('prefix', (GetDataFirst[11]))
+            self.Gird_Ver.SelectedItem = self._config.get_option('prefix', str(GetDataFirst[12]))
+            self.Slope.Text = self._config.get_option('prefix', str(GetDataFirst[13]))
+
+            
+            self._config.prefix = self.Length_Rater_Left.Text
+            self._config.prefix = self.Rafter_Left.Text
+            self._config.prefix = self.Rater_Type_Left.Text
+            
+            self.Column_Left.SelectedItem = GetDataFirst[1]
+            self.Column_Type.SelectedItem = GetDataFirst[2]
+            self.Base_Level.SelectedItem = (GetDataFirst[3])
+            self.Top_Level.SelectedItem = GetDataFirst[4]
+            self.Rafter_Left.SelectedItem = GetDataFirst[5]
+            self.Rater_Type_Left.SelectedItem = (GetDataFirst[6])
+            self.Level_Rater_Type_Left.SelectedItem = (GetDataFirst[7])
+            self.Length_Rater_Left.Text = str(GetDataFirst[8])
+            self.Plate_Pt.Text = str(GetDataFirst[9])
+            self.Gird_Hor.SelectedItem = (GetDataFirst[11])
+            self.Gird_Ver.SelectedItem =  (GetDataFirst[12])
+            self.Slope.Text =  str(GetDataFirst[13])
+            """
+
         self.Rafter_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
     def ok_Click (self, sender, e):
         Column_Lefted = self.Column_Left.SelectedItem
