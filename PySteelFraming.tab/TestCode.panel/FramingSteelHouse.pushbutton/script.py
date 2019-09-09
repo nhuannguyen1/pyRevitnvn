@@ -10,7 +10,7 @@ from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import clr
 import rpw
-from GlobalParameter import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
+from GlobalParameter1 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
     setparameterfromvalue,writefilecsv,Getcontentdata,count_csv,Return_Row,GetDataFirstRow,GetcontentdataStr,InputDataChangeToCSV,DataFromCSV
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
@@ -23,31 +23,8 @@ path = r"C:\Users\nhuan.nguyen\Desktop\sometext.csv"
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
-        DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None)
-        count_dem = DataFromdem.count_csv()
-        print (count_dem)
-        if count_dem !=  0:
-            self._config = script.get_config()
-            GetDataFirst = DataFromdem.Getcontentdata()
-            print (GetDataFirst)
-            Column_Left_Config = self._config.get_option('prefix', GetDataFirst[1].Name)
-            self.Column_Type.SelectedItem = self._config.get_option('prefix', GetDataFirst[2])
-            self.Base_Level.SelectedItem = self._config.get_option('prefix', GetDataFirst[3])
-            self.Top_Level.SelectedItem = self._config.get_option('prefix', GetDataFirst[4])
-            self.Rafter_Left.SelectedItem = self._config.get_option('prefix', GetDataFirst[5])
-            self.Rater_Type_Left.SelectedItem = self._config.get_option('prefix', GetDataFirst[6])
-            self.Level_Rater_Type_Left.SelectedItem = self._config.get_option('prefix', GetDataFirst[7])
-            self.Length_Rater_Left.Text = self._config.get_option('prefix', str(GetDataFirst[8]))
-            self.Plate_Pt.Text = self._config.get_option('prefix', str(GetDataFirst[9]))
-            self.Gird_Hor.SelectedItem = self._config.get_option('prefix', (GetDataFirst[11]))
-            self.Gird_Ver.SelectedItem = self._config.get_option('prefix', str(GetDataFirst[12]))
-            self.Slope.Text = self._config.get_option('prefix', str(GetDataFirst[13]))
-            self.Column_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.Name ==Column_Left_Config]
-        else:
-            self.Column_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Columns"]
-        #self.Column_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.Name == "3611a.Column-Connection-Flange -Up-Up-VE_V02"]
-
-
+        self.Column_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Columns"]
+        self.Rafter_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
         self.levels = FilteredElementCollector(doc).OfClass(Level)
         self.Base_Level.DataContext = self.levels
         self.Top_Level.DataContext = self.levels
@@ -56,51 +33,19 @@ class WPF_PYTHON(WPFWindow):
         self.Gird_Hor.DataContext = self.Girds
         self.Level_Rater_Type_Left.DataContext = self.levels
 
-        # get parameters from config file or use default values
-        """
-        DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None)
-        count_dem = DataFromdem.count_csv()
-        if count_dem !=  0:
-            self._config = script.get_config()
-            GetDataFirst = DataFromdem.Getcontentdata()
-            self.Column_Left.SelectedItem = self._config.get_option('prefix', GetDataFirst[1])
-            self.Column_Type.SelectedItem = self._config.get_option('prefix', GetDataFirst[2])
-            self.Base_Level.SelectedItem = self._config.get_option('prefix', GetDataFirst[3])
-            self.Top_Level.SelectedItem = self._config.get_option('prefix', GetDataFirst[4])
-            self.Rafter_Left.SelectedItem = self._config.get_option('prefix', GetDataFirst[5])
-            self.Rater_Type_Left.SelectedItem = self._config.get_option('prefix', GetDataFirst[6])
-            self.Level_Rater_Type_Left.SelectedItem = self._config.get_option('prefix', GetDataFirst[7])
-            self.Length_Rater_Left.Text = self._config.get_option('prefix', str(GetDataFirst[8]))
-            self.Plate_Pt.Text = self._config.get_option('prefix', str(GetDataFirst[9]))
-            self.Gird_Hor.SelectedItem = self._config.get_option('prefix', (GetDataFirst[11]))
-            self.Gird_Ver.SelectedItem = self._config.get_option('prefix', str(GetDataFirst[12]))
-            self.Slope.Text = self._config.get_option('prefix', str(GetDataFirst[13]))
+    def source_Family_selection_changed(self, sender, e):
+        try:
+            self.Column_Left = sender.SelectedItem
+            self.Column_Type.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralColumns).OfClass(FamilySymbol) if vt.FamilyName ==  self.Column_Left.Name]
+        except:
+             pass
+    def source_Type_selection_changed(self, sender, e):
+        try:
+            self.Rafter_Left = sender.SelectedItem
+            self.Rater_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).OfClass(FamilySymbol) if vt.FamilyName == self.Rafter_Left.Name]
+        except:
+            pass
 
-            
-            self._config.prefix = self.Length_Rater_Left.Text
-            self._config.prefix = self.Rafter_Left.Text
-            self._config.prefix = self.Rater_Type_Left.Text
-            
-            self.Column_Left.SelectedItem = GetDataFirst[1]
-            self.Column_Type.SelectedItem = GetDataFirst[2]
-            self.Base_Level.SelectedItem = (GetDataFirst[3])
-            self.Top_Level.SelectedItem = GetDataFirst[4]
-            self.Rafter_Left.SelectedItem = GetDataFirst[5]
-            self.Rater_Type_Left.SelectedItem = (GetDataFirst[6])
-            self.Level_Rater_Type_Left.SelectedItem = (GetDataFirst[7])
-            self.Length_Rater_Left.Text = str(GetDataFirst[8])
-            self.Plate_Pt.Text = str(GetDataFirst[9])
-            self.Gird_Hor.SelectedItem = (GetDataFirst[11])
-            self.Gird_Ver.SelectedItem =  (GetDataFirst[12])
-            self.Slope.Text =  str(GetDataFirst[13])
-            """
-
-        self.Rafter_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
-    def ok_Click (self, sender, e):
-        Column_Lefted = self.Column_Left.SelectedItem
-        self.Column_Type.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralColumns).OfClass(FamilySymbol) if vt.FamilyName == Column_Lefted.Name]
-        Rafter_Family_Lefted = self.Rafter_Left.SelectedItem
-        self.Rater_Type_Left.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).OfClass(FamilySymbol) if vt.FamilyName == Rafter_Family_Lefted.Name]
     def Ok_Next(self, sender, e):
         Count_Continue = int(self.InputNumberLeft.Text)
         DataFromdem = DataFromCSV(None,None,None,None,None,None,None,None,None,None,path,None,None,None)
@@ -125,7 +70,6 @@ class WPF_PYTHON(WPFWindow):
         else:
             DataFromCSV_2 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
             Return_Row1 =DataFromCSV_2.Return_Row()
-            print (Return_Row1)
             #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
             DataFromCSV_DATA = DataFromCSV(Count_Continue + 1,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
             arr = DataFromCSV_DATA.Getcontentdata()
@@ -159,13 +103,10 @@ class WPF_PYTHON(WPFWindow):
             DataFromdem = DataFromCSV(int(0),None,None,None,None,None,None,None,None,None,path,None,None,None)
             arr = DataFromdem.Getcontentdata()
             dem = DataFromdem.count_csv()
-      
             DataFromdem = DataFromCSV(int(0),arr[1],arr[2],(arr[3]),arr[4], arr[5],arr[6],arr[7],str(arr[8]),str(arr[9]),path,(arr[11]),(arr[12]),arr[13])
-       
             t = Transaction (doc,"Place Element")
             t.Start()
             CreateColumn = DataFromdem.PlaceElement()
             DataFromdem.PlaceElementRafterFather(CreateColumn)
             t.Commit()
-            #def  __init__(self, Count, FamilyCol, FamilyColType,Base_Level_Col,Top_Level_Col,FamilyRafter,FamilyRafterType,LevelRafter,Length_Rafter,Thinkess_Plate,path,Gird1,Gird2,Slope):
 WPF_PYTHON = WPF_PYTHON('WPF_PYTHON.xaml').ShowDialog()
