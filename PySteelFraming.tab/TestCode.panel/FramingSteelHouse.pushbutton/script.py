@@ -22,24 +22,7 @@ import csv
 path = r"C:\Users\nhuan.nguyen\Desktop\sometext.csv"
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
-        """
-        DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None)
-        count_dem = DataFromdem.count_csv()
-        if count_dem !=  0:
-            GetDataFirst = DataFromdem.Getcontentdata()
-            self.Column_Left.SelectedValue = GetDataFirst[1].Name
-            self.Column_Type.SelectedItem   = GetDataFirst[2]
-            self.Base_Level.SelectedValue = GetDataFirst[3].Name
-            self.Top_Level.SelectedValue = GetDataFirst[4].Name
-            self.Rafter_Left.SelectedValue = GetDataFirst[5].Name
-            self.Rater_Type_Left.SelectedItem = GetDataFirst[6]
-            self.Level_Rater_Type_Left.SelectedValue = GetDataFirst[7].Name
-            self.Length_Rater_Left.Text = str(GetDataFirst[8])
-            self.Plate_Pt.Text = str(GetDataFirst[9])
-            self.Gird_Hor.SelectedValue = GetDataFirst[11].Name
-            self.Gird_Ver.SelectedValue =  (GetDataFirst[12]).Name
-            self.Slope.Text =  str(GetDataFirst[13])
-        """
+     
         WPFWindow.__init__(self, xaml_file_name)
         self.Column_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Columns"]
         self.Rafter_Left.DataContext =  [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
@@ -55,19 +38,23 @@ class WPF_PYTHON(WPFWindow):
         count_dem = DataFromdem.count_csv()
         if count_dem !=  0:
             GetDataFirst = DataFromdem.Getcontentdata()
-            print ("Top_Level is",GetDataFirst[4].Name)
+            #print ("Column_Left is",GetDataFirst[1].Name,"Column_Type is",Element.Name.__get__(GetDataFirst[2]))
+            print ("Base level is",GetDataFirst[3].Name, "Top Level is",GetDataFirst[4].Name)
+
             self.Column_Left.SelectedValue = GetDataFirst[1].Name
-            self.Column_Type.SelectedItem   = GetDataFirst[2]
-            self.Base_Level.SelectedValue = GetDataFirst[3]
+            self.Column_Type.SelectedValue = Element.Name.__get__(GetDataFirst[2])
+            self.Base_Level.SelectedValue  = GetDataFirst[3].Name
             self.Top_Level.SelectedValue = GetDataFirst[4].Name
             self.Rafter_Left.SelectedValue = GetDataFirst[5].Name
-            self.Rater_Type_Left.SelectedItem = GetDataFirst[6]
+            print ("Base level is 1",self.Base_Level.SelectedValuePath, "Top Level is 1",self.Top_Level.SelectedValuePath)
+
+            self.Rater_Type_Left.SelectedValue = Element.Name.__get__(GetDataFirst[6])
             self.Level_Rater_Type_Left.SelectedValue = GetDataFirst[7].Name
             self.Length_Rater_Left.Text = str(GetDataFirst[8])
             self.Plate_Pt.Text = str(GetDataFirst[9])
-            self.Gird_Hor.SelectedItem = GetDataFirst[11]
-            self.Gird_Ver.SelectedValue = GetDataFirst[12].Name
-            self.Slope.Text =  str(GetDataFirst[13])
+            self.Gird_Hor.SelectedValue = (GetDataFirst[11]).Name
+            self.Gird_Ver.SelectedValue = (GetDataFirst[12]).Name
+            self.Slope.Text = str(GetDataFirst[13])
 
     def source_Family_selection_changed(self, sender, e):
         try:
@@ -100,7 +87,8 @@ class WPF_PYTHON(WPFWindow):
         Gird_Vered = self.Gird_Ver.SelectedItem
         Gird_Hored = self.Gird_Hor.SelectedItem
         Sloped = float(self.Slope.Text)
-        if count_dem == 0 or Count_Continue >= count_dem:
+    
+        if count_dem == 0 or Count_Continue > (count_dem-1):
             DataFromCSV_1 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
                 Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
             DataFromCSV_1.writefilecsv(count_dem)
@@ -109,21 +97,27 @@ class WPF_PYTHON(WPFWindow):
                 Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
             Return_Row1 =DataFromCSV_2.Return_Row()
             #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
-            DataFromCSV_DATA = DataFromCSV(Count_Continue + 1,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,\
-                Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
-            arr = DataFromCSV_DATA.Getcontentdata()
-            print (arr[2])
+            if (Count_Continue == (count_dem - 1)):
+                DataFromCSV_DATA = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,\
+                    Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
+                arr = DataFromCSV_DATA.Getcontentdata()
+            else:
+                DataFromCSV_DATA = DataFromCSV(Count_Continue + 1,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,\
+                    Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
+                arr = DataFromCSV_DATA.Getcontentdata()
             self.Column_Left.SelectedValue = arr[1].Name
-            self.Column_Type.SelectedItem   = arr[2]
+            self.Column_Type.SelectedValue = Element.Name.__get__(arr[2])
             self.Base_Level.SelectedValue = arr[3].Name
+            
             self.Top_Level.SelectedValue = arr[4].Name
             self.Rafter_Left.SelectedValue = arr[5].Name
-            self.Rater_Type_Left.SelectedItem = arr[6]
+            self.Rater_Type_Left.SelectedValue = Element.Name.__get__(arr[6])
             self.Level_Rater_Type_Left.SelectedValue = arr[7].Name
             self.Length_Rater_Left.Text = str(arr[8])
             self.Plate_Pt.Text = str(arr[9])
-            self.Gird_Hor.SelectedValue = arr[11].Name
-            self.Gird_Ver.SelectedValue =  (arr[12]).Name
+            self.Gird_Hor.SelectedValue = (arr[11]).Name
+            self.Gird_Ver.SelectedValue = (arr[12]).Name
+            print ("Gird_Hor is",(arr[11]).Name, "Gird_Ver",(arr[12]).Name)
             self.Slope.Text =  str(arr[13])
             DataFromCSV_DATA = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
                 Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
