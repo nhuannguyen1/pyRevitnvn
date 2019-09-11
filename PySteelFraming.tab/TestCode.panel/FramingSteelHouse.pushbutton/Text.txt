@@ -17,8 +17,8 @@
                 <RowDefinition Height="*"/>
                 <!--Collum left-->
             </Grid.RowDefinitions>
-            <ComboBox x:Name="Column_Left" HorizontalAlignment="Center" ItemsSource="{Binding}" DisplayMemberPath="Name"
-                      SelectedValuePath="Name" SelectionChanged="source_Family_selection_changed" SelectedValue="{Binding Name}"
+            <ComboBox x:Name="Column_Left" HorizontalAlignment="Center" ItemsSource="{Binding}" SelectedIndex="3"  DisplayMemberPath="Name"
+                      SelectedValuePath="Name" SelectedValue="{Binding Name, Mode=OneWay}" SelectionChanged="source_Family_selection_changed"
                       IsEditable="True" IsReadOnly="True"  VerticalAlignment="Center" 
                       Margin="28,2,50,2" Grid.Column="0" Text="Colum Left" Width="136" Height="24"
                       HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
