@@ -30,7 +30,10 @@ class WPF_PYTHON(WPFWindow):
         self.Top_Level.DataContext = self.levels
         self.Girds = FilteredElementCollector(doc).OfClass(Grid)
         self.Gird_Ver.DataContext = self.Girds
-        self.Gird_Hor.DataContext = self.Girds
+
+        self.Gird_Ver_G.DataContext = self.Girds
+        self.Gird_Hor_G.DataContext = self.Girds
+
         self.Level_Rater_Type_Left.DataContext = self.levels
         
         DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None)
@@ -58,6 +61,7 @@ class WPF_PYTHON(WPFWindow):
             self.Column_Type.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralColumns).OfClass(FamilySymbol) if vt.FamilyName ==  self.Column_Left_SD.Name]
         except:
              pass
+
     def source_Type_selection_changed(self, sender, e):
         try:
             self.Rafter_Left_SD = sender.SelectedItem
@@ -65,6 +69,12 @@ class WPF_PYTHON(WPFWindow):
         except:
             pass
           
+    def Changed_Grid(self, sender, e):
+         try:
+            self.ChangedGrid = sender.SelectedItem
+            self.Gird_Hor.DataContext =[vt for vt in FilteredElementCollector(doc).OfClass(Grid) if vt.Name != self.ChangedGrid.Name]
+         except:
+            pass   
     def Ok_Next(self, sender, e):
         Count_Continue = int(self.InputNumberLeft.Text)
         DataFromdem = DataFromCSV(None,None,None,None,None,None,None,None,None,None,path,None,None,None)
@@ -120,8 +130,11 @@ class WPF_PYTHON(WPFWindow):
             DataFromCSV_DATA.InputDataChangeToCSV(Return_Row1)
         self.InputNumberLeft.Text = str (int(Count_Continue + 1))        
     def Ok_Prevous(self, sender, e):
-        Count_Continue = int(self.InputNumberLeft.Text)
-        try:
+            DataFromdem = DataFromCSV(None,None,None,None,None,None,None,None,None,None,path,None,None,None)
+            count_dem = DataFromdem.count_csv()
+
+            Count_Continue = int(self.InputNumberLeft.Text)
+        #try:
             Column_Lefted = self.Column_Left.SelectedItem
             Column_Typed = self.Column_Type.SelectedItem
             Base_Leveled =self.Base_Level.SelectedItem
@@ -156,10 +169,13 @@ class WPF_PYTHON(WPFWindow):
             self.Slope.Text =  str(arr[13])
             DataFromCSV_DATA = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
                 Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
-            DataFromCSV_DATA.InputDataChangeToCSV(Return_Row1)
-            self.InputNumberLeft.Text = str (int(Count_Continue - 1))
-        except:
-             print("Unable to retrieve reference level from this object")
+            if count_dem == Count_Continue:
+                self.InputNumberLeft.Text = str (int(Count_Continue - 1))
+            else:
+                DataFromCSV_DATA.InputDataChangeToCSV(Return_Row1)
+                self.InputNumberLeft.Text = str (int(Count_Continue - 1))
+        #except:
+             #print("Recheck count ")
 
     def Click_To_Start(self, sender, e):
             DataFromdem = DataFromCSV(int(0),None,None,None,None,None,None,None,None,None,path,None,None,None)
