@@ -10,8 +10,8 @@ from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import clr
 import rpw
-from GlobalParameter2 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
-    setparameterfromvalue,writefilecsv,Getcontentdata,count_csv,Return_Row,GetDataFirstRow,GetcontentdataStr,InputDataChangeToCSV,DataFromCSV
+from GlobalParameter11 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
+    setparameterfromvalue,DataFromCSV
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
@@ -30,13 +30,11 @@ class WPF_PYTHON(WPFWindow):
         self.Top_Level.DataContext = self.levels
         self.Girds = FilteredElementCollector(doc).OfClass(Grid)
         self.Gird_Ver.DataContext = self.Girds
-
         self.Gird_Ver_G.DataContext = self.Girds
-        self.Gird_Hor_G.DataContext = self.Girds
-
+        #self.Gird_Hor_G.DataContext = self.Girds
         self.Level_Rater_Type_Left.DataContext = self.levels
-        
-        DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None)
+        DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
+        #DataFromdem.DeleteRow()
         count_dem = DataFromdem.count_csv()
         if count_dem !=  0:
             GetDataFirst = DataFromdem.Getcontentdata()
@@ -55,6 +53,16 @@ class WPF_PYTHON(WPFWindow):
             self.Gird_Ver.SelectedValue = (GetDataFirst[12]).Name
             self.Slope.Text = str(GetDataFirst[13])
 
+            self.Gird_Ver_G.SelectedValue = (GetDataFirst[14]).Name
+            self.Gird_Hor_G.SelectedValue = (GetDataFirst[15]).Name
+
+            self.Length_From_Gird.Text = str(GetDataFirst[16])
+            self.Plate_Column.Text = str(GetDataFirst[17])
+    
+    def Reset_Data(self, sender, e):
+        DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
+        DataFromdem.DeleteRow()
+        self.InputNumberLeft.Text = str (0)
     def source_Family_selection_changed(self, sender, e):
         try:
             self.Column_Left_SD = sender.SelectedItem
@@ -70,14 +78,22 @@ class WPF_PYTHON(WPFWindow):
             pass
           
     def Changed_Grid(self, sender, e):
-         try:
+        try:
             self.ChangedGrid = sender.SelectedItem
             self.Gird_Hor.DataContext =[vt for vt in FilteredElementCollector(doc).OfClass(Grid) if vt.Name != self.ChangedGrid.Name]
-         except:
+        except:
             pass   
+          
+    def Changed_Grid_R(self, sender, e):
+        try:
+            self.ChangedGrid = sender.SelectedItem
+            self.Gird_Hor_G.DataContext =[vt for vt in FilteredElementCollector(doc).OfClass(Grid) if vt.Name != self.ChangedGrid.Name]
+        except:
+            pass   
+
     def Ok_Next(self, sender, e):
         Count_Continue = int(self.InputNumberLeft.Text)
-        DataFromdem = DataFromCSV(None,None,None,None,None,None,None,None,None,None,path,None,None,None)
+        DataFromdem = DataFromCSV(None,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
         count_dem = DataFromdem.count_csv()
         
         #count_dem = count_csv(path)
@@ -94,23 +110,27 @@ class WPF_PYTHON(WPFWindow):
         Gird_Vered = self.Gird_Ver.SelectedItem
         Gird_Hored = self.Gird_Hor.SelectedItem
         Sloped = float(self.Slope.Text)
-    
+        Gird_Ver_Ged = self.Gird_Ver_G.SelectedItem
+        Gird_Hor_Ged = self.Gird_Hor_G.SelectedItem
+        Length_From_Girded = float(self.Length_From_Gird.Text)
+        Plate_Columned = float(self.Plate_Column.Text)
+
         if count_dem == 0 or Count_Continue > (count_dem-1):
             DataFromCSV_1 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
-                Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
+                Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
             DataFromCSV_1.writefilecsv(count_dem)
         else:
             DataFromCSV_2 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
-                Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
+                Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
             Return_Row1 =DataFromCSV_2.Return_Row()
             #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
             if (Count_Continue == (count_dem - 1)):
                 DataFromCSV_DATA = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,\
-                    Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
+                    Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
                 arr = DataFromCSV_DATA.Getcontentdata()
             else:
                 DataFromCSV_DATA = DataFromCSV(Count_Continue + 1,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,\
-                    Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
+                    Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
                 arr = DataFromCSV_DATA.Getcontentdata()
             self.Column_Left.SelectedValue = arr[1].Name
             self.Column_Type.SelectedValue = Element.Name.__get__(arr[2])
@@ -125,14 +145,19 @@ class WPF_PYTHON(WPFWindow):
             self.Gird_Hor.SelectedValue = (arr[11]).Name
             self.Gird_Ver.SelectedValue = (arr[12]).Name
             self.Slope.Text =  str(arr[13])
+        
+            self.Gird_Ver_G.SelectedValue =  (arr[14]).Name
+            self.Gird_Hor_G.SelectedValue = (arr[15]).Name
+            self.Length_From_Gird.Text = str(arr[16])
+            self.Plate_Column.Text =str(arr[17])
+
             DataFromCSV_DATA = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
-                Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
+                Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
             DataFromCSV_DATA.InputDataChangeToCSV(Return_Row1)
         self.InputNumberLeft.Text = str (int(Count_Continue + 1))        
     def Ok_Prevous(self, sender, e):
-            DataFromdem = DataFromCSV(None,None,None,None,None,None,None,None,None,None,path,None,None,None)
+            DataFromdem = DataFromCSV(None,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
             count_dem = DataFromdem.count_csv()
-
             Count_Continue = int(self.InputNumberLeft.Text)
         #try:
             Column_Lefted = self.Column_Left.SelectedItem
@@ -148,12 +173,16 @@ class WPF_PYTHON(WPFWindow):
             Gird_Vered = self.Gird_Ver.SelectedItem
             Gird_Hored = self.Gird_Hor.SelectedItem
             Sloped = float(self.Slope.Text)
+            Gird_Ver_Ged = self.Gird_Ver_G.SelectedItem
+            Gird_Hor_Ged = self.Gird_Hor_G.SelectedItem
+            Length_From_Girded = float(self.Length_From_Gird.Text)
+            Plate_Columned = float(self.Plate_Column.Text)
             DataFromCSV_2 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
-                Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
+                Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
             Return_Row1 =DataFromCSV_2.Return_Row()
             #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
             DataFromCSV_DATA = DataFromCSV(Count_Continue -1,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,\
-                Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
+                Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
             arr = DataFromCSV_DATA.Getcontentdata()
             self.Column_Left.SelectedValue = arr[1].Name
             self.Column_Type.SelectedValue = Element.Name.__get__(arr[2])
@@ -167,21 +196,24 @@ class WPF_PYTHON(WPFWindow):
             self.Gird_Hor.SelectedValue = (arr[11]).Name
             self.Gird_Ver.SelectedValue = (arr[12]).Name
             self.Slope.Text =  str(arr[13])
+
+            self.Gird_Ver_G.SelectedValue =  (arr[14]).Name
+            self.Gird_Hor_G.SelectedValue = (arr[15]).Name
+            self.Length_From_Gird.Text = str(arr[16])
+            self.Plate_Column.Text =str(arr[17])
+
             DataFromCSV_DATA = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
-                Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped)
+                Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
             if count_dem == Count_Continue:
                 self.InputNumberLeft.Text = str (int(Count_Continue - 1))
             else:
                 DataFromCSV_DATA.InputDataChangeToCSV(Return_Row1)
                 self.InputNumberLeft.Text = str (int(Count_Continue - 1))
-        #except:
-             #print("Recheck count ")
-
     def Click_To_Start(self, sender, e):
-            DataFromdem = DataFromCSV(int(0),None,None,None,None,None,None,None,None,None,path,None,None,None)
+            DataFromdem = DataFromCSV(int(0),None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
             arr = DataFromdem.Getcontentdata()
-            dem = DataFromdem.count_csv()
-            DataFromdem = DataFromCSV(int(0),arr[1],arr[2],(arr[3]),arr[4], arr[5],arr[6],arr[7],str(arr[8]),str(arr[9]),path,(arr[11]),(arr[12]),arr[13])
+            #dem = DataFromdem.count_csv()
+            DataFromdem = DataFromCSV(int(0),arr[1],arr[2],(arr[3]),arr[4], arr[5],arr[6],arr[7],str(arr[8]),str(arr[9]),path,(arr[11]),(arr[12]),arr[13],(arr[14]),(arr[15]),arr[16],arr[17])
             t = Transaction (doc,"Place Element")
             t.Start()
             CreateColumn = DataFromdem.PlaceElement()
