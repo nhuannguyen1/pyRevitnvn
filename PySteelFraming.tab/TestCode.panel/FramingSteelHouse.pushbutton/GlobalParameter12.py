@@ -47,13 +47,13 @@ class ConvertToInternalUnits1:
         #print (self.ParameterValue)
         ParameterValue = UnitUtils.ConvertToInternalUnits(self.ParameterValue, DisplayUnitType.DUT_DECIMAL_DEGREES)
         return ParameterValue
-def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird1,Gird2,Thinkess_Plate):
+def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird1,Gird2,Thinkess_Plate,Plate_Column):
     
     Arr_Point_Type_Length = []
     ArrTotal = []
     #Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
     Getcondination =  Getintersection (Gird1.Curve,Gird2.Curve)
-    LIST =  GetHt_Hn (ElementInstance,Slope)
+    LIST =  GetHt_Hn (ElementInstance,Slope,Plate_Column)
     Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
     H_t = LIST[1]
     H_n = LIST[0]
@@ -87,10 +87,10 @@ def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_
             print (ArrTotal)
             return ArrTotal
     csvFile.close()
-def GetHt_Hn (ElementInstance,Slope):
+def GetHt_Hn (ElementInstance,Slope,Plate_Column):
 
     Slope = UnitUtils.ConvertToInternalUnits(Slope, DisplayUnitType.DUT_DECIMAL_DEGREES)
-
+    Plate_Column  = ConvertToInternalUnitsmm (Plate_Column)
     Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
 
     ElementType =  doc.GetElement(ElementInstance.GetTypeId())
@@ -111,10 +111,10 @@ def GetHt_Hn (ElementInstance,Slope):
 
     H13r_L = H13r - math.tan(Slope) * Tf
 
-    h_n = H13r_L - Tw1 / 2 + Pl_Total
+    h_n = H13r_L - Tw1 / 2 + (Plate_Column * 2)*math.cos(Slope)
     G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
     V34 = v34u - V4u
-    h_t = V34 + G2_V1
+    h_t = V34 + G2_V1  - math.tan(Slope) * Pl_Total + math.sin(Slope) * (Plate_Column * 2)
     return [h_n,h_t]
 def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
@@ -175,7 +175,7 @@ class DataFromCSV:
                     Gird_Ver_G = doc.GetElement(ElementId(int(row[14])))
                     Gird_Hor_G = doc.GetElement(ElementId(int(row[15])))
                     Length_From_Gird = float (row[16])
-                    Plate_Column = float (row[17])
+                    Plate_Column = float(row[17])
                     arr = [self.Count, Column_Left, FamilyColType,Base_Level_Col,Top_Level_Col,Rafter_Family_Lefted,\
                         Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Thinkess_Plate,self.path,Gird1,Gird2,Slope,\
                             Gird_Ver_G,Gird_Hor_G,Length_From_Gird,Plate_Column]
@@ -229,7 +229,7 @@ class DataFromCSV:
         return ColumnCreate
     def PlaceElementRafterFather(self,ColumnCreate):
         #GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird1,Gird2):
-        Point_Levels = GetParameterFromSubElement (ColumnCreate,self.FamilyRafterType,self.Slope,self.Length_Rafter,self.path,self.Gird1,self.Gird2,self.Thinkess_Plate)
+        Point_Levels = GetParameterFromSubElement (ColumnCreate,self.FamilyRafterType,self.Slope,self.Length_Rafter,self.path,self.Gird1,self.Gird2,self.Thinkess_Plate,self.Plate_Column)
         for Point_Level,FamilyRafterType,Length_Rafter, Thinkess_Plate in Point_Levels:
             Length_Rafter = UnitUtils.ConvertToInternalUnits(float(Length_Rafter), DisplayUnitType.DUT_MILLIMETERS)
             PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate))
@@ -251,6 +251,9 @@ class DataFromCSV:
         if (self.Length_From_Gird) < sum:
             print ("Recheck Total Length of Rafter")
 def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate):
+    if Rater_Type_Lefted.IsActive == False:
+	    Rater_Type_Lefted.Activate()
+	    doc.Regenerate()
     Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)
     a= Global(Slope_Type,None,None)
     a.globalparameterchange(Elementinstance)

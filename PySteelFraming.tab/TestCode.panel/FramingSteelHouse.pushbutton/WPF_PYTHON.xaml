@@ -144,8 +144,8 @@
 
             <TextBlock Text="Gird R2" Margin="0 0 0 0 " HorizontalAlignment="Center" Grid.Column="3" Grid.Row="0" VerticalAlignment ="Center"/>
 
-            <TextBox x:Name="Length_From_Gird" HorizontalAlignment ="Center" TextAlignment="Center" VerticalAlignment="Center"  Margin="0,0,0,0"
-                     Grid.Column="4" Grid.Row="1"  Height="24" Text="10" Width="30"/>
+            <TextBox x:Name="Length_From_Gird" HorizontalAlignment ="Center" TextAlignment="Center"  Margin="44,3,29,3"
+                     Grid.Column="4" Grid.Row="1"  Height="24" Text="10" Width="78" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
 
             <TextBlock Text="Length From Gird" Margin="0 0 0 0 " HorizontalAlignment="Center" Grid.Column="4" Grid.Row="0" VerticalAlignment ="Center"/>
 

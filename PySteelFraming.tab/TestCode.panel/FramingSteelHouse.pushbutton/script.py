@@ -10,8 +10,8 @@ from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import clr
 import rpw
-from GlobalParameter11 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
-    setparameterfromvalue,DataFromCSV
+from GlobalParameter2 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
+    setparameterfromvalue,DataFromCSV,CheckTypeLengthBal
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
@@ -93,6 +93,8 @@ class WPF_PYTHON(WPFWindow):
 
     def Ok_Next(self, sender, e):
         Count_Continue = int(self.InputNumberLeft.Text)
+
+    
         DataFromdem = DataFromCSV(None,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
         count_dem = DataFromdem.count_csv()
         
@@ -106,7 +108,13 @@ class WPF_PYTHON(WPFWindow):
         Plate_Pted = float(self.Plate_Pt.Text)
         # Plate_Pted = self.Plate_Pt.SelectedItem
         LevelRafter = self.Level_Rater_Type_Left.SelectedItem
+
+
+
         Length_Rater_Lefted_n = self.Length_Rater_Left.Text
+        
+
+
         Gird_Vered = self.Gird_Ver.SelectedItem
         Gird_Hored = self.Gird_Hor.SelectedItem
         Sloped = float(self.Slope.Text)
@@ -116,10 +124,12 @@ class WPF_PYTHON(WPFWindow):
         Plate_Columned = float(self.Plate_Column.Text)
 
         if count_dem == 0 or Count_Continue > (count_dem-1):
+            #print ("Rafter_Family_Lefted dem 0" ,Rafter_Family_Lefted)
             DataFromCSV_1 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
                 Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
             DataFromCSV_1.writefilecsv(count_dem)
         else:
+            #print ("Rafter_Family_Lefted dem 1" ,Rafter_Family_Lefted)
             DataFromCSV_2 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
                 Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
             Return_Row1 =DataFromCSV_2.Return_Row()
@@ -137,6 +147,7 @@ class WPF_PYTHON(WPFWindow):
             self.Base_Level.SelectedValue = arr[3].Name
 
             self.Top_Level.SelectedValue = arr[4].Name
+            print (arr[5])
             self.Rafter_Left.SelectedValue = arr[5].Name
             self.Rater_Type_Left.SelectedValue = Element.Name.__get__(arr[6])
             self.Level_Rater_Type_Left.SelectedValue = arr[7].Name
