@@ -10,6 +10,11 @@ uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
 import math 
+_config = script.get_config()
+X_Top_X = float(_config.get_option('X_Top_X', '1'))
+X_Bottom_X = float(_config.get_option('X_Bottom_X', '1'))
+X_Left_X = float(_config.get_option('X_Left_X', '1'))
+X_Right_X = float(_config.get_option('X_Right_X', '1'))
 class Global:
     def  __init__(self, ParameterValue,ParameterName,Element):
         self.ParameterValue = ParameterValue
@@ -132,7 +137,7 @@ def GetHt_Hn1 (ElementInstance,Slope,Plate_Column):
     G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
     V34 = v34u - V4u
     h_t = V34 + G2_V1  - math.tan(Slope) * Pl_Total + math.sin(Slope) * (Plate_Column * 2)
-    return [h_n,h_t]
+    return [h_n +- X_Left_X +X_Right_X,h_t + + X_Top_X - X_Bottom_X]
 def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
     Tw2_Rafter.Set(setvalue)
@@ -230,7 +235,9 @@ class DataFromCSV:
         self.Length_Rafter = (UnitUtils.ConvertToInternalUnits(float(self.Length_Rafter), DisplayUnitType.DUT_MILLIMETERS))
         LEVEL_ELEV_Base_Level= self.Top_Level_Col.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
         Getcondination =  Getintersection (self.Gird1.Curve,self.Gird2.Curve)
-        Base_Leveled_Point =XYZ (Getcondination.X,Getcondination.Y,(LEVEL_ELEV_Base_Level))
+
+        Base_Leveled_Point =XYZ (Getcondination.X - X_Left_X +X_Right_X  ,Getcondination.Y + X_Top_X - X_Bottom_X ,(LEVEL_ELEV_Base_Level))
+
         #t = Transaction (doc,"Place Element")
         #t.Start()
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,self.Base_Level_Col, Structure.StructuralType.NonStructural)
@@ -293,3 +300,5 @@ def CheckTypeLengthBal(Length_Rater):
     else:
         Length = float(Length_Rater)
     return Length
+#def MoveColumn (X_Left, X_Right, Y_Top, Y_Bottom):
+

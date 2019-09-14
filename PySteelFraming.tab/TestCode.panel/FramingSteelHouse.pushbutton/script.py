@@ -17,7 +17,7 @@ doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
 from pyrevit import script
 import csv
-
+#get Config in revit 
 _config = script.get_config()
 X_Top_X = float(_config.get_option('X_Top_X', '1'))
 X_Bottom_X = float(_config.get_option('X_Bottom_X', '1'))
