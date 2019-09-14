@@ -27,13 +27,10 @@ class Global:
         Slope = TypeElement.LookupParameter('Slope')
         Slope.AssociateWithGlobalParameter(param.Id)
     def SetParameterInstance (self):
-        
         ParameterName = self.Element.LookupParameter(self.ParameterName)
         ParameterValue = UnitUtils.ConvertToInternalUnits(float(self.ParameterValue), DisplayUnitType.DUT_MILLIMETERS)
-
         ParameterName.Set(ParameterValue)
         #t.Commit()
-    
 def ConvertToInternalUnitsmm(Parameter):
     Parameter = UnitUtils.ConvertToInternalUnits(float(Parameter), DisplayUnitType.DUT_MILLIMETERS)
     return Parameter
@@ -62,13 +59,26 @@ def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_
             for row in readcsv:
                 DataFromCSV_DATA = DataFromCSV(int(row[0]),None,None,None,None,None,Rafter_Type_Lefted,None,Length_Rafter,None,path,None,None,None,None,None,None,None)
                 arr = DataFromCSV_DATA.Getcontentdata()
-                print (arr[6].FamilyName)
                 Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
-                print (Point_Level)
-                Arr_Point_Type_Length=[Point_Level,arr[6],arr[8],arr[9]]
+                Length_From_Gird =  arr[16]
+                SumLength = DataFromCSV_DATA.checkLengthOfItemRafter()
+                #Arr_Point_Type_Length=[Point_Level,arr[6],arr[8],arr[9]]
                 Length_Rafter = arr[8]
-                Length_Rafter = UnitUtils.Convert(Length_Rafter,DisplayUnitType.DUT_MILLIMETERS, DisplayUnitType.DUT_DECIMAL_FEET)
-                #Thinkess_Plate1 = UnitUtils.ConvertToInternalUnits(float(arr[9]), DisplayUnitType.DUT_MILLIMETERS)
+                if Length_Rafter =="BAL":
+                    #Length_Rafter = Length_From_Gird - float(SumLength) 
+                    print ("Length_From_Gird",Length_From_Gird, "SumLength is",SumLength )
+                    #Length_Rafter1 = Length_From_Gird - float(SumLength)
+                    Length_Rafter1 = ConvertToInternalUnitsmm(Length_From_Gird - float(SumLength))
+                    print ("Length_From_Gird",Length_From_Gird, "SumLength is",SumLength )
+
+                    #Length_Rafter1 = UnitUtils.Convert(Length_From_Gird - float(SumLength) ,DisplayUnitType.DUT_MILLIMETERS, DisplayUnitType.DUT_DECIMAL_FEET)
+            
+                else:
+                    #Length_Rafter1=Length_Rafter
+                    Length_Rafter1 = ConvertToInternalUnitsmm(Length_Rafter)
+                #Length_Rafter1 = UnitUtils.Convert(Length_Rafter,DisplayUnitType.DUT_MILLIMETERS, DisplayUnitType.DUT_DECIMAL_FEET)
+                #Thinkess_Plate1 = UnitUtils.ConvertToInternalUnits(float(arr[9]), DisplayUnitType.DUT_MILLIMETERS)\
+                Arr_Point_Type_Length=[Point_Level,arr[6],Length_Rafter1,arr[9]]
                 Thinkess_Plate1 = ConvertToInternalUnitsmm(arr[9])
 
                 #print ("length rapter is 1",Length_Rafter1)
@@ -76,19 +86,19 @@ def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_
                 H_n = H_n + (Length_Rafter + Thinkess_Plate1 * 2 ) * math.cos(Slope) 
                 H_t = H_t + (Length_Rafter + Thinkess_Plate1 * 2 ) * math.sin(Slope)
                 """
-                GetHt_Hn = (arr[6], Length_Rafter,Thinkess_Plate1,Slope,H_n,H_t)
+                GetHt_Hn = GetHt_HnTotal(arr[6], Length_Rafter1,Thinkess_Plate1,Slope,H_n,H_t)
                 H_n = GetHt_Hn[0]
                 H_t = GetHt_Hn[1]
                 ArrTotal.append(Arr_Point_Type_Length)
             return ArrTotal
-
     csvFile.close()
-
 def GetHt_HnTotal (ElementType, Length_Rafter,Thinkess_Plate1,Slope,H_n,H_t):
     FamilyRafterName = ElementType.FamilyName 
-    if "4111b" in FamilyRafterName ==True:
-        H_n = H_n + (Length_Rafter + Thinkess_Plate1 * 2 )
-        H_t = H_t + Length_Rafter + (Thinkess_Plate1 * 2 ) * math.sin(Slope)
+ 
+    if "4111b" in FamilyRafterName:
+        H_n = H_n + Length_Rafter * math.cos(Slope)  + Thinkess_Plate1 * 2 
+        H_t = H_t + Length_Rafter* math.sin(Slope) + Thinkess_Plate1 * 2 * math.tan(Slope)
+      
     else:
         H_n = H_n + (Length_Rafter + Thinkess_Plate1 * 2 ) * math.cos(Slope) 
         H_t = H_t + (Length_Rafter + Thinkess_Plate1 * 2 ) * math.sin(Slope)
@@ -97,6 +107,7 @@ def GetHt_Hn1 (ElementInstance,Slope,Plate_Column):
 
     Slope = UnitUtils.ConvertToInternalUnits(Slope, DisplayUnitType.DUT_DECIMAL_DEGREES)
     Plate_Column  = ConvertToInternalUnitsmm (Plate_Column)
+    print ("Plate_Column",Plate_Column)
     Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
 
     ElementType =  doc.GetElement(ElementInstance.GetTypeId())
@@ -173,7 +184,8 @@ class DataFromCSV:
                     Rafter_Family_Lefted = doc.GetElement(ElementId(int(row[5])))
                     Rafter_Type_Lefted = doc.GetElement(ElementId(int(row[6])))
                     LevelRafter = doc.GetElement(ElementId(int(row[7])))
-                    Length_Rater_Lefted_n = float (row[8])
+                    Row8 = CheckTypeLengthBal(row[8])
+                    Length_Rater_Lefted_n = Row8
                     Thinkess_Plate = float (row[9])
                     Gird1 = doc.GetElement(ElementId(int(row[11])))
                     Gird2 = doc.GetElement(ElementId(int(row[12])))
@@ -237,7 +249,7 @@ class DataFromCSV:
         #GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird1,Gird2):
         Point_Levels = GetParameterFromSubElement (ColumnCreate,self.FamilyRafterType,self.Slope,self.Length_Rafter,self.path,self.Gird1,self.Gird2,self.Thinkess_Plate,self.Plate_Column)
         for Point_Level,FamilyRafterType,Length_Rafter, Thinkess_Plate in Point_Levels:
-            Length_Rafter = UnitUtils.ConvertToInternalUnits(float(Length_Rafter), DisplayUnitType.DUT_MILLIMETERS)
+            #Length_Rafter = UnitUtils.ConvertToInternalUnits(float(Length_Rafter), DisplayUnitType.DUT_MILLIMETERS)
             PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate))
     def DeleteRow(self):
         with open(self.path ,'rb') as inp:
@@ -252,10 +264,12 @@ class DataFromCSV:
             readcsv =csv.reader(csvFile, delimiter=',')
             sum = 0 
             for row in readcsv:
-                sum = sum + float(row[16]) 
+                if row[8] == "BAL":
+                    continue
+                else:
+                    sum = sum + float(row[8]) 
         csvFile.close()
-        if (self.Length_From_Gird) < sum:
-            print ("Recheck Total Length of Rafter")
+        return sum
 def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate):
     if Rater_Type_Lefted.IsActive == False:
 	    Rater_Type_Lefted.Activate()
@@ -273,3 +287,9 @@ def Getintersection (line1, line2):
 	    print('No Intesection, Review Gird was chose')
     res = results.Item[0]
     return res.XYZPoint
+def CheckTypeLengthBal(Length_Rater):
+    if  Length_Rater == "BAL":
+        Length = "BAL"
+    else:
+        Length = float(Length_Rater)
+    return Length
