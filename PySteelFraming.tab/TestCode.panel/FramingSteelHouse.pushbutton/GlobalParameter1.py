@@ -137,7 +137,8 @@ def GetHt_Hn1 (ElementInstance,Slope,Plate_Column):
     G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
     V34 = v34u - V4u
     h_t = V34 + G2_V1  - math.tan(Slope) * Pl_Total + math.sin(Slope) * (Plate_Column * 2)
-    return [h_n +- X_Left_X +X_Right_X,h_t + + X_Top_X - X_Bottom_X]
+    print ("X_Left_X",X_Left_X,"X_Right_X",X_Right_X,"X_Top_X",X_Top_X,"X_Bottom_X",X_Bottom_X)
+    return [h_n - X_Left_X +X_Right_X,h_t]
 def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
     Tw2_Rafter.Set(setvalue)
@@ -236,7 +237,7 @@ class DataFromCSV:
         LEVEL_ELEV_Base_Level= self.Top_Level_Col.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
         Getcondination =  Getintersection (self.Gird1.Curve,self.Gird2.Curve)
 
-        Base_Leveled_Point =XYZ (Getcondination.X - X_Left_X +X_Right_X  ,Getcondination.Y + X_Top_X - X_Bottom_X ,(LEVEL_ELEV_Base_Level))
+        Base_Leveled_Point =XYZ (Getcondination.X - X_Left_X +X_Right_X  ,Getcondination.Y,(LEVEL_ELEV_Base_Level + X_Top_X - X_Bottom_X))
 
         #t = Transaction (doc,"Place Element")
         #t.Start()
