@@ -1,26 +1,32 @@
 import clr
-# import the Excel Interop. 
-clr.AddReference('Microsoft.Office.Interop.Excel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c')
-from Microsoft.Office.Interop import Excel
-from System.Runtime.InteropServices import Marshal
-import xlrd 
-# file path of excel file. 
-path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\Rwp.pushbutton\ExcelTest.xlsx"
-# Instantiate the Excel Application
-ex = Excel.ApplicationClass()
-# Make it Visiable for us all to see
-ex.Visible = False
-# Disable Alerts - Errors Ignore them, they're probably not important
-ex.DisplayAlerts = False
-# Workbook 
-workbook = ex.Workbooks.Open(path)
-# WorkSheet
+import xlsxwriter 
+  
+# Workbook() takes one, non-optional, argument  
+# which is the filename that we want to create.
+path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\Rwp.pushbutton\ExcelTest - Copy.xlsx"
 
-ws = workbook.Worksheets[1]
-# Cell range
-print (ws.Rows[1].Value2[0,0])
-# close and release excel file from memory. 
-ex.ActiveWorkbook.Close(False)
-Marshal.ReleaseComObject(ws)
-Marshal.ReleaseComObject(workbook)
-Marshal.ReleaseComObject(ex)
+workbook = xlsxwriter.Workbook(path) 
+  
+# The workbook object is then used to add new  
+# worksheet via the add_worksheet() method. 
+worksheet = workbook.add_worksheet() 
+  
+row = 0
+column = 0
+  
+content = ["ankit", "rahul", "priya", "harshita", 
+                    "sumit", "neeraj", "shivam"] 
+  
+# iterating through content list 
+for item in content : 
+  
+    # write operation perform 
+    worksheet.write(row, column, item) 
+  
+    # incrementing the value of row by one 
+    # with each iteratons. 
+    row += 1
+  
+# Finally, close the Excel file 
+# via the close() method. 
+workbook.close() 

@@ -10,17 +10,18 @@ from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import clr
 import rpw
-from GlobalParameter4 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
+from GlobalParameter import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
     setparameterfromvalue,DataFromCSV,CheckTypeLengthBal
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
 from pyrevit import script
 import csv
-
 #get Config in revit 
-
-path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest.xlsx"
+import xlsxwriter 
+path_excel = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest4.xlsx"
+workbook = xlsxwriter.Workbook(path_excel) 
+path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest1.csv"
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
@@ -37,6 +38,7 @@ class WPF_PYTHON(WPFWindow):
         DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
         #DataFromdem.DeleteRow()
         count_dem = DataFromdem.count_csv()
+        print (count_dem)
         if count_dem !=  0:
             GetDataFirst = DataFromdem.Getcontentdata()
             #print (GetDataFirst[3].Name,GetDataFirst[4].Name)
@@ -120,7 +122,7 @@ class WPF_PYTHON(WPFWindow):
             #print ("Rafter_Family_Lefted dem 0" ,Rafter_Family_Lefted)
             DataFromCSV_1 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
                 Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
-            DataFromCSV_1.writefilecsv(count_dem)
+            DataFromCSV_1.writefilecsv(Count_Continue)
         else:
             #print ("Rafter_Family_Lefted dem 1" ,Rafter_Family_Lefted)
             DataFromCSV_2 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
