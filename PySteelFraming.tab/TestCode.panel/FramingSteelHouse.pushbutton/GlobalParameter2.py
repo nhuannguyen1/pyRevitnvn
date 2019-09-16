@@ -67,7 +67,7 @@ def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_
                 Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
                 Length_From_Gird =  arr[16]
                 SumLength = DataFromCSV_DATA.checkLengthOfItemRafter()
-                SumLength_Inline = DataFromCSV_DATA.
+                #SumLength_Inline = DataFromCSV_DATA.
                 #Arr_Point_Type_Length=[Point_Level,arr[6],arr[8],arr[9]]
                 Length_Rafter = arr[8]
                 if Length_Rafter =="BAL":

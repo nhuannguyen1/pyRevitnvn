@@ -10,13 +10,14 @@ from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import clr
 import rpw
-from GlobalParameter1 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
+from GlobalParameter4 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
     setparameterfromvalue,DataFromCSV,CheckTypeLengthBal
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
 from pyrevit import script
 import csv
+
 #get Config in revit 
 
 
@@ -59,8 +60,6 @@ class WPF_PYTHON(WPFWindow):
 
             self.Length_From_Gird.Text = str(GetDataFirst[16])
             self.Plate_Column.Text = str(GetDataFirst[17])
-        
-    
     def Reset_Data(self, sender, e):
         DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
         DataFromdem.DeleteRow()

@@ -67,7 +67,7 @@ def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_
                 Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
                 Length_From_Gird =  arr[16]
                 SumLength = DataFromCSV_DATA.checkLengthOfItemRafter()
-                SumLength_Inline = DataFromCSV_DATA.
+                #SumLength_Inline = DataFromCSV_DATA.
                 #Arr_Point_Type_Length=[Point_Level,arr[6],arr[8],arr[9]]
                 Length_Rafter = arr[8]
                 if Length_Rafter =="BAL":
@@ -76,9 +76,7 @@ def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_
                     #Length_Rafter1 = Length_From_Gird - float(SumLength)
                     Length_Rafter1 = ConvertToInternalUnitsmm(Length_From_Gird - float(SumLength))
                     print ("Length_From_Gird",Length_From_Gird, "SumLength is",SumLength )
-
                     #Length_Rafter1 = UnitUtils.Convert(Length_From_Gird - float(SumLength) ,DisplayUnitType.DUT_MILLIMETERS, DisplayUnitType.DUT_DECIMAL_FEET)
-            
                 else:
                     #Length_Rafter1=Length_Rafter
                     Length_Rafter1 = ConvertToInternalUnitsmm(Length_Rafter)
@@ -88,7 +86,6 @@ def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_
                 Thinkess_Plate1 = ConvertToInternalUnitsmm(arr[9])
 
                 #print ("length rapter is 1",Length_Rafter1)
-
                 """
                 H_n = H_n + (Length_Rafter + Thinkess_Plate1 * 2 ) * math.cos(Slope) 
                 H_t = H_t + (Length_Rafter + Thinkess_Plate1 * 2 ) * math.sin(Slope)
@@ -96,6 +93,10 @@ def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_
                 GetHt_Hn = GetHt_HnTotal(arr[6], Length_Rafter1,Thinkess_Plate1,Slope,H_n,H_t)
                 H_n = GetHt_Hn[0]
                 H_t = GetHt_Hn[1]
+
+                H_n_Final = GetHt_Hn[0]
+
+
                 ArrTotal.append(Arr_Point_Type_Length)
             return ArrTotal
     csvFile.close()
