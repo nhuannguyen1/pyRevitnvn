@@ -10,7 +10,7 @@ from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import clr
 import rpw
-from GlobalParameter import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
+from GlobalParameter1 import Global,ConvertToInternalUnits1,GetParameterFromSubElement,\
     setparameterfromvalue,DataFromCSV,CheckTypeLengthBal
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
@@ -19,8 +19,7 @@ from pyrevit import script
 import csv
 #get Config in revit 
 import xlsxwriter 
-path_excel = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest4.xlsx"
-workbook = xlsxwriter.Workbook(path_excel) 
+#workbook = xlsxwriter.Workbook(path_excel) 
 path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest1.csv"
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
@@ -35,32 +34,29 @@ class WPF_PYTHON(WPFWindow):
         self.Gird_Ver_G.DataContext = self.Girds
         #self.Gird_Hor_G.DataContext = self.Girds
         self.Level_Rater_Type_Left.DataContext = self.levels
+        
         DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
         #DataFromdem.DeleteRow()
         count_dem = DataFromdem.count_csv()
-        print (count_dem)
-        if count_dem !=  0:
-            GetDataFirst = DataFromdem.Getcontentdata()
-            #print (GetDataFirst[3].Name,GetDataFirst[4].Name)
-            self.Column_Left.SelectedValue = GetDataFirst[1].Name
-            self.Column_Type.SelectedValue = Element.Name.__get__(GetDataFirst[2])
-            self.Base_Level.SelectedValue  = GetDataFirst[3].Name
-            self.Top_Level.SelectedValue = GetDataFirst[4].Name
-            self.Rafter_Left.SelectedValue = GetDataFirst[5].Name
-
-            self.Rater_Type_Left.SelectedValue = Element.Name.__get__(GetDataFirst[6])
-            self.Level_Rater_Type_Left.SelectedValue = GetDataFirst[7].Name
-            self.Length_Rater_Left.Text = str(GetDataFirst[8])
-            self.Plate_Pt.Text = str(GetDataFirst[9])
-            self.Gird_Hor.SelectedValue = (GetDataFirst[11]).Name
-            self.Gird_Ver.SelectedValue = (GetDataFirst[12]).Name
-            self.Slope.Text = str(GetDataFirst[13])
-
-            self.Gird_Ver_G.SelectedValue = (GetDataFirst[14]).Name
-            self.Gird_Hor_G.SelectedValue = (GetDataFirst[15]).Name
-
-            self.Length_From_Gird.Text = str(GetDataFirst[16])
-            self.Plate_Column.Text = str(GetDataFirst[17])
+        GetDataFirst = DataFromdem.GetContentDataFromExcel()
+        self.Column_Left.SelectedValue = GetDataFirst[1].Name
+        self.Column_Type.SelectedValue = Element.Name.__get__(GetDataFirst[2])
+        self.Base_Level.SelectedValue  = GetDataFirst[3].Name
+        self.Top_Level.SelectedValue = GetDataFirst[4].Name
+        self.Rafter_Left.SelectedValue = GetDataFirst[5].Name
+        self.Rater_Type_Left.SelectedValue = Element.Name.__get__(GetDataFirst[6])
+        self.Level_Rater_Type_Left.SelectedValue = GetDataFirst[7].Name
+        self.Length_Rater_Left.Text = str(GetDataFirst[8])
+        self.Plate_Pt.Text = str(GetDataFirst[9])
+        self.Gird_Hor.SelectedValue = (GetDataFirst[11]).Name
+        self.Gird_Ver.SelectedValue = (GetDataFirst[12]).Name
+        self.Slope.Text = str(GetDataFirst[13])
+        self.Gird_Ver_G.SelectedValue = (GetDataFirst[14]).Name
+        print ("GetDataFirst[15]",(GetDataFirst[15]))
+        self.Gird_Hor_G.SelectedValue = (GetDataFirst[15]).Name
+        self.Length_From_Gird.Text = str(GetDataFirst[16])
+        self.Plate_Column.Text = str(GetDataFirst[17])
+        
     def Reset_Data(self, sender, e):
         DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
         DataFromdem.DeleteRow()
@@ -105,9 +101,7 @@ class WPF_PYTHON(WPFWindow):
         Plate_Pted = float(self.Plate_Pt.Text)
         # Plate_Pted = self.Plate_Pt.SelectedItem
         LevelRafter = self.Level_Rater_Type_Left.SelectedItem
-
         Length_Rater_Lefted_n = self.Length_Rater_Left.Text
-      
         Gird_Vered = self.Gird_Ver.SelectedItem
         Gird_Hored = self.Gird_Hor.SelectedItem
         Sloped = float(self.Slope.Text)

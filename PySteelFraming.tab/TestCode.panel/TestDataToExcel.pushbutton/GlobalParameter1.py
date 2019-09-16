@@ -15,7 +15,7 @@ ex.Visible = True
 ex.DisplayAlerts = False   
 from System import Array
 import xlsxwriter 
-path_excel = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest5.xlsx"
+path_excel = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest6.xlsx"
 import xlrd 
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
@@ -202,10 +202,11 @@ class DataFromCSV:
         sheet = wb.sheet_by_index(0) 
         #f = ExcelInstance()
         #a = f.get_last_row_from_column("A")
-        for i in range (6):
-            arr = sheet.cell_value(self.Count, i) 
-            ArrData = GetElementByName(arr)
+        for i in range (18):
+            Element = sheet.cell_value(3, i) 
+            ArrData = GetElementByName(str(i),Element)
             GetContentDataFromExcelArr.append(ArrData) 
+        print ("GetContentDataFromExcelArr is",GetContentDataFromExcelArr)
         return GetContentDataFromExcelArr
     def Getcontentdata (self):
         with open(self.path) as csvFile:
@@ -347,13 +348,71 @@ def CheckTypeLengthBal(Length_Rater):
     else:
         Length = float(Length_Rater)
     return Length
-def GetElementByName(NameSymbol):
-    if type (NameSymbol) is  not float:
-        Vt_Sumbol = [vt for vt in FilteredElementCollector(doc).OfClass(FamilySymbol).WhereElementIsElementType().ToElements() if Element.Name.__get__(vt) == NameSymbol]
+def GetElementByName(Count, NameElement):
+    print ("Count",Count)
+    if any(str(Count) in s for s in [str(1),str(5)]):
+        for vt in FilteredElementCollector(doc).OfClass(Family):
+            if vt.Name == NameElement:
+               vt_Element = vt 
+               return vt_Element  
+    elif  any(Count in s for s in [str(2),str(6)]):
+        for vt in FilteredElementCollector(doc).OfClass(FamilySymbol).WhereElementIsElementType().ToElements():
+            if Element.Name.__get__(vt)  == NameElement:
+                vt_Element = vt
+                return vt_Element  
+    elif any(Count in s for s in [str(3),str(4),str(7)]):
+        for vt in FilteredElementCollector(doc).OfClass(Level):
+            vt_Element = vt
+            return vt_Element  
+    elif any(Count in s for s in [str(11),str(12),str(14),str(15)]):
+        for vt in FilteredElementCollector(doc).OfClass(Grid):
+            vt_Element = vt
+            return vt_Element  
     else:
-        Vt_Sumbol = NameSymbol
-    return Vt_Sumbol
+        vt_Element =  NameElement
+        return vt_Element  
+
 """
+    for vt in FilteredElementCollector(doc).OfClass(Family):
+        if vt.Name == NameElement:
+            k =1
+            vt_Element = vt
+            return vt_Element   
+    for vt in FilteredElementCollector(doc).OfClass(FamilySymbol).WhereElementIsElementType().ToElements():
+        if Element.Name.__get__(vt)  == NameElement:
+            k =2
+            vt_Element = vt
+            return vt_Element   
+    for vt in FilteredElementCollector(doc).OfClass(Grid):
+        if vt.Name == NameElement:
+            k =3
+            vt_Element = vt
+            return vt_Element   
+    for vt in FilteredElementCollector(doc).OfClass(Level):
+        if vt.Name == NameElement:
+            k =4
+            vt_Element = vt
+            return vt_Element   
+    if result:
+        vt_Element =  (NameElement)
+        return vt_Element    
+
+        [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.Name == str(NameElement)] !=None:
+
+        #vt_Element = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.Name == str(NameElement)]#
+        
+    elif [vt for vt in FilteredElementCollector(doc).OfClass(FamilySymbol).WhereElementIsElementType().ToElements() if Element.Name.__get__(vt) == str(NameElement)] != None:
+        vt_Element = [vt for vt in FilteredElementCollector(doc).OfClass(FamilySymbol).WhereElementIsElementType().ToElements() if Element.Name.__get__(vt) == str(NameElement)]
+    elif [vt for vt in FilteredElementCollector(doc).OfClass(Grid) if vt.Name == str(NameElement)] != None:
+        vt_Element = [vt for vt in FilteredElementCollector(doc).OfClass(Grid) if vt.Name == str(NameElement)]
+    elif [vt for vt in FilteredElementCollector(doc).OfClass(Grid) if vt.Name == str(NameElement)] != None:
+        vt_Element = [vt for vt in FilteredElementCollector(doc).OfClass(Level) if vt.Name == str(NameElement)]
+    else:
+        vt_Element = str (NameElement)
+    print (vt_Element)
+    return vt_Element
+
+
 WORKSHEET_NAME = "Sheet1"
 class ExcelInstance():
     def __init__(self, wb=None):
