@@ -15,15 +15,12 @@ ex.Visible = True
 ex.DisplayAlerts = False   
 from System import Array
 import xlsxwriter 
-path_excel = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest6.xlsx"
+path_excel = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest8.xlsx"
 import xlrd 
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
 import math 
-
-#import string
-#import win32com.client
 
 GetContentDataFromExcelArr = []
 _config = script.get_config()
@@ -88,10 +85,10 @@ def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_
                 Length_Rafter = arr[8]
                 if Length_Rafter =="BAL":
                     #Length_Rafter = Length_From_Gird - float(SumLength) 
-                    print ("Length_From_Gird",Length_From_Gird, "SumLength is",SumLength )
+                    #print ("Length_From_Gird",Length_From_Gird, "SumLength is",SumLength )
                     #Length_Rafter1 = Length_From_Gird - float(SumLength)
                     Length_Rafter1 = ConvertToInternalUnitsmm(Length_From_Gird - float(SumLength))
-                    print ("Length_From_Gird",Length_From_Gird, "SumLength is",SumLength )
+                   #print ("Length_From_Gird",Length_From_Gird, "SumLength is",SumLength )
 
                     #Length_Rafter1 = UnitUtils.Convert(Length_From_Gird - float(SumLength) ,DisplayUnitType.DUT_MILLIMETERS, DisplayUnitType.DUT_DECIMAL_FEET)
             
@@ -130,7 +127,7 @@ def GetHt_Hn1 (ElementInstance,Slope,Plate_Column):
 
     Slope = UnitUtils.ConvertToInternalUnits(Slope, DisplayUnitType.DUT_DECIMAL_DEGREES)
     Plate_Column  = ConvertToInternalUnitsmm (Plate_Column)
-    print ("Plate_Column",Plate_Column)
+    #print ("Plate_Column",Plate_Column)
     Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
 
     ElementType =  doc.GetElement(ElementInstance.GetTypeId())
@@ -155,7 +152,7 @@ def GetHt_Hn1 (ElementInstance,Slope,Plate_Column):
     G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
     V34 = v34u - V4u
     h_t = V34 + G2_V1  - math.tan(Slope) * Pl_Total + math.sin(Slope) * (Plate_Column * 2)
-    print ("X_Left_X",X_Left_X,"X_Right_X",X_Right_X,"X_Top_X",X_Top_X,"X_Bottom_X",X_Bottom_X)
+    #print ("X_Left_X",X_Left_X,"X_Right_X",X_Right_X,"X_Top_X",X_Top_X,"X_Bottom_X",X_Bottom_X)
     return [h_n - X_Left_X + X_Right_X,h_t]
 def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
@@ -196,14 +193,13 @@ class DataFromCSV:
             ws_Sheet1.Cells(a,i).Value2 = str(item)
             i =i+1
         workbook.Save()
-    
     def GetContentDataFromExcel(self):
         wb = xlrd.open_workbook(path_excel) 
         sheet = wb.sheet_by_index(0) 
         #f = ExcelInstance()
         #a = f.get_last_row_from_column("A")
         for i in range (18):
-            Element = sheet.cell_value(3, i) 
+            Element = sheet.cell_value( self.Count, i) 
             ArrData = GetElementByName(str(i),Element)
             GetContentDataFromExcelArr.append(ArrData) 
         print ("GetContentDataFromExcelArr is",GetContentDataFromExcelArr)
@@ -271,8 +267,6 @@ class DataFromCSV:
 
         Base_Leveled_Point =XYZ (Getcondination.X - X_Left_X +X_Right_X  ,Getcondination.Y,(LEVEL_ELEV_Base_Level + X_Top_X - X_Bottom_X))
 
-        #t = Transaction (doc,"Place Element")
-        #t.Start()
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,self.Base_Level_Col, Structure.StructuralType.NonStructural)
         #LIST = GetParameterFromSubElement(ColumnCreate,self.Slope)
         a= Global(self.Slope,None,None)
@@ -349,7 +343,7 @@ def CheckTypeLengthBal(Length_Rater):
         Length = float(Length_Rater)
     return Length
 def GetElementByName(Count, NameElement):
-    print ("Count",Count)
+    #print ("Count",Count)
     if any(str(Count) in s for s in [str(1),str(5)]):
         for vt in FilteredElementCollector(doc).OfClass(Family):
             if vt.Name == NameElement:

@@ -17,9 +17,9 @@ doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
 from pyrevit import script
 import csv
+
 #get Config in revit 
-import xlsxwriter 
-#workbook = xlsxwriter.Workbook(path_excel) 
+
 path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest1.csv"
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
@@ -34,29 +34,29 @@ class WPF_PYTHON(WPFWindow):
         self.Gird_Ver_G.DataContext = self.Girds
         #self.Gird_Hor_G.DataContext = self.Girds
         self.Level_Rater_Type_Left.DataContext = self.levels
-        
-        DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
+        DataFromdem = DataFromCSV(1,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
         #DataFromdem.DeleteRow()
         count_dem = DataFromdem.count_csv()
-        GetDataFirst = DataFromdem.GetContentDataFromExcel()
-        self.Column_Left.SelectedValue = GetDataFirst[1].Name
-        self.Column_Type.SelectedValue = Element.Name.__get__(GetDataFirst[2])
-        self.Base_Level.SelectedValue  = GetDataFirst[3].Name
-        self.Top_Level.SelectedValue = GetDataFirst[4].Name
-        self.Rafter_Left.SelectedValue = GetDataFirst[5].Name
-        self.Rater_Type_Left.SelectedValue = Element.Name.__get__(GetDataFirst[6])
-        self.Level_Rater_Type_Left.SelectedValue = GetDataFirst[7].Name
-        self.Length_Rater_Left.Text = str(GetDataFirst[8])
-        self.Plate_Pt.Text = str(GetDataFirst[9])
-        self.Gird_Hor.SelectedValue = (GetDataFirst[11]).Name
-        self.Gird_Ver.SelectedValue = (GetDataFirst[12]).Name
-        self.Slope.Text = str(GetDataFirst[13])
-        self.Gird_Ver_G.SelectedValue = (GetDataFirst[14]).Name
-        print ("GetDataFirst[15]",(GetDataFirst[15]))
-        self.Gird_Hor_G.SelectedValue = (GetDataFirst[15]).Name
-        self.Length_From_Gird.Text = str(GetDataFirst[16])
-        self.Plate_Column.Text = str(GetDataFirst[17])
-        
+        if count_dem !=  0:
+            GetDataFirst = DataFromdem.GetContentDataFromExcel()
+            #print (GetDataFirst[3].Name,GetDataFirst[4].Name)
+            self.Column_Left.SelectedValue = GetDataFirst[1].Name
+            self.Column_Type.SelectedValue = Element.Name.__get__(GetDataFirst[2])
+            self.Base_Level.SelectedValue  = GetDataFirst[3].Name
+            self.Top_Level.SelectedValue = GetDataFirst[4].Name
+            self.Rafter_Left.SelectedValue = GetDataFirst[5].Name
+
+            self.Rater_Type_Left.SelectedValue = Element.Name.__get__(GetDataFirst[6])
+            self.Level_Rater_Type_Left.SelectedValue = GetDataFirst[7].Name
+            self.Length_Rater_Left.Text = str(GetDataFirst[8])
+            self.Plate_Pt.Text = str(GetDataFirst[9])
+            self.Gird_Hor.SelectedValue = (GetDataFirst[11]).Name
+            self.Gird_Ver.SelectedValue = (GetDataFirst[12]).Name
+            self.Slope.Text = str(GetDataFirst[13])
+            self.Gird_Ver_G.SelectedValue = (GetDataFirst[14]).Name
+            self.Gird_Hor_G.SelectedValue = (GetDataFirst[15]).Name
+            self.Length_From_Gird.Text = str(GetDataFirst[16])
+            self.Plate_Column.Text = str(GetDataFirst[17])
     def Reset_Data(self, sender, e):
         DataFromdem = DataFromCSV(0,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
         DataFromdem.DeleteRow()
@@ -101,7 +101,9 @@ class WPF_PYTHON(WPFWindow):
         Plate_Pted = float(self.Plate_Pt.Text)
         # Plate_Pted = self.Plate_Pt.SelectedItem
         LevelRafter = self.Level_Rater_Type_Left.SelectedItem
+
         Length_Rater_Lefted_n = self.Length_Rater_Left.Text
+      
         Gird_Vered = self.Gird_Ver.SelectedItem
         Gird_Hored = self.Gird_Hor.SelectedItem
         Sloped = float(self.Slope.Text)
@@ -114,9 +116,12 @@ class WPF_PYTHON(WPFWindow):
 
         if count_dem == 0 or Count_Continue > (count_dem-1):
             #print ("Rafter_Family_Lefted dem 0" ,Rafter_Family_Lefted)
+            
             DataFromCSV_1 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
                 Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
             DataFromCSV_1.writefilecsv(Count_Continue)
+
+            
         else:
             #print ("Rafter_Family_Lefted dem 1" ,Rafter_Family_Lefted)
             DataFromCSV_2 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
@@ -127,12 +132,12 @@ class WPF_PYTHON(WPFWindow):
                 DataFromCSV_DATA = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,\
                     Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,\
                         Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
-                arr = DataFromCSV_DATA.Getcontentdata()
+                arr = DataFromCSV_DATA.GetContentDataFromExcel()
             else:
                 DataFromCSV_DATA = DataFromCSV(Count_Continue + 1,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,\
                     Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,\
                         Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
-                arr = DataFromCSV_DATA.Getcontentdata()
+                arr = DataFromCSV_DATA.GetContentDataFromExcel()
             self.Column_Left.SelectedValue = arr[1].Name
             self.Column_Type.SelectedValue = Element.Name.__get__(arr[2])
             self.Base_Level.SelectedValue = arr[3].Name
