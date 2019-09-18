@@ -33,7 +33,6 @@ workbook = ex.Workbooks.Open(path_excel)
 sheet = workbook.Sheets("Sheet1")
 #lr = sheet.Range("A" + Rows.Count).End(xlUp).Row
 lr = excel.FindLastRowOFData(sheet)
-print ("lr",lr)
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
@@ -97,7 +96,6 @@ class WPF_PYTHON(WPFWindow):
             pass   
     def Ok_Next(self, sender, e):
         Count_Continue = int(self.InputNumberLeft.Text)
-
         DataFromdem = DataFromCSV(None,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
         #count_dem = DataFromdem.count_csv()
         count_dem = excel.FindLastRowOFData(sheet)
@@ -128,13 +126,17 @@ class WPF_PYTHON(WPFWindow):
             #print ("Rafter_Family_Lefted dem 1" ,Rafter_Family_Lefted)
             DataFromCSV_2 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
                 Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
-            Return_Row1 =DataFromCSV_2.Return_Row()
+            Return_Row1 =DataFromCSV_2.Return_Row_Excel()
             #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
-            if (Count_Continue == (count_dem - 1)):
+            
+            print ("Count_Continue",Count_Continue, "count_dem", count_dem)
+            if (int(Count_Continue) == int(int(count_dem) - 1)):
                 DataFromCSV_DATA = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,\
                     Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,\
                         Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
                 arr = DataFromCSV_DATA.GetContentDataFromExcel(sheet)
+                print ("arr of new arr",arr)
+                print ("Return_Row1",(arr[1]).Name)
             else:
                 DataFromCSV_DATA = DataFromCSV(Count_Continue + 1,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,\
                     Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,\
@@ -161,7 +163,7 @@ class WPF_PYTHON(WPFWindow):
             DataFromCSV_DATA = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
                 Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,\
                     Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
-            DataFromCSV_DATA.InputDataChangeToCSV(Return_Row1)
+            DataFromCSV_DATA.InputDataChangeToCSV_Excel(sheet,Return_Row1)
         self.InputNumberLeft.Text = str (int(Count_Continue + 1))     
     def Ok_Prevous(self, sender, e):
             DataFromdem = DataFromCSV(None,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)

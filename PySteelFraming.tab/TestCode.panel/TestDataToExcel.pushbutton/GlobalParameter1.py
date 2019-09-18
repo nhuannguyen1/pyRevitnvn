@@ -229,6 +229,7 @@ class DataFromCSV:
                     arr = [self.Count, Column_Left, FamilyColType,Base_Level_Col,Top_Level_Col,Rafter_Family_Lefted,\
                         Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Thinkess_Plate,self.path,Gird1,Gird2,Slope,\
                             Gird_Ver_G,Gird_Hor_G,Length_From_Gird,Plate_Column]
+        
         csvFile.close()
         return arr
     def count_csv(self):
@@ -236,11 +237,19 @@ class DataFromCSV:
             a = sum (1 for row in readFile)
         readFile.close
         return a
+    def Return_Row_Excel (self):
+        return [self.Count, self.FamilyCol.Name,Element.Name.__get__(self.FamilyColType),self.Base_Level_Col.Name,self.Top_Level_Col.Name,\
+                self.FamilyRafter.Name, Element.Name.__get__(self.FamilyRafterType),self.LevelRafter.Name,self.Length_Rafter,\
+                self.Thinkess_Plate,self.path,self.Gird1.Name,self.Gird2.Name,self.Slope,self.Gird_Ver_Ged.Name,self.Gird_Hor_Ged.Name,self.Length_From_Gird,self.Plate_Column]
     def Return_Row (self):
         return  [str(self.Count), str(self.FamilyCol.Id), str(self.FamilyColType.Id),str(self.Base_Level_Col.Id),str(self.Top_Level_Col.Id),\
                     str(self.FamilyRafter.Id),str(self.FamilyRafterType.Id),str(self.LevelRafter.Id),str(self.Length_Rafter),\
                         str(self.Thinkess_Plate),str(self.path),str(self.Gird1.Id),str(self.Gird2.Id),str(self.Slope),str(self.Gird_Ver_Ged.Id),\
                             str(self.Gird_Hor_Ged.Id),str(self.Length_From_Gird),str(self.Plate_Column)]
+    def InputDataChangeToCSV_Excel(self,ws_Sheet1,row_input):
+        a= int(self.Count) + 2
+        for item,Element in enumerate(row_input,1):
+            ws_Sheet1.Cells(a,item).Value2 = str(Element)
     def InputDataChangeToCSV(self,row_input):
         with open(self.path, 'r') as readFile:
             reader = csv.reader(readFile)
