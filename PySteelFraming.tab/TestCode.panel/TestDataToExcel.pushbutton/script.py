@@ -17,20 +17,23 @@ doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
 from pyrevit import script
 import csv
-clr.AddReference('Microsoft.Office.Interop.Excel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c')
-from Microsoft.Office.Interop import Excel
-from System.Runtime.InteropServices import Marshal
-excel = Marshal.GetActiveObject("Excel.Application")
-ex = Excel.ApplicationClass()   
-ex.Visible = False
-ex.DisplayAlerts = True   
 from System import Array
 import xlsxwriter 
+import excel
 path_excel = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest8.xlsx"
 import xlrd 
 #get Config in revit 
 path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest1.csv"
+
+#Open workbook and Get data from Sheet 
+
+ex = excel.initialise()
+ex.Visible = True
 workbook = ex.Workbooks.Open(path_excel)
+sheet = workbook.Sheets("Sheet1")
+print (sheet)
+
+
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
@@ -56,7 +59,6 @@ class WPF_PYTHON(WPFWindow):
             self.Base_Level.SelectedValue  = GetDataFirst[3].Name
             self.Top_Level.SelectedValue = GetDataFirst[4].Name
             self.Rafter_Left.SelectedValue = GetDataFirst[5].Name
-
             self.Rater_Type_Left.SelectedValue = Element.Name.__get__(GetDataFirst[6])
             self.Level_Rater_Type_Left.SelectedValue = GetDataFirst[7].Name
             self.Length_Rater_Left.Text = str(GetDataFirst[8])
@@ -120,21 +122,15 @@ class WPF_PYTHON(WPFWindow):
         Sloped = float(self.Slope.Text)
         Gird_Ver_Ged = self.Gird_Ver_G.SelectedItem
         Gird_Hor_Ged = self.Gird_Hor_G.SelectedItem
-
         Length_From_Girded = float(self.Length_From_Gird.Text)
-
         Plate_Columned = float(self.Plate_Column.Text)
-
-
         if count_dem == 0 or Count_Continue > (count_dem-1):
             #print ("Rafter_Family_Lefted dem 0" ,Rafter_Family_Lefted)
             
             DataFromCSV_1 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
                 Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
-            DataFromCSV_1.writefilecsv(Count_Continue,workbook)
-
-        else:
-            
+            DataFromCSV_1.writefilecsv(Count_Continue,sheet)
+        else:    
             #print ("Rafter_Family_Lefted dem 1" ,Rafter_Family_Lefted)
             DataFromCSV_2 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
                 Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
@@ -144,12 +140,12 @@ class WPF_PYTHON(WPFWindow):
                 DataFromCSV_DATA = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,\
                     Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,\
                         Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
-                arr = DataFromCSV_DATA.GetContentDataFromExcel(path_excel)
+                arr = DataFromCSV_DATA.GetContentDataFromExcel(sheet)
             else:
                 DataFromCSV_DATA = DataFromCSV(Count_Continue + 1,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,\
                     Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,\
                         Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
-                arr = DataFromCSV_DATA.GetContentDataFromExcel(path_excel)
+                arr = DataFromCSV_DATA.GetContentDataFromExcel(sheet)
             self.Column_Left.SelectedValue = arr[1].Name
             self.Column_Type.SelectedValue = Element.Name.__get__(arr[2])
             self.Base_Level.SelectedValue = arr[3].Name
