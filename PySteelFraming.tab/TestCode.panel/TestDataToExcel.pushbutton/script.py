@@ -17,10 +17,20 @@ doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
 from pyrevit import script
 import csv
-
+clr.AddReference('Microsoft.Office.Interop.Excel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c')
+from Microsoft.Office.Interop import Excel
+from System.Runtime.InteropServices import Marshal
+excel = Marshal.GetActiveObject("Excel.Application")
+ex = Excel.ApplicationClass()   
+ex.Visible = False
+ex.DisplayAlerts = True   
+from System import Array
+import xlsxwriter 
+path_excel = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest8.xlsx"
+import xlrd 
 #get Config in revit 
-
 path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest1.csv"
+workbook = ex.Workbooks.Open(path_excel)
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
@@ -36,9 +46,10 @@ class WPF_PYTHON(WPFWindow):
         self.Level_Rater_Type_Left.DataContext = self.levels
         DataFromdem = DataFromCSV(1,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
         #DataFromdem.DeleteRow()
+        
         count_dem = DataFromdem.count_csv()
         if count_dem !=  0:
-            GetDataFirst = DataFromdem.GetContentDataFromExcel()
+            GetDataFirst = DataFromdem.GetContentDataFromExcel(workbook)
             #print (GetDataFirst[3].Name,GetDataFirst[4].Name)
             self.Column_Left.SelectedValue = GetDataFirst[1].Name
             self.Column_Type.SelectedValue = Element.Name.__get__(GetDataFirst[2])
@@ -114,15 +125,16 @@ class WPF_PYTHON(WPFWindow):
 
         Plate_Columned = float(self.Plate_Column.Text)
 
+
         if count_dem == 0 or Count_Continue > (count_dem-1):
             #print ("Rafter_Family_Lefted dem 0" ,Rafter_Family_Lefted)
             
             DataFromCSV_1 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
                 Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
-            DataFromCSV_1.writefilecsv(Count_Continue)
+            DataFromCSV_1.writefilecsv(Count_Continue,workbook)
 
-            
         else:
+            
             #print ("Rafter_Family_Lefted dem 1" ,Rafter_Family_Lefted)
             DataFromCSV_2 = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,Rafter_Family_Lefted,\
                 Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
@@ -132,12 +144,12 @@ class WPF_PYTHON(WPFWindow):
                 DataFromCSV_DATA = DataFromCSV(Count_Continue,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,\
                     Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,\
                         Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
-                arr = DataFromCSV_DATA.GetContentDataFromExcel()
+                arr = DataFromCSV_DATA.GetContentDataFromExcel(path_excel)
             else:
                 DataFromCSV_DATA = DataFromCSV(Count_Continue + 1,Column_Lefted,Column_Typed,Base_Leveled,Top_Leveled,\
                     Rafter_Family_Lefted,Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Plate_Pted,path,Gird_Hored,\
                         Gird_Vered,Sloped,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Girded,Plate_Columned)
-                arr = DataFromCSV_DATA.GetContentDataFromExcel()
+                arr = DataFromCSV_DATA.GetContentDataFromExcel(path_excel)
             self.Column_Left.SelectedValue = arr[1].Name
             self.Column_Type.SelectedValue = Element.Name.__get__(arr[2])
             self.Base_Level.SelectedValue = arr[3].Name

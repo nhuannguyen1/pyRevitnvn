@@ -7,20 +7,18 @@ import csv
 import clr
 from pyrevit import script
 # import the Excel Interop. 
+uidoc = rpw.revit.uidoc  # type: UIDocument
+doc = rpw.revit.doc  # type: Document
+from pyrevit.forms import WPFWindow, alert
+import math 
+import xlrd 
+
 clr.AddReference('Microsoft.Office.Interop.Excel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c')
 from Microsoft.Office.Interop import Excel
 from System.Runtime.InteropServices import Marshal
 ex = Excel.ApplicationClass()   
 ex.Visible = True
-ex.DisplayAlerts = False   
-from System import Array
-import xlsxwriter 
-path_excel = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest8.xlsx"
-import xlrd 
-uidoc = rpw.revit.uidoc  # type: UIDocument
-doc = rpw.revit.doc  # type: Document
-from pyrevit.forms import WPFWindow, alert
-import math 
+ex.DisplayAlerts = False 
 
 GetContentDataFromExcelArr = []
 _config = script.get_config()
@@ -28,6 +26,12 @@ X_Top_X = float(_config.get_option('X_Top_X', '1'))
 X_Bottom_X = float(_config.get_option('X_Bottom_X', '1'))
 X_Left_X = float(_config.get_option('X_Left_X', '1'))
 X_Right_X = float(_config.get_option('X_Right_X', '1'))
+
+
+path_excel1 = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest8.xlsx"
+
+
+
 class Global:
     def  __init__(self, ParameterValue,ParameterName,Element):
         self.ParameterValue = ParameterValue
@@ -179,13 +183,12 @@ class DataFromCSV:
         self.Length_From_Gird = Length_From_Gird
         self.Plate_Column = Plate_Column
 
-    def writefilecsv(self,a):
+    def writefilecsv(self,a,workbook):
         #row = [str(self.Count), str(self.FamilyRafterType.Id), self.FamilyRafterType.Id,str(self.Length_Rafter) ]
         row_Str = [self.Count, self.FamilyCol.Name,  Element.Name.__get__(self.FamilyColType),self.Base_Level_Col.Name,self.Top_Level_Col.Name,\
             self.FamilyRafter.Name, Element.Name.__get__(self.FamilyRafterType),self.LevelRafter.Name,self.Length_Rafter,\
                 self.Thinkess_Plate,self.path,self.Gird1.Name,self.Gird2.Name,self.Slope,self.Gird_Ver_Ged.Name,self.Gird_Hor_Ged.Name,self.Length_From_Gird,self.Plate_Column]
-
-        workbook = ex.Workbooks.Open(path_excel)
+        #workbook = ex.Workbooks.Open(path_excel)
         ws_Sheet1 = workbook.Worksheets[1]
         a = a + 2
         i = 1 
@@ -193,16 +196,20 @@ class DataFromCSV:
             ws_Sheet1.Cells(a,i).Value2 = str(item)
             i =i+1
         workbook.Save()
-    def GetContentDataFromExcel(self):
-        wb = xlrd.open_workbook(path_excel) 
-        sheet = wb.sheet_by_index(0) 
-        #f = ExcelInstance()
-        #a = f.get_last_row_from_column("A")
+        workbook.Close()
+    def GetContentDataFromExcel(self,path_excel):
+        workbook = ex.Workbooks.Open(path_excel)
+        ws_Sheet1 = workbook.Worksheets[1]
+        #wb = xlrd.open_workbook(path_excel1)
+        #ws_Sheet1 = workbook.Worksheets[1]
+        sheet = wb.sheet_by_index(0)
+        print("ws_Sheet1",sheet)
         for i in range (18):
-            Element = sheet.cell_value( self.Count, i) 
+            Element = ws_Sheet1.Cells(int(self.Count),int(i)).Value
+            Element = sheet.cell_value(int(self.Count), i) 
             ArrData = GetElementByName(str(i),Element)
             GetContentDataFromExcelArr.append(ArrData) 
-        print ("GetContentDataFromExcelArr is",GetContentDataFromExcelArr)
+        #print ("GetContentDataFromExcelArr is",GetContentDataFromExcelArr)
         return GetContentDataFromExcelArr
     def Getcontentdata (self):
         with open(self.path) as csvFile:
