@@ -192,6 +192,7 @@ class DataFromCSV:
         #workbook = ex.Workbooks.Open(path_excel)
         #ws_Sheet1 = workbook.Worksheets[1]
         wb = xlrd.open_workbook(path_excel1)
+        print ("Count",self.Count)
         #ws_Sheet1 = workbook.Worksheets[1]
         sheet = wb.sheet_by_index(0)
         for i in range (18):
@@ -363,6 +364,18 @@ def GetElementByName(Count, NameElement):
         vt_Element =  NameElement
         return vt_Element  
 
+def CheckSelectedValueForFamily(SelectedValue):
+    try:
+        SelectedValue1 = SelectedValue.Name
+        return SelectedValue1
+    except:
+            pass
+def CheckSelectedValueForFamilyType(SelectedValue):
+    try:
+        SelectedValue1 = Element.Name.__get__(SelectedValue)
+        return SelectedValue1
+    except:
+            pass
 """
     for vt in FilteredElementCollector(doc).OfClass(Family):
         if vt.Name == NameElement:

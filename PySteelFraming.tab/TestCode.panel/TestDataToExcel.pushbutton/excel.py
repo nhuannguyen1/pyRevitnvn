@@ -49,3 +49,11 @@ def worksheet_by_name(workbook, name):
     for worksheet in workbook.Sheets:
         if worksheet.Name == name:
             return worksheet
+def FindLastRowOFData (sheet):
+    i = 1
+    while True:
+        print (sheet.Cells(i, 1).Value2 )
+        if (sheet.Cells(i, 1).Value2 == None):
+            break 
+        i +=1        
+    return  i - 2
