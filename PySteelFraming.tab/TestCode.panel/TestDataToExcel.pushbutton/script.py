@@ -24,7 +24,7 @@ path_excel = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelF
 import xlrd 
 #Open workbook and Get data from Sheet 
 ex = excel.initialise()
-ex.Visible = False
+ex.Visible = True
 workbook = ex.Workbooks.Open(path_excel)
 sheet = workbook.Sheets("Sheet1")
 #lr = sheet.Range("A" + Rows.Count).End(xlUp).Row

@@ -151,26 +151,25 @@ def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
     Tw2_Rafter.Set(setvalue)
 class DataFromCSV:
-    def  __init__(self, Count, FamilyCol, FamilyColType,Base_Level_Col,Top_Level_Col,FamilyRafter,FamilyRafterType,LevelRafter,Length_Rafter,\
-        Thinkess_Plate,path,Gird_Ver,Gird_hor,Slope,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Gird,Plate_Column):
-        self.Count = Count
-        self.FamilyCol = FamilyCol
-        self.FamilyColType = FamilyColType
-        self.Base_Level_Col = Base_Level_Col
-        self.Top_Level_Col = Top_Level_Col
-        self.FamilyRafter = FamilyRafter
-        self.FamilyRafterType = FamilyRafterType
-        self.LevelRafter = LevelRafter
-        self.Length_Rafter = Length_Rafter
-        self.Thinkess_Plate = Thinkess_Plate
-        self.path = path
-        self.Gird_Ver = Gird_Ver
-        self.Gird_hor = Gird_hor
-        self.Slope = Slope
-        self.Gird_Ver_Ged = Gird_Ver_Ged
-        self.Gird_Hor_Ged = Gird_Hor_Ged
-        self.Length_From_Gird = Length_From_Gird
-        self.Plate_Column = Plate_Column
+    def  __init__(self, *List):
+        self.Count = List[0]
+        self.FamilyCol = List[1]
+        self.FamilyColType =  List[2]
+        self.Base_Level_Col =  List[3]
+        self.Top_Level_Col =  List[4]
+        self.FamilyRafter =  List[5]
+        self.FamilyRafterType =  List[6]
+        self.LevelRafter = List[7]
+        self.Length_Rafter = List[8]
+        self.Thinkess_Plate = List[9]
+        self.path = List[10]
+        self.Gird_Ver = List[11]
+        self.Gird_hor = List[12]
+        self.Slope = List[13]
+        self.Gird_Ver_Ged = List[14]
+        self.Gird_Hor_Ged = List[15]
+        self.Length_From_Gird = List[16]
+        self.Plate_Column = List[17]
 
     def writefilecsv(self,a,ws_Sheet1):
         from Autodesk.Revit.DB import Element
