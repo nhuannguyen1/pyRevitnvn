@@ -56,3 +56,9 @@ def FindLastRowOFData (sheet):
             break 
         i +=1        
     return  i - 2
+
+def delete_multiple_rows(worksheet):
+# Deleting 10 rows from the worksheet starting from 3rd row
+    for k in range (3,18):
+        for i in range(1,19):
+            worksheet.Cells(k,i).Value2 = ""

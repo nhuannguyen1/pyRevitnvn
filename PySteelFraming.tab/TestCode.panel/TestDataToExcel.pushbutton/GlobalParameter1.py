@@ -55,12 +55,12 @@ class ConvertToInternalUnits1:
         #print (self.ParameterValue)
         ParameterValue = UnitUtils.ConvertToInternalUnits(self.ParameterValue, DisplayUnitType.DUT_DECIMAL_DEGREES)
         return ParameterValue
-def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird1,Gird2,Thinkess_Plate,Plate_Column):
+def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird_Ver,Gird_hor,Thinkess_Plate,Plate_Column):
     
     Arr_Point_Type_Length = []
     ArrTotal = []
     #Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
-    Getcondination =  Getintersection (Gird1.Curve,Gird2.Curve)
+    Getcondination =  Getintersection (Gird_Ver.Curve,Gird_hor.Curve)
     LIST =  GetHt_Hn1 (ElementInstance,Slope,Plate_Column)
     Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
     H_t = LIST[1]
@@ -152,7 +152,7 @@ def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter.Set(setvalue)
 class DataFromCSV:
     def  __init__(self, Count, FamilyCol, FamilyColType,Base_Level_Col,Top_Level_Col,FamilyRafter,FamilyRafterType,LevelRafter,Length_Rafter,\
-        Thinkess_Plate,path,Gird1,Gird2,Slope,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Gird,Plate_Column):
+        Thinkess_Plate,path,Gird_Ver,Gird_hor,Slope,Gird_Ver_Ged,Gird_Hor_Ged,Length_From_Gird,Plate_Column):
         self.Count = Count
         self.FamilyCol = FamilyCol
         self.FamilyColType = FamilyColType
@@ -164,8 +164,8 @@ class DataFromCSV:
         self.Length_Rafter = Length_Rafter
         self.Thinkess_Plate = Thinkess_Plate
         self.path = path
-        self.Gird1 = Gird1
-        self.Gird2 = Gird2
+        self.Gird_Ver = Gird_Ver
+        self.Gird_hor = Gird_hor
         self.Slope = Slope
         self.Gird_Ver_Ged = Gird_Ver_Ged
         self.Gird_Hor_Ged = Gird_Hor_Ged
@@ -177,30 +177,21 @@ class DataFromCSV:
         #row = [str(self.Count), str(self.FamilyRafterType.Id), self.FamilyRafterType.Id,str(self.Length_Rafter) ]
         row_Str = [self.Count, self.FamilyCol.Name,Element.Name.__get__(self.FamilyColType),self.Base_Level_Col.Name,self.Top_Level_Col.Name,\
             self.FamilyRafter.Name, Element.Name.__get__(self.FamilyRafterType),self.LevelRafter.Name,self.Length_Rafter,\
-                self.Thinkess_Plate,self.path,self.Gird1.Name,self.Gird2.Name,self.Slope,self.Gird_Ver_Ged.Name,self.Gird_Hor_Ged.Name,self.Length_From_Gird,self.Plate_Column]
+                self.Thinkess_Plate,self.path,self.Gird_Ver.Name,self.Gird_hor.Name,self.Slope,self.Gird_Ver_Ged.Name,self.Gird_Hor_Ged.Name,self.Length_From_Gird,self.Plate_Column]
         #workbook = ex.Workbooks.Open(path_excel)
         #ws_Sheet1 = workbook.Worksheets[1]
         a = a + 2
-        #i = 1 
         for item, Element in enumerate(row_Str,1):
             ws_Sheet1.Cells(a,item).Value2 = str(Element)
         #workbook.Save()
     def GetContentDataFromExcel(self,ws_Sheet1):
-        
-        #ws_Sheet = ws_Sheet1.Sheets("Sheet1")
-        #print (ws_Sheet)
-        #workbook = ex.Workbooks.Open(path_excel)
-        #ws_Sheet1 = workbook.Worksheets[1]
         wb = xlrd.open_workbook(path_excel1)
-        print ("Count",self.Count)
-        #ws_Sheet1 = workbook.Worksheets[1]
         sheet = wb.sheet_by_index(0)
         for i in range (18):
             #Element = sheet.Cells(int(self.Count),i).Value2
             Element = sheet.cell_value(int(self.Count), i) 
             ArrData = GetElementByName(str(i),Element)
             GetContentDataFromExcelArr.append(ArrData) 
-        #print ("GetContentDataFromExcelArr is",GetContentDataFromExcelArr)
         return GetContentDataFromExcelArr
     def Getcontentdata (self):
         with open(self.path) as csvFile:
@@ -219,15 +210,15 @@ class DataFromCSV:
                     Row8 = CheckTypeLengthBal(row[8])
                     Length_Rater_Lefted_n = Row8
                     Thinkess_Plate = float (row[9])
-                    Gird1 = doc.GetElement(ElementId(int(row[11])))
-                    Gird2 = doc.GetElement(ElementId(int(row[12])))
+                    Gird_Ver = doc.GetElement(ElementId(int(row[11])))
+                    Gird_hor = doc.GetElement(ElementId(int(row[12])))
                     Slope = float (row[13])
                     Gird_Ver_G = doc.GetElement(ElementId(int(row[14])))
                     Gird_Hor_G = doc.GetElement(ElementId(int(row[15])))
                     Length_From_Gird = float (row[16])
                     Plate_Column = float(row[17])
                     arr = [self.Count, Column_Left, FamilyColType,Base_Level_Col,Top_Level_Col,Rafter_Family_Lefted,\
-                        Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Thinkess_Plate,self.path,Gird1,Gird2,Slope,\
+                        Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Thinkess_Plate,self.path,Gird_Ver,Gird_hor,Slope,\
                             Gird_Ver_G,Gird_Hor_G,Length_From_Gird,Plate_Column]
         
         csvFile.close()
@@ -240,11 +231,11 @@ class DataFromCSV:
     def Return_Row_Excel (self):
         return [self.Count, self.FamilyCol.Name,Element.Name.__get__(self.FamilyColType),self.Base_Level_Col.Name,self.Top_Level_Col.Name,\
                 self.FamilyRafter.Name, Element.Name.__get__(self.FamilyRafterType),self.LevelRafter.Name,self.Length_Rafter,\
-                self.Thinkess_Plate,self.path,self.Gird1.Name,self.Gird2.Name,self.Slope,self.Gird_Ver_Ged.Name,self.Gird_Hor_Ged.Name,self.Length_From_Gird,self.Plate_Column]
+                self.Thinkess_Plate,self.path,self.Gird_Ver.Name,self.Gird_hor.Name,self.Slope,self.Gird_Ver_Ged.Name,self.Gird_Hor_Ged.Name,self.Length_From_Gird,self.Plate_Column]
     def Return_Row (self):
         return  [str(self.Count), str(self.FamilyCol.Id), str(self.FamilyColType.Id),str(self.Base_Level_Col.Id),str(self.Top_Level_Col.Id),\
                     str(self.FamilyRafter.Id),str(self.FamilyRafterType.Id),str(self.LevelRafter.Id),str(self.Length_Rafter),\
-                        str(self.Thinkess_Plate),str(self.path),str(self.Gird1.Id),str(self.Gird2.Id),str(self.Slope),str(self.Gird_Ver_Ged.Id),\
+                        str(self.Thinkess_Plate),str(self.path),str(self.Gird_Ver.Id),str(self.Gird_hor.Id),str(self.Slope),str(self.Gird_Ver_Ged.Id),\
                             str(self.Gird_Hor_Ged.Id),str(self.Length_From_Gird),str(self.Plate_Column)]
     def InputDataChangeToCSV_Excel(self,ws_Sheet1,row_input):
         a= int(self.Count) + 2
@@ -270,7 +261,7 @@ class DataFromCSV:
     def PlaceElement (self):
         self.Length_Rafter = (UnitUtils.ConvertToInternalUnits(float(self.Length_Rafter), DisplayUnitType.DUT_MILLIMETERS))
         LEVEL_ELEV_Base_Level= self.Top_Level_Col.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
-        Getcondination =  Getintersection (self.Gird1.Curve,self.Gird2.Curve)
+        Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve)
 
         Base_Leveled_Point =XYZ (Getcondination.X - X_Left_X +X_Right_X  ,Getcondination.Y,(LEVEL_ELEV_Base_Level + X_Top_X - X_Bottom_X))
 
@@ -287,8 +278,8 @@ class DataFromCSV:
         #t.Commit()
         return ColumnCreate
     def PlaceElementRafterFather(self,ColumnCreate):
-        #GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird1,Gird2):
-        Point_Levels = GetParameterFromSubElement (ColumnCreate,self.FamilyRafterType,self.Slope,self.Length_Rafter,self.path,self.Gird1,self.Gird2,self.Thinkess_Plate,self.Plate_Column)
+        #GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird_Ver,Gird_hor):
+        Point_Levels = GetParameterFromSubElement (ColumnCreate,self.FamilyRafterType,self.Slope,self.Length_Rafter,self.path,self.Gird_Ver,self.Gird_hor,self.Thinkess_Plate,self.Plate_Column)
         for Point_Level,FamilyRafterType,Length_Rafter, Thinkess_Plate in Point_Levels:
             #Length_Rafter = UnitUtils.ConvertToInternalUnits(float(Length_Rafter), DisplayUnitType.DUT_MILLIMETERS)
             PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate))
@@ -363,14 +354,16 @@ def GetElementByName(Count, NameElement):
                 return vt_Element  
     elif any(Count in s for s in [str(3),str(4),str(7)]):
         for vt in FilteredElementCollector(doc).OfClass(Level):
-            vt_Element = vt
-            return vt_Element  
+            if vt.Name == NameElement:
+               vt_Element = vt 
+               return vt_Element 
     elif any(Count in s for s in [str(11),str(12),str(14),str(15)]):
         for vt in FilteredElementCollector(doc).OfClass(Grid):
-            vt_Element = vt
-            return vt_Element  
+            if vt.Name == NameElement:
+                vt_Element = vt 
+                return vt_Element  
     else:
-        vt_Element =  NameElement
+        vt_Element = NameElement
         return vt_Element  
 
 def CheckSelectedValueForFamily(SelectedValue):
@@ -378,93 +371,13 @@ def CheckSelectedValueForFamily(SelectedValue):
         SelectedValue1 = SelectedValue.Name
         return SelectedValue1
     except:
-            pass
-def CheckSelectedValueForFamilyType(SelectedValue):
-    try:
-        SelectedValue1 = Element.Name.__get__(SelectedValue)
-        return SelectedValue1
-    except:
-            pass
-"""
-    for vt in FilteredElementCollector(doc).OfClass(Family):
-        if vt.Name == NameElement:
-            k =1
-            vt_Element = vt
-            return vt_Element   
-    for vt in FilteredElementCollector(doc).OfClass(FamilySymbol).WhereElementIsElementType().ToElements():
-        if Element.Name.__get__(vt)  == NameElement:
-            k =2
-            vt_Element = vt
-            return vt_Element   
-    for vt in FilteredElementCollector(doc).OfClass(Grid):
-        if vt.Name == NameElement:
-            k =3
-            vt_Element = vt
-            return vt_Element   
-    for vt in FilteredElementCollector(doc).OfClass(Level):
-        if vt.Name == NameElement:
-            k =4
-            vt_Element = vt
-            return vt_Element   
-    if result:
-        vt_Element =  (NameElement)
-        return vt_Element    
-
-        [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.Name == str(NameElement)] !=None:
-
-        #vt_Element = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.Name == str(NameElement)]#
-        
-    elif [vt for vt in FilteredElementCollector(doc).OfClass(FamilySymbol).WhereElementIsElementType().ToElements() if Element.Name.__get__(vt) == str(NameElement)] != None:
-        vt_Element = [vt for vt in FilteredElementCollector(doc).OfClass(FamilySymbol).WhereElementIsElementType().ToElements() if Element.Name.__get__(vt) == str(NameElement)]
-    elif [vt for vt in FilteredElementCollector(doc).OfClass(Grid) if vt.Name == str(NameElement)] != None:
-        vt_Element = [vt for vt in FilteredElementCollector(doc).OfClass(Grid) if vt.Name == str(NameElement)]
-    elif [vt for vt in FilteredElementCollector(doc).OfClass(Grid) if vt.Name == str(NameElement)] != None:
-        vt_Element = [vt for vt in FilteredElementCollector(doc).OfClass(Level) if vt.Name == str(NameElement)]
-    else:
-        vt_Element = str (NameElement)
-    print (vt_Element)
-    return vt_Element
-
-
-WORKSHEET_NAME = "Sheet1"
-class ExcelInstance():
-    def __init__(self, wb=None):
-        self.source_path = path_excel
-        try:
-            self.app = win32com.client.gencache.EnsureDispatch('Excel.Application')
-        except:
-            print("Application could not be opened.")
-            return
-        try:
-            self.open_workbook()
-        except:
-            print("Workbook could not be opened.")
-            return
-        try:
-            self.ws = self.wb.Worksheets(WORKSHEET_NAME) 
-        except:
-            print("Worksheet not found.")
-            return
-        self.app.Visible = True
-        self.app.WindowState = win32com.client.constants.xlMaximized
-
-    def open_workbook(self):
-        
-        If it doesn't open one way, try another.
-        
-        try:        
-            self.wb = self.app.Workbooks(self.source_path)            
-        except Exception as e:
             try:
-                self.wb = self.app.Workbooks.Open(self.source_path)
-            except Exception as e:
-                print(e)
-                self.wb = None   
-
-    def get_column_after(self, column, offset):
-        for item in self.ws.Range("{0}{1}:{0}{2}".format(column, offset, self.get_last_row_from_column(column))).Value:
-            print(item[0])
-
-    def get_last_row_from_column(self, column):
-        return self.ws.Range("{0}{1}".format(column, self.ws.Rows.Count)).End(win32com.client.constants.xlUp).Row
-"""
+                SelectedValue1 = Element.Name.__get__(SelectedValue)
+                return SelectedValue1
+            except:
+                try:
+                    if(type (SelectedValue) is str) or (type (SelectedValue) is float):
+                        SelectedValue1 = str(SelectedValue)
+                        return SelectedValue1
+                except:
+                    pass

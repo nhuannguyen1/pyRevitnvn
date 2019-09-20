@@ -53,7 +53,8 @@ class WPF_PYTHON(WPFWindow):
             self.Gird_Hor.SelectedValue = (GetDataFirst[11]).Name
             self.Gird_Ver.SelectedValue = (GetDataFirst[12]).Name
             self.Slope.Text = str(GetDataFirst[13])
-
+            print ((GetDataFirst[11]).Name)
+            print ((GetDataFirst[15]).Name)
             self.Gird_Ver_G.SelectedValue = (GetDataFirst[14]).Name
             self.Gird_Hor_G.SelectedValue = (GetDataFirst[15]).Name
 
