@@ -22,8 +22,6 @@ import xlsxwriter
 import excel
 path_excel = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest8.xlsx"
 import xlrd 
-#get Config in revit 
-path = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest1.csv"
 #Open workbook and Get data from Sheet 
 ex = excel.initialise()
 ex.Visible = False
@@ -150,11 +148,11 @@ class WPF_PYTHON(WPFWindow):
                 DataFromCSV_DATA.InputDataChangeToCSV_Excel(sheet,Return_Row1)
                 self.InputNumberLeft.Text = str (int(Count_Continue - 1))
     def Click_To_Start(self, sender, e):
-            DataFromdem = DataFromCSV(int(0),None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
+            DataFromdem = DataFromCSV(int(0),None,None,None,None,None,None,None,None,None,path_excel,None,None,None,None,None,None,None)
             arr = DataFromdem.Getcontentdata()
             #dem = DataFromdem.count_csv()
             DataFromdem = DataFromCSV(int(0),arr[1],arr[2],(arr[3]),arr[4], arr[5],arr[6],arr[7],str(arr[8]),\
-                str(arr[9]),path,(arr[11]),(arr[12]),arr[13],(arr[14]),(arr[15]),arr[16],arr[17])
+                str(arr[9]),path_excel,(arr[11]),(arr[12]),arr[13],(arr[14]),(arr[15]),arr[16],arr[17])
             t = Transaction (doc,"Place Element")
             t.Start()
             CreateColumn = DataFromdem.PlaceElement()
