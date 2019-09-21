@@ -9,8 +9,6 @@ class ExcelApp:
     def __init__(self, app=None, workbook=None):
         self.app = app
         self.workbook = workbook
-
-
 def initialise():
     """Get active Excel.Application COM object if available or create a new one"""
     # If Excel is open, get it
@@ -56,7 +54,13 @@ def FindLastRowOFData (sheet):
             break 
         i +=1        
     return  i - 2
-
+def FindLastColumnOFData (sheet):
+    i = 1
+    while True:
+        if (sheet.Cells(2, i).Value2 == None):
+            break 
+        i +=1        
+    return  i - 2
 def delete_multiple_rows(worksheet):
 # Deleting 10 rows from the worksheet starting from 3rd row
     for k in range (3,18):

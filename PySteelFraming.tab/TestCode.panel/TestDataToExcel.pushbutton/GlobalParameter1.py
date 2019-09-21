@@ -5,151 +5,43 @@ from Autodesk.Revit.DB import Transaction,Element, FilteredElementCollector,\
 import rpw
 import csv
 import clr
-from pyrevit import script
+from ConvertAndCaculation import Global,ConvertToInternalUnits,ConvertToInternalUnitsmm,setparameterfromvalue,GetCondinationH_nAndH_V,GetCoordinateContinnue
 # import the Excel Interop. 
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
-from pyrevit.forms import WPFWindow, alert
 import math 
 import xlrd 
 GetContentDataFromExcelArr = []
-_config = script.get_config()
-X_Top_X = float(_config.get_option('X_Top_X', '1'))
-X_Bottom_X = float(_config.get_option('X_Bottom_X', '1'))
-X_Left_X = float(_config.get_option('X_Left_X', '1'))
-X_Right_X = float(_config.get_option('X_Right_X', '1'))
-
-path_excel1 = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest8.xlsx"
-
-class Global:
-    def  __init__(self, ParameterValue,ParameterName,Element):
-        self.ParameterValue = ParameterValue
-        self.ParameterName = ParameterName
-        self.Element = Element
-        
-    def globalparameterchange(self,TypeElement):
-        #t = Transaction (doc,"Slope Element")
-        #t.Start()
-        paramId = GlobalParametersManager.FindByName(doc,"Slope")
-        param = doc.GetElement(paramId) 
-        kkkk = ConvertToInternalUnits1(self.ParameterValue)
-        ParameterValue = kkkk.DUT_DECIMAL_DEGREES1()
-        param.SetValue(DoubleParameterValue(ParameterValue))
-        Slope = TypeElement.LookupParameter('Slope')
-        Slope.AssociateWithGlobalParameter(param.Id)
-    def SetParameterInstance (self):
-        ParameterName = self.Element.LookupParameter(self.ParameterName)
-        ParameterValue = UnitUtils.ConvertToInternalUnits(float(self.ParameterValue), DisplayUnitType.DUT_MILLIMETERS)
-        ParameterName.Set(ParameterValue)
-        #t.Commit()
-def ConvertToInternalUnitsmm(Parameter):
-    Parameter = UnitUtils.ConvertToInternalUnits(float(Parameter), DisplayUnitType.DUT_MILLIMETERS)
-    return Parameter
-class ConvertToInternalUnits1:
-    def  __init__(self, ParameterValue):
-        self.ParameterValue = ParameterValue
-    def DUT_MILLIMETERS1(self):
-        ParameterValue = UnitUtils.ConvertToInternalUnits(self.ParameterValue, DisplayUnitType.DUT_MILLIMETERS)
-        return ParameterValue
-    def DUT_DECIMAL_DEGREES1(self):
-        #print (self.ParameterValue)
-        ParameterValue = UnitUtils.ConvertToInternalUnits(self.ParameterValue, DisplayUnitType.DUT_DECIMAL_DEGREES)
-        return ParameterValue
-def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird_Ver,Gird_hor,Thinkess_Plate,Plate_Column):
-    
+def GetParameterFromSubElement (ElementInstance,Slope,path_excel,Gird_Ver,Gird_hor,Plate_Column,Move_Left,Move_Right,Move_Up,Move_Bottom,lr_Row,lr_Col):
     Arr_Point_Type_Length = []
     ArrTotal = []
     #Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
     Getcondination =  Getintersection (Gird_Ver.Curve,Gird_hor.Curve)
-    LIST =  GetHt_Hn1 (ElementInstance,Slope,Plate_Column)
+    LIST =  GetCondinationH_nAndH_V (ElementInstance,Slope,Plate_Column,Move_Left,Move_Right)
     Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
     H_t = LIST[1]
     H_n = LIST[0]
-    with open(path) as csvFile:
-            readcsv =csv.reader(csvFile, delimiter=',')
-            for row in readcsv:
-                DataFromCSV_DATA = DataFromCSV(int(row[0]),None,None,None,None,None,Rafter_Type_Lefted,None,Length_Rafter,None,path,None,None,None,None,None,None,None)
-                arr = DataFromCSV_DATA.Getcontentdata()
-                Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
-                Length_From_Gird =  arr[16]
-                SumLength = DataFromCSV_DATA.checkLengthOfItemRafter()
-                #SumLength_Inline = DataFromCSV_DATA.
-                #Arr_Point_Type_Length=[Point_Level,arr[6],arr[8],arr[9]]
-                Length_Rafter = arr[8]
-                if Length_Rafter =="BAL":
-                    #Length_Rafter = Length_From_Gird - float(SumLength) 
-                    #print ("Length_From_Gird",Length_From_Gird, "SumLength is",SumLength )
-                    #Length_Rafter1 = Length_From_Gird - float(SumLength)
-                    Length_Rafter1 = ConvertToInternalUnitsmm(Length_From_Gird - float(SumLength))
-                   #print ("Length_From_Gird",Length_From_Gird, "SumLength is",SumLength )
-
-                    #Length_Rafter1 = UnitUtils.Convert(Length_From_Gird - float(SumLength) ,DisplayUnitType.DUT_MILLIMETERS, DisplayUnitType.DUT_DECIMAL_FEET)
-            
-                else:
-                    #Length_Rafter1=Length_Rafter
-                    Length_Rafter1 = ConvertToInternalUnitsmm(Length_Rafter)
-                #Length_Rafter1 = UnitUtils.Convert(Length_Rafter,DisplayUnitType.DUT_MILLIMETERS, DisplayUnitType.DUT_DECIMAL_FEET)
-                #Thinkess_Plate1 = UnitUtils.ConvertToInternalUnits(float(arr[9]), DisplayUnitType.DUT_MILLIMETERS)\
-                Arr_Point_Type_Length=[Point_Level,arr[6],Length_Rafter1,arr[9]]
-                Thinkess_Plate1 = ConvertToInternalUnitsmm(arr[9])
-
-                #print ("length rapter is 1",Length_Rafter1)
-
-                """
-                H_n = H_n + (Length_Rafter + Thinkess_Plate1 * 2 ) * math.cos(Slope) 
-                H_t = H_t + (Length_Rafter + Thinkess_Plate1 * 2 ) * math.sin(Slope)
-                """
-                GetHt_Hn = GetHt_HnTotal(arr[6], Length_Rafter1,Thinkess_Plate1,Slope,H_n,H_t)
-                H_n = GetHt_Hn[0]
-                H_t = GetHt_Hn[1]
-                ArrTotal.append(Arr_Point_Type_Length)
-            return ArrTotal
-    csvFile.close()
-def GetHt_HnTotal (ElementType, Length_Rafter,Thinkess_Plate1,Slope,H_n,H_t):
-    FamilyRafterName = ElementType.FamilyName 
- 
-    if "4111b" in FamilyRafterName:
-        H_n = H_n + Length_Rafter * math.cos(Slope)  + Thinkess_Plate1 * 2 
-        H_t = H_t + Length_Rafter* math.sin(Slope) + Thinkess_Plate1 * 2 * math.tan(Slope)
-      
-    else:
-        H_n = H_n + (Length_Rafter + Thinkess_Plate1 * 2 ) * math.cos(Slope) 
-        H_t = H_t + (Length_Rafter + Thinkess_Plate1 * 2 ) * math.sin(Slope)
-    return [H_n,H_t]
-def GetHt_Hn1 (ElementInstance,Slope,Plate_Column):
-
-    Slope = UnitUtils.ConvertToInternalUnits(Slope, DisplayUnitType.DUT_DECIMAL_DEGREES)
-    Plate_Column  = ConvertToInternalUnitsmm (Plate_Column)
-    #print ("Plate_Column",Plate_Column)
-    Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
-
-    ElementType =  doc.GetElement(ElementInstance.GetTypeId())
-
-    Tw2_Rafter = ElementType.LookupParameter('Tw2_WF_R').AsDouble()
-    
-    Tf = ElementType.LookupParameter('Tf').AsDouble()
-    Tw1 = ElementType.LookupParameter('Tw1').AsDouble() 
-    Tw2 = ElementType.LookupParameter('Tw2').AsDouble() 
-    A = ElementType.LookupParameter('A').AsDouble() 
-  
-    Pl_Total =math.cos(Slope) * Pl_Right * 2
-    v34u = math.cos(Slope) * Tw2_Rafter
-    V24u = v34u + A
-    H13r = Tw2 - (math.tan(Slope) * V24u)
-    
-    V4u = math.tan(Slope) * H13r
-
-    H13r_L = H13r - math.tan(Slope) * Tf
-
-    h_n = H13r_L - Tw1 / 2 + (Plate_Column * 2)*math.cos(Slope)
-    G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
-    V34 = v34u - V4u
-    h_t = V34 + G2_V1  - math.tan(Slope) * Pl_Total + math.sin(Slope) * (Plate_Column * 2)
-    #print ("X_Left_X",X_Left_X,"X_Right_X",X_Right_X,"X_Top_X",X_Top_X,"X_Bottom_X",X_Bottom_X)
-    return [h_n - X_Left_X + X_Right_X,h_t]
-def setparameterfromvalue (elemeninstance,ValueName,setvalue):
-    Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
-    Tw2_Rafter.Set(setvalue)
+    for i in range(1,int(lr_Row)):
+        ArrDataExcell = ArrDataExcell1(lr_Col)
+        ArrDataExcell[0] = i 
+        ArrDataExcell [10] = path_excel
+        DataFromCSV_DATA = DataFromCSV(*ArrDataExcell)
+        arr = DataFromCSV_DATA.GetContentDataFromExcel(path_excel,lr_Col)
+        Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
+        Length_From_Gird =  arr[16]
+        SumLength = DataFromCSV_DATA.checkLengthAngGetSumOfItemRafterFromExcel(path_excel,lr_Row,lr_Col)
+        Length_Rafter = arr[8]
+        if Length_Rafter =="BAL":
+            Length_Rafter1 = ConvertToInternalUnitsmm(Length_From_Gird - float(SumLength))
+        else:
+            Length_Rafter1 = ConvertToInternalUnitsmm(Length_Rafter)
+        Arr_Point_Type_Length=[Point_Level,arr[6],Length_Rafter1,arr[9]]
+        Thinkess_Plate1 = ConvertToInternalUnitsmm(arr[9])
+        GetHt_Hn = GetCoordinateContinnue(arr[6], Length_Rafter1,Thinkess_Plate1,Slope,H_n,H_t)
+        H_n = GetHt_Hn[0]
+        H_t = GetHt_Hn[1]
+        ArrTotal.append(Arr_Point_Type_Length)
+    return ArrTotal
 class DataFromCSV:
     def  __init__(self, *List):
         self.Count = List[0]
@@ -170,100 +62,51 @@ class DataFromCSV:
         self.Gird_Hor_Ged = List[15]
         self.Length_From_Gird = List[16]
         self.Plate_Column = List[17]
-
-    def writefilecsv(self,a,ws_Sheet1):
+        self.Move_Left =  List[18]
+        self.Move_Right =  List[19]
+        self.Move_Up = List[20]
+        self.Move_Bottom = List[21]
+    def ArrDataList(self):
+        ArrDataList = [self.Count,self.FamilyCol, self.FamilyColType ,self.Base_Level_Col,\
+            self.Top_Level_Col,self.FamilyRafter,self.FamilyRafterType,self.LevelRafter,\
+                self.Length_Rafter, self.Thinkess_Plate,self.path,self.Gird_Ver,self.Gird_hor,self.Slope,\
+                    self.Gird_Ver_Ged,self.Gird_Hor_Ged, self.Length_From_Gird,self.Plate_Column,self.Move_Left,self.Move_Right, self.Move_Up,self.Move_Bottom]
+        return ArrDataList
+    def writefileExcel(self,a,ws_Sheet1):
         from Autodesk.Revit.DB import Element
-        #row = [str(self.Count), str(self.FamilyRafterType.Id), self.FamilyRafterType.Id,str(self.Length_Rafter) ]
-        row_Str = [self.Count, self.FamilyCol.Name,Element.Name.__get__(self.FamilyColType),self.Base_Level_Col.Name,self.Top_Level_Col.Name,\
-            self.FamilyRafter.Name, Element.Name.__get__(self.FamilyRafterType),self.LevelRafter.Name,self.Length_Rafter,\
-                self.Thinkess_Plate,self.path,self.Gird_Ver.Name,self.Gird_hor.Name,self.Slope,self.Gird_Ver_Ged.Name,self.Gird_Hor_Ged.Name,self.Length_From_Gird,self.Plate_Column]
-        #workbook = ex.Workbooks.Open(path_excel)
-        #ws_Sheet1 = workbook.Worksheets[1]
+        row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]    
         a = a + 2
         for item, Element in enumerate(row_Str,1):
             ws_Sheet1.Cells(a,item).Value2 = str(Element)
         #workbook.Save()
-    def GetContentDataFromExcel(self,ws_Sheet1):
-        wb = xlrd.open_workbook(path_excel1)
+    def GetContentDataFromExcel(self,path_excel,Count):
+        wb = xlrd.open_workbook(path_excel)
         sheet = wb.sheet_by_index(0)
-        for i in range (18):
+        for i in range (Count):
             #Element = sheet.Cells(int(self.Count),i).Value2
-            Element = sheet.cell_value(int(self.Count), i) 
+            Element = sheet.cell_value(int(self.Count), i)
             ArrData = GetElementByName(str(i),Element)
             GetContentDataFromExcelArr.append(ArrData) 
         return GetContentDataFromExcelArr
-    def Getcontentdata (self):
-        with open(self.path) as csvFile:
-            readcsv =csv.reader(csvFile, delimiter=',')
-            for row in readcsv:
-                if int(row[0]) == self.Count:
-                    arr = []
-                    self.Count = int(row[0])
-                    Column_Left = doc.GetElement(ElementId(int(row[1])))
-                    FamilyColType = doc.GetElement(ElementId(int(row[2])))
-                    Base_Level_Col = doc.GetElement(ElementId(int(row[3])))
-                    Top_Level_Col = doc.GetElement(ElementId(int(row[4])))
-                    Rafter_Family_Lefted = doc.GetElement(ElementId(int(row[5])))
-                    Rafter_Type_Lefted = doc.GetElement(ElementId(int(row[6])))
-                    LevelRafter = doc.GetElement(ElementId(int(row[7])))
-                    Row8 = CheckTypeLengthBal(row[8])
-                    Length_Rater_Lefted_n = Row8
-                    Thinkess_Plate = float (row[9])
-                    Gird_Ver = doc.GetElement(ElementId(int(row[11])))
-                    Gird_hor = doc.GetElement(ElementId(int(row[12])))
-                    Slope = float (row[13])
-                    Gird_Ver_G = doc.GetElement(ElementId(int(row[14])))
-                    Gird_Hor_G = doc.GetElement(ElementId(int(row[15])))
-                    Length_From_Gird = float (row[16])
-                    Plate_Column = float(row[17])
-                    arr = [self.Count, Column_Left, FamilyColType,Base_Level_Col,Top_Level_Col,Rafter_Family_Lefted,\
-                        Rafter_Type_Lefted,LevelRafter,Length_Rater_Lefted_n,Thinkess_Plate,self.path,Gird_Ver,Gird_hor,Slope,\
-                            Gird_Ver_G,Gird_Hor_G,Length_From_Gird,Plate_Column]
-        
-        csvFile.close()
-        return arr
-    def count_csv(self):
-        with open(self.path, 'r') as readFile:
-            a = sum (1 for row in readFile)
-        readFile.close
-        return a
     def Return_Row_Excel (self):
-        return [self.Count, self.FamilyCol.Name,Element.Name.__get__(self.FamilyColType),self.Base_Level_Col.Name,self.Top_Level_Col.Name,\
-                self.FamilyRafter.Name, Element.Name.__get__(self.FamilyRafterType),self.LevelRafter.Name,self.Length_Rafter,\
-                self.Thinkess_Plate,self.path,self.Gird_Ver.Name,self.Gird_hor.Name,self.Slope,self.Gird_Ver_Ged.Name,self.Gird_Hor_Ged.Name,self.Length_From_Gird,self.Plate_Column]
-    def Return_Row (self):
-        return  [str(self.Count), str(self.FamilyCol.Id), str(self.FamilyColType.Id),str(self.Base_Level_Col.Id),str(self.Top_Level_Col.Id),\
-                    str(self.FamilyRafter.Id),str(self.FamilyRafterType.Id),str(self.LevelRafter.Id),str(self.Length_Rafter),\
-                        str(self.Thinkess_Plate),str(self.path),str(self.Gird_Ver.Id),str(self.Gird_hor.Id),str(self.Slope),str(self.Gird_Ver_Ged.Id),\
-                            str(self.Gird_Hor_Ged.Id),str(self.Length_From_Gird),str(self.Plate_Column)]
+        row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]
+        return row_Str
     def InputDataChangeToCSV_Excel(self,ws_Sheet1,row_input):
         a= int(self.Count) + 2
         for item,Element in enumerate(row_input,1):
             ws_Sheet1.Cells(a,item).Value2 = str(Element)
-    def InputDataChangeToCSV(self,row_input):
-        with open(self.path, 'r') as readFile:
-            reader = csv.reader(readFile)
-            lines = list(reader)
-            lines[self.Count] = row_input
-        with open(self.path, 'w') as writeFile:
-            writer = csv.writer(writeFile)
-            writer.writerows(lines)
-        writeFile.close()
-        readFile.close()
-    def GetcontentdataStr (self):
-        with open(self.path) as csvFile:
-            readcsv =csv.reader(csvFile, delimiter=',')
-            for row in readcsv:
-                if int(row[0]) == self.Count:
-                    return row
-        csvFile.close()
     def PlaceElement (self):
         self.Length_Rafter = (UnitUtils.ConvertToInternalUnits(float(self.Length_Rafter), DisplayUnitType.DUT_MILLIMETERS))
+        self.Move_Up  = ConvertToInternalUnitsmm (self.Move_Up)
+        self.Move_Bottom  = ConvertToInternalUnitsmm (self.Move_Bottom)
+        self.Move_Left  = ConvertToInternalUnitsmm (self.Move_Left)
+        self.Move_Right  = ConvertToInternalUnitsmm (self.Move_Right)
         LEVEL_ELEV_Base_Level= self.Top_Level_Col.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
         Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve)
-
-        Base_Leveled_Point =XYZ (Getcondination.X - X_Left_X +X_Right_X  ,Getcondination.Y,(LEVEL_ELEV_Base_Level + X_Top_X - X_Bottom_X))
-
+        Base_Leveled_Point =XYZ (Getcondination.X - self.Move_Left + self.Move_Right  ,Getcondination.Y,(LEVEL_ELEV_Base_Level + self.Move_Up - self.Move_Bottom))
+        if self.FamilyColType.IsActive == False:
+	        self.FamilyColType.Activate()
+	        doc.Regenerate()
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,self.Base_Level_Col, Structure.StructuralType.NonStructural)
         #LIST = GetParameterFromSubElement(ColumnCreate,self.Slope)
         a= Global(self.Slope,None,None)
@@ -276,9 +119,9 @@ class DataFromCSV:
         TopoffsetPam.Set(0)
         #t.Commit()
         return ColumnCreate
-    def PlaceElementRafterFather(self,ColumnCreate):
+    def PlaceElementRafterFather(self,ColumnCreate,lr_Row,lr_Col):
         #GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird_Ver,Gird_hor):
-        Point_Levels = GetParameterFromSubElement (ColumnCreate,self.FamilyRafterType,self.Slope,self.Length_Rafter,self.path,self.Gird_Ver,self.Gird_hor,self.Thinkess_Plate,self.Plate_Column)
+        Point_Levels = GetParameterFromSubElement (ColumnCreate,self.Slope,self.path,self.Gird_Ver,self.Gird_hor,self.Plate_Column,self.Move_Left,self.Move_Right,self.Move_Up,self.Move_Bottom,lr_Row,lr_Col)
         for Point_Level,FamilyRafterType,Length_Rafter, Thinkess_Plate in Point_Levels:
             #Length_Rafter = UnitUtils.ConvertToInternalUnits(float(Length_Rafter), DisplayUnitType.DUT_MILLIMETERS)
             PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate))
@@ -301,6 +144,19 @@ class DataFromCSV:
                     sum = sum + float(row[8]) 
         csvFile.close()
         return sum
+    def checkLengthAngGetSumOfItemRafterFromExcel (self,path_excel,lr_Row, lr_col):
+        print ("lr_Row,lr_col isss)",lr_Row,lr_col)
+        wb = xlrd.open_workbook(path_excel)
+        sheet = wb.sheet_by_index(0)
+        sum = 0 
+        for i in range (1,lr_Row):
+            ElementSum = sheet.cell_value(i,8)
+            if ElementSum == 'BAL':
+                continue
+            else:
+                sum = sum + float (ElementSum)
+        return sum
+
     def GetSumLengthAndPlate(self):
         with open(self.path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
@@ -340,7 +196,6 @@ def CheckTypeLengthBal(Length_Rater):
         Length = float(Length_Rater)
     return Length
 def GetElementByName(Count, NameElement):
-    #print ("Count",Count)
     if any(str(Count) in s for s in [str(1),str(5)]):
         for vt in FilteredElementCollector(doc).OfClass(Family):
             if vt.Name == NameElement:
@@ -358,13 +213,18 @@ def GetElementByName(Count, NameElement):
                return vt_Element 
     elif any(Count in s for s in [str(11),str(12),str(14),str(15)]):
         for vt in FilteredElementCollector(doc).OfClass(Grid):
-            if vt.Name == NameElement:
-                vt_Element = vt 
-                return vt_Element  
+            try: 
+                NameElement = int (NameElement)
+                if vt.Name == str(NameElement):
+                    vt_Element = vt 
+                    return vt_Element  
+            except:    
+                if vt.Name == NameElement:
+                    vt_Element = vt 
+                    return vt_Element  
     else:
         vt_Element = NameElement
         return vt_Element  
-
 def CheckSelectedValueForFamily(SelectedValue):
     try:
         SelectedValue1 = SelectedValue.Name
@@ -375,8 +235,14 @@ def CheckSelectedValueForFamily(SelectedValue):
                 return SelectedValue1
             except:
                 try:
-                    if(type (SelectedValue) is str) or (type (SelectedValue) is float):
+                    if(type (SelectedValue) is str) or (type (SelectedValue) is float) or (type (SelectedValue) is int) :
                         SelectedValue1 = str(SelectedValue)
                         return SelectedValue1
                 except:
                     pass
+def ArrDataExcell1(Col):
+    ArrDataExcell = []
+    for i in range (0,Col):
+        ArrDataExcell.append(None)
+        i +=1
+    return ArrDataExcell

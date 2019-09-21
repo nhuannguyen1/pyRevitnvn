@@ -16,6 +16,8 @@ X_Top_X = float(_config.get_option('X_Top_X', '1'))
 X_Bottom_X = float(_config.get_option('X_Bottom_X', '1'))
 X_Left_X = float(_config.get_option('X_Left_X', '1'))
 X_Right_X = float(_config.get_option('X_Right_X', '1'))
+
+print ("X_Right_X isssssssssssss",X_Right_X)
 class Global:
     def  __init__(self, ParameterValue,ParameterName,Element):
         self.ParameterValue = ParameterValue
@@ -73,10 +75,8 @@ def GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_
                 Length_Rafter = arr[8]
                 if Length_Rafter =="BAL":
                     #Length_Rafter = Length_From_Gird - float(SumLength) 
-                    print ("Length_From_Gird",Length_From_Gird, "SumLength is",SumLength )
                     #Length_Rafter1 = Length_From_Gird - float(SumLength)
                     Length_Rafter1 = ConvertToInternalUnitsmm(Length_From_Gird - float(SumLength))
-                    print ("Length_From_Gird",Length_From_Gird, "SumLength is",SumLength )
 
                     #Length_Rafter1 = UnitUtils.Convert(Length_From_Gird - float(SumLength) ,DisplayUnitType.DUT_MILLIMETERS, DisplayUnitType.DUT_DECIMAL_FEET)
             
@@ -112,10 +112,12 @@ def GetHt_HnTotal (ElementType, Length_Rafter,Thinkess_Plate1,Slope,H_n,H_t):
         H_t = H_t + (Length_Rafter + Thinkess_Plate1 * 2 ) * math.sin(Slope)
     return [H_n,H_t]
 def GetHt_Hn1 (ElementInstance,Slope,Plate_Column):
-
+    print ("X_Left_X",X_Left_X,"X_Right_X",X_Right_X,"X_Top_X",X_Top_X,"X_Bottom_X",X_Bottom_X)
+    print ("Slope isss", Slope)
     Slope = UnitUtils.ConvertToInternalUnits(Slope, DisplayUnitType.DUT_DECIMAL_DEGREES)
+    print ("Plate_Column is ", Plate_Column)
     Plate_Column  = ConvertToInternalUnitsmm (Plate_Column)
-    print ("Plate_Column",Plate_Column)
+   
     Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
 
     ElementType =  doc.GetElement(ElementInstance.GetTypeId())
@@ -140,7 +142,7 @@ def GetHt_Hn1 (ElementInstance,Slope,Plate_Column):
     G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
     V34 = v34u - V4u
     h_t = V34 + G2_V1  - math.tan(Slope) * Pl_Total + math.sin(Slope) * (Plate_Column * 2)
-    print ("X_Left_X",X_Left_X,"X_Right_X",X_Right_X,"X_Top_X",X_Top_X,"X_Bottom_X",X_Bottom_X)
+    print ("h_n , h_t is ",h_n ,h_t )
     return [h_n - X_Left_X + X_Right_X,h_t]
 def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
@@ -243,7 +245,10 @@ class DataFromCSV:
         Base_Leveled_Point =XYZ (Getcondination.X - X_Left_X +X_Right_X  ,Getcondination.Y,(LEVEL_ELEV_Base_Level + X_Top_X - X_Bottom_X))
 
         #t = Transaction (doc,"Place Element")
-        #t.Start()
+        #t.Start()\
+        if self.FamilyColType.IsActive == False:
+	        self.FamilyColType.Activate()
+	        doc.Regenerate()
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,self.Base_Level_Col, Structure.StructuralType.NonStructural)
         #LIST = GetParameterFromSubElement(ColumnCreate,self.Slope)
         a= Global(self.Slope,None,None)
@@ -319,6 +324,3 @@ def CheckTypeLengthBal(Length_Rater):
     else:
         Length = float(Length_Rater)
     return Length
-
-#def MoveColumn (X_Left, X_Right, Y_Top, Y_Bottom):
-
