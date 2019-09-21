@@ -13,42 +13,6 @@ doc = rpw.revit.doc  # type: Document
 import math 
 import xlrd 
 GetContentDataFromExcelArr = []
-def GetParameterFromSubElement (ElementInstance,Slope,path_excel,Gird_Ver,Gird_hor,Plate_Column,Move_Left,Move_Right,Move_Up,Move_Bottom,lr_Row,lr_Col):
-    Arr_Point_Type_Length = []
-    ArrTotal = []
-    #Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
-    Getcondination =  Getintersection (Gird_Ver.Curve,Gird_hor.Curve)
-    LIST =  GetCondinationH_nAndH_V (ElementInstance,Slope,Plate_Column,Move_Left,Move_Right)
-    Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
-    H_t = LIST[1]
-    H_n = LIST[0]
-    H_t0 = H_t
-    H_n0 = H_n
-
-    for i in range(1,int(lr_Row)):
-        ArrDataExcell = ArrDataExcell1(lr_Col)
-        ArrDataExcell[0] = i 
-        ArrDataExcell [10] = path_excel
-        DataFromCSV_DATA = DataFromCSV(*ArrDataExcell)
-        arr = DataFromCSV_DATA.GetContentDataFromExcel(path_excel,lr_Col)
-        Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
-        Length_From_Gird =  arr[16]
-        SumLength = DataFromCSV_DATA.checkLengthAngGetSumOfItemRafterFromExcel(path_excel,lr_Row,lr_Col)
-        Length_Rafter = arr[8]
-        if Length_Rafter =="BAL":
-            Length_Rafter1 = ConvertToInternalUnitsmm(Length_From_Gird - float(SumLength))
-        else:
-            Length_Rafter1 = ConvertToInternalUnitsmm(Length_Rafter)
-        Arr_Point_Type_Length=[Point_Level,arr[6],Length_Rafter1,arr[9]]
-        Thinkess_Plate1 = ConvertToInternalUnitsmm(arr[9])
-        GetHt_Hn = GetCoordinateContinnue(arr[6], Length_Rafter1,Thinkess_Plate1,Slope,H_n,H_t)
-        H_n = GetHt_Hn[0]
-        H_t = GetHt_Hn[1]
-        ArrTotal.append(Arr_Point_Type_Length)
-    H_Horizontal = H_n
-    H_Vertical = H_t
-    ArrFistAgm = [H_n0,H_Horizontal]
-    return [ArrTotal,ArrFistAgm]
 class DataFromCSV:
     def  __init__(self, *List):
         self.Count = List[0]
@@ -128,11 +92,8 @@ class DataFromCSV:
         #t.Commit()
         return ColumnCreate
     def PlaceElementRafterFather(self,ColumnCreate,lr_Row,lr_Col):
-        #GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird_Ver,Gird_hor):
-        Point_Levels = GetParameterFromSubElement (ColumnCreate,self.Slope,self.path,self.Gird_Ver,self.Gird_hor,\
-            self.Plate_Column,self.Move_Left,self.Move_Right,self.Move_Up,self.Move_Bottom,lr_Row,lr_Col)
-        for Point_Level,FamilyRafterType,Length_Rafter, Thinkess_Plate in Point_Levels[0]:
-            #Length_Rafter = UnitUtils.ConvertToInternalUnits(float(Length_Rafter), DisplayUnitType.DUT_MILLIMETERS)
+        Point_Levels = self.GetParameterFromSubElement (ColumnCreate,lr_Row,lr_Col)
+        for Point_Level,FamilyRafterType,Length_Rafter, Thinkess_Plate in Point_Levels:
             PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate))
     def DeleteRow(self):
         with open(self.path ,'rb') as inp:
@@ -183,13 +144,37 @@ class DataFromCSV:
                 Sum_Plate = Sum_Plate +  float (row[9])
         csvFile.close()
         return Sum_Length + Sum_Plate
-
+    def GetParameterFromSubElement (self,ElementInstance,lr_Row,lr_Col):
+        Arr_Point_Type_Length = []
+        ArrTotal = []
+        #Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
+        Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve)
+        LIST =  GetCondinationH_nAndH_V (ElementInstance,self.Slope,self.Plate_Column,self.Move_Left,self.Move_Right)
+        Slope = UnitUtils.ConvertToInternalUnits(float(self.Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
+        H_t = LIST[1]
+        H_n = LIST[0]
+        for i in range(1,int(lr_Row)):
+            ArrDataExcell = ArrDataExcell1(lr_Col)
+            ArrDataExcell[0] = i 
+            ArrDataExcell [10] = self.path
+            DataFromCSV_DATA = DataFromCSV(*ArrDataExcell)
+            arr = DataFromCSV_DATA.GetContentDataFromExcel(self.path,lr_Col)
+            Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
+            Length_From_Gird =  arr[16]
+            SumLength = DataFromCSV_DATA.checkLengthAngGetSumOfItemRafterFromExcel(self.path,lr_Row,lr_Col)
+            Length_Rafter = arr[8]
+            if Length_Rafter =="BAL":
+                Length_Rafter1 = ConvertToInternalUnitsmm(Length_From_Gird - float(SumLength))
+            else:
+                Length_Rafter1 = ConvertToInternalUnitsmm(Length_Rafter)
+            Arr_Point_Type_Length=[Point_Level,arr[6],Length_Rafter1,arr[9]]
+            Thinkess_Plate1 = ConvertToInternalUnitsmm(arr[9])
+            GetHt_Hn = GetCoordinateContinnue(arr[6], Length_Rafter1,Thinkess_Plate1,Slope,H_n,H_t)
+            H_n = GetHt_Hn[0]
+            H_t = GetHt_Hn[1]
+            ArrTotal.append(Arr_Point_Type_Length)
+        return ArrTotal
 def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate):
-    """
-    if Rater_Type_Lefted.IsActive == False:
-	    Rater_Type_Lefted.Activate()
-	    doc.Regenerate()
-    """
     FamilySymbol.FamilySymbolAtive(Rater_Type_Lefted)
     Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)
     a= Global(Slope_Type,None,None)
@@ -211,13 +196,16 @@ def CheckTypeLengthBal(Length_Rater):
         Length = float(Length_Rater)
     return Length
 def GetElementByName(Count, NameElement):
+    print ("Count is", Count, "NameElment is", NameElement)
     if any(str(Count) in s for s in [str(1),str(5)]):
         for vt in FilteredElementCollector(doc).OfClass(Family):
             if vt.Name == NameElement:
                vt_Element = vt 
                return vt_Element  
     elif  any(Count in s for s in [str(2),str(6)]):
-        for vt in FilteredElementCollector(doc).OfClass(FamilySymbol).WhereElementIsElementType().ToElements():
+        from Autodesk.Revit.DB  import FamilySymbol
+        for vt in FilteredElementCollector(doc).OfClass(FamilySymbol):
+        #for vt in FilteredElementCollector(doc).OfClass(FamilySymbol).WhereElementIsElementType().ToElements():
             if Element.Name.__get__(vt)  == NameElement:
                 vt_Element = vt
                 return vt_Element  
