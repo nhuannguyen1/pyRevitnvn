@@ -5,6 +5,7 @@ from Autodesk.Revit.DB import Transaction,Element, FilteredElementCollector,\
 import rpw
 import csv
 import clr
+import FamilySymbol
 from ConvertAndCaculation import Global,ConvertToInternalUnits,ConvertToInternalUnitsmm,setparameterfromvalue,GetCondinationH_nAndH_V,GetCoordinateContinnue
 # import the Excel Interop. 
 uidoc = rpw.revit.uidoc  # type: UIDocument
@@ -21,6 +22,9 @@ def GetParameterFromSubElement (ElementInstance,Slope,path_excel,Gird_Ver,Gird_h
     Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
     H_t = LIST[1]
     H_n = LIST[0]
+    H_t0 = H_t
+    H_n0 = H_n
+
     for i in range(1,int(lr_Row)):
         ArrDataExcell = ArrDataExcell1(lr_Col)
         ArrDataExcell[0] = i 
@@ -41,7 +45,10 @@ def GetParameterFromSubElement (ElementInstance,Slope,path_excel,Gird_Ver,Gird_h
         H_n = GetHt_Hn[0]
         H_t = GetHt_Hn[1]
         ArrTotal.append(Arr_Point_Type_Length)
-    return ArrTotal
+    H_Horizontal = H_n
+    H_Vertical = H_t
+    ArrFistAgm = [H_n0,H_Horizontal]
+    return [ArrTotal,ArrFistAgm]
 class DataFromCSV:
     def  __init__(self, *List):
         self.Count = List[0]
@@ -70,7 +77,8 @@ class DataFromCSV:
         ArrDataList = [self.Count,self.FamilyCol, self.FamilyColType ,self.Base_Level_Col,\
             self.Top_Level_Col,self.FamilyRafter,self.FamilyRafterType,self.LevelRafter,\
                 self.Length_Rafter, self.Thinkess_Plate,self.path,self.Gird_Ver,self.Gird_hor,self.Slope,\
-                    self.Gird_Ver_Ged,self.Gird_Hor_Ged, self.Length_From_Gird,self.Plate_Column,self.Move_Left,self.Move_Right, self.Move_Up,self.Move_Bottom]
+                    self.Gird_Ver_Ged,self.Gird_Hor_Ged, self.Length_From_Gird,self.Plate_Column,\
+                        self.Move_Left,self.Move_Right, self.Move_Up,self.Move_Bottom]
         return ArrDataList
     def writefileExcel(self,a,ws_Sheet1):
         from Autodesk.Revit.DB import Element
@@ -103,11 +111,11 @@ class DataFromCSV:
         self.Move_Right  = ConvertToInternalUnitsmm (self.Move_Right)
         LEVEL_ELEV_Base_Level= self.Top_Level_Col.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
         Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve)
-        Base_Leveled_Point =XYZ (Getcondination.X - self.Move_Left + self.Move_Right  ,Getcondination.Y,(LEVEL_ELEV_Base_Level + self.Move_Up - self.Move_Bottom))
-        if self.FamilyColType.IsActive == False:
-	        self.FamilyColType.Activate()
-	        doc.Regenerate()
-        ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,self.Base_Level_Col, Structure.StructuralType.NonStructural)
+        Base_Leveled_Point =XYZ (Getcondination.X - self.Move_Left + self.Move_Right ,\
+            Getcondination.Y,(LEVEL_ELEV_Base_Level + self.Move_Up - self.Move_Bottom))
+        FamilySymbol.FamilySymbolAtive(self.FamilyColType)
+        ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,\
+            self.Base_Level_Col, Structure.StructuralType.NonStructural)
         #LIST = GetParameterFromSubElement(ColumnCreate,self.Slope)
         a= Global(self.Slope,None,None)
         a.globalparameterchange(ColumnCreate)
@@ -121,8 +129,9 @@ class DataFromCSV:
         return ColumnCreate
     def PlaceElementRafterFather(self,ColumnCreate,lr_Row,lr_Col):
         #GetParameterFromSubElement (ElementInstance,Rafter_Type_Lefted,Slope,Length_Rafter,path,Gird_Ver,Gird_hor):
-        Point_Levels = GetParameterFromSubElement (ColumnCreate,self.Slope,self.path,self.Gird_Ver,self.Gird_hor,self.Plate_Column,self.Move_Left,self.Move_Right,self.Move_Up,self.Move_Bottom,lr_Row,lr_Col)
-        for Point_Level,FamilyRafterType,Length_Rafter, Thinkess_Plate in Point_Levels:
+        Point_Levels = GetParameterFromSubElement (ColumnCreate,self.Slope,self.path,self.Gird_Ver,self.Gird_hor,\
+            self.Plate_Column,self.Move_Left,self.Move_Right,self.Move_Up,self.Move_Bottom,lr_Row,lr_Col)
+        for Point_Level,FamilyRafterType,Length_Rafter, Thinkess_Plate in Point_Levels[0]:
             #Length_Rafter = UnitUtils.ConvertToInternalUnits(float(Length_Rafter), DisplayUnitType.DUT_MILLIMETERS)
             PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate))
     def DeleteRow(self):
@@ -145,18 +154,21 @@ class DataFromCSV:
         csvFile.close()
         return sum
     def checkLengthAngGetSumOfItemRafterFromExcel (self,path_excel,lr_Row, lr_col):
-        print ("lr_Row,lr_col isss)",lr_Row,lr_col)
         wb = xlrd.open_workbook(path_excel)
         sheet = wb.sheet_by_index(0)
         sum = 0 
         for i in range (1,lr_Row):
-            ElementSum = sheet.cell_value(i,8)
-            if ElementSum == 'BAL':
-                continue
+            LengthRafter = sheet.cell_value(i,8)
+            PlateThinessRaffter = sheet.cell_value(i,9)
+            if LengthRafter == 'BAL':
+                sum = sum   + float (PlateThinessRaffter)*2
             else:
-                sum = sum + float (ElementSum)
+                sum = sum + float (LengthRafter) + float (PlateThinessRaffter)*2
         return sum
-
+    def LengthToTotalInlineFromGird (self):
+        Slope = UnitUtils.ConvertToInternalUnits(float(self.Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
+        LineInline = (self.Length_From_Gird)/ (math.cos(Slope))
+        return LineInline
     def GetSumLengthAndPlate(self):
         with open(self.path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
@@ -173,9 +185,12 @@ class DataFromCSV:
         return Sum_Length + Sum_Plate
 
 def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate):
+    """
     if Rater_Type_Lefted.IsActive == False:
 	    Rater_Type_Lefted.Activate()
 	    doc.Regenerate()
+    """
+    FamilySymbol.FamilySymbolAtive(Rater_Type_Lefted)
     Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)
     a= Global(Slope_Type,None,None)
     a.globalparameterchange(Elementinstance)
