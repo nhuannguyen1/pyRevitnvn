@@ -8,6 +8,7 @@ GlobalParametersManager,DoubleParameterValue,FamilyInstance,ElementId
 from Autodesk.Revit.UI.Selection import ObjectType
 from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
+import os.path
 import clr
 import rpw
 from GlobalParameter import setparameterfromvalue,DataFromCSV,CheckTypeLengthBal,CheckSelectedValueForFamily,ArrDataExcell1
@@ -19,8 +20,8 @@ import csv
 from System import Array
 import xlsxwriter 
 import excel
-path_excel = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest8.xlsx"
-path_excel1 = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest9.xlsx"
+path_excel = r"D:\ExcelTest8.xlsx"
+path_excel1 =r"D:\ExcelTest8_Next.xlsx"
 import xlrd 
 #Open workbook and Get data from Sheet 
 ex = excel.initialise()
@@ -108,12 +109,7 @@ class WPF_PYTHON(WPFWindow):
         return ArraySelectedItem
     def Ok_Next(self, sender, e):
         Count_Continue = int(self.InputNumberLeft.Text)
-        #DataFromdem = DataFromCSV(None,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
-        #count_dem = DataFromdem.count_csv()
         count_dem = excel.FindLastRowOFData(sheet)
-        #print ("Count_Continue is", Count_Continue)
-        #print ("count_dem is",count_dem )
-        #print ("count_dem is and Continue  ",count_dem , Count_Continue)'
         ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
         # Only Test
         if count_dem == 0 or Count_Continue > (count_dem-1):
@@ -139,28 +135,30 @@ class WPF_PYTHON(WPFWindow):
             DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
             DataFromCSV_DATA.InputDataChangeToCSV_Excel(sheet,Return_Row1)
         self.InputNumberLeft.Text = str (int(Count_Continue + 1))
-        excel.release(ex)
-        workbook.Save()
     def Ok_Prevous(self, sender, e):
+            sheet = excel.SaveAsFileExcelReturnSheet(ex,path_excel1)
+            # Only Test
             count_dem =excel.FindLastRowOFData(sheet)
             Count_Continue = int(self.InputNumberLeft.Text)
             ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
             DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
             Return_Row1 =DataFromCSV_2.Return_Row_Excel()
             #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
-            ArraySelectedItem[0] = int(Count_Continue) - 1
+            ArraySelectedItem[0] = ArraySelectedItem[0] - 1
             DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
-            arr = DataFromCSV_DATA.GetContentDataFromExcel1(lr_Col)
-            self.GetValueOfSelectedValue(arr)
-            #print ("count_dem is",count_dem)
-            #print ("Count_Continue is",Count_Continue)
+            #arr = DataFromCSV_DATA.GetContentDataFromExcel1(lr_Col)
+            #self.GetValueOfSelectedValue(arr)
+            print ("count_dem,Count_Continue",count_dem,Count_Continue)
             DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
-            if count_dem == Count_Continue - 1:
+            if count_dem == Count_Continue :
                 self.InputNumberLeft.Text = str (int(Count_Continue - 1))
             else:
+                arr = DataFromCSV_DATA.GetContentDataFromExcel1(lr_Col)
+                self.GetValueOfSelectedValue(arr)
                 DataFromCSV_DATA.InputDataChangeToCSV_Excel(sheet,Return_Row1)
                 self.InputNumberLeft.Text = str (int(Count_Continue - 1))
     def Click_To_Start(self, sender, e):
+            sheet = excel.SaveAsFileExcelReturnSheet(ex,path_excel)
             ArrDataExcell [0] = 1
             ArrDataExcell [10] = path_excel
             DataFromdem = DataFromCSV(*ArrDataExcell)

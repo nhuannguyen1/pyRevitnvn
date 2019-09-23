@@ -76,9 +76,7 @@ class DataFromCSV:
             ArrData = GetElementByName(str(i),Element)
             #GetContentDataFromExcelArr.append(ArrData) 
             GetContentDataFromExcelArr1.append(ArrData)
-        print ("GetContentDataFromExcelArr1 is",GetContentDataFromExcelArr1)
         return GetContentDataFromExcelArr1
-    
     def Return_Row_Excel (self):
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]
         return row_Str

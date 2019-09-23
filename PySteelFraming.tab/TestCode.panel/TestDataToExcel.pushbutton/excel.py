@@ -4,7 +4,7 @@ clr.AddReferenceByName('Microsoft.Office.Interop.Excel, Version=11.0.0.0, Cultur
 from Microsoft.Office.Interop import Excel
 from Microsoft.Office.Interop.Excel import XlListObjectSourceType, Worksheet, Range, XlYesNoGuess
 from System.Runtime.InteropServices import Marshal
-
+import os.path
 class ExcelApp:
     def __init__(self, app=None, workbook=None):
         self.app = app
@@ -66,3 +66,16 @@ def delete_multiple_rows(worksheet):
     for k in range (3,18):
         for i in range(1,19):
             worksheet.Cells(k,i).Value2 = ""
+def SaveAsFileExcelReturnSheet(ex,path):
+    workbook = ex.ActiveWorkbook
+    if os.path.isfile(path):
+        try:
+            os.remove(path)
+            workbook.SaveAs(path)
+            workbook.Close(False)
+            workbook = ex.Workbooks.Open(path)
+            sheet = workbook.Sheets("Sheet1")
+        except:
+            sheet = workbook.Sheets("Sheet1")
+    workbook.Save()
+    return sheet
