@@ -130,7 +130,7 @@
                     Width="40" Height="22" Margin="0,0,0,0" Grid.ColumnSpan="1"/>
             <Button x:Name="Click_Change_Left_Pre" Click="Ok_Next" Content="Next" HorizontalContentAlignment="Center" Grid.Column="6" Grid.Row="1" Width="40" Height="22" 
                     VerticalContentAlignment="Center" Margin="0,0,0,0" Grid.ColumnSpan="1"/>
-            <TextBlock x:Name="InputNumberLeft" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Column="7" Text="0" Grid.Row="1" Width="40" Height="22" TextAlignment="Center" 
+            <TextBlock x:Name="InputNumberLeft" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Column="7" Text="1" Grid.Row="1" Width="40" Height="22" TextAlignment="Center" 
                        TextOptions.TextFormattingMode="Display" Cursor="None" TextWrapping="WrapWithOverflow" 
                        OpacityMask="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}"
                        Background="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" IsManipulationEnabled="True" Grid.ColumnSpan="1"/>

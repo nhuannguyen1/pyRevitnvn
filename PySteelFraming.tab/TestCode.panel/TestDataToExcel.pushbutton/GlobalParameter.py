@@ -12,7 +12,7 @@ uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 import math 
 import xlrd 
-GetContentDataFromExcelArr = []
+import excel
 class DataFromCSV:
     def  __init__(self, *List):
         self.Count = List[0]
@@ -51,15 +51,34 @@ class DataFromCSV:
         for item, Element in enumerate(row_Str,1):
             ws_Sheet1.Cells(a,item).Value2 = str(Element)
         #workbook.Save()
-    def GetContentDataFromExcel(self,path_excel,Count):
-        wb = xlrd.open_workbook(path_excel)
+    def GetContentDataFromExcel(self,Count):
+        print ("self.Count is",self.Count)
+        GetContentDataFromExcelArr = []
+        wb = xlrd.open_workbook(self.path)
         sheet = wb.sheet_by_index(0)
         for i in range (Count):
-            #Element = sheet.Cells(int(self.Count),i).Value2
             Element = sheet.cell_value(int(self.Count), i)
             ArrData = GetElementByName(str(i),Element)
             GetContentDataFromExcelArr.append(ArrData) 
         return GetContentDataFromExcelArr
+    def GetContentDataFromExcel1(self,Count):
+        print ("self.Count in GetContentDataFromExcel1 ",self.Count)
+        GetContentDataFromExcelArr1 = []
+        wb = xlrd.open_workbook(self.path)
+        sheet = wb.sheet_by_index(0)
+        values = [c.value for c in sheet.col(0)]
+        print (values)
+        for i in range (Count):
+            #Element = sheet.Cells(int(self.Count),i).Value2
+            Element = sheet.cell_value(int(self.Count), i)
+            #Element = sheet.cell_value(4, i)
+            print ("element is ",Element)
+            ArrData = GetElementByName(str(i),Element)
+            #GetContentDataFromExcelArr.append(ArrData) 
+            GetContentDataFromExcelArr1.append(ArrData)
+        print ("GetContentDataFromExcelArr1 is",GetContentDataFromExcelArr1)
+        return GetContentDataFromExcelArr1
+    
     def Return_Row_Excel (self):
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]
         return row_Str
@@ -68,6 +87,7 @@ class DataFromCSV:
         for item,Element in enumerate(row_input,1):
             ws_Sheet1.Cells(a,item).Value2 = str(Element)
     def PlaceElement (self):
+        print ("self.Length_Rafter is",self.Length_Rafter)
         self.Length_Rafter = (UnitUtils.ConvertToInternalUnits(float(self.Length_Rafter), DisplayUnitType.DUT_MILLIMETERS))
         self.Move_Up  = ConvertToInternalUnitsmm (self.Move_Up)
         self.Move_Bottom  = ConvertToInternalUnitsmm (self.Move_Bottom)
@@ -95,25 +115,6 @@ class DataFromCSV:
         Point_Levels = self.GetParameterFromSubElement (ColumnCreate,lr_Row,lr_Col)
         for Point_Level,FamilyRafterType,Length_Rafter, Thinkess_Plate in Point_Levels:
             PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate))
-    def DeleteRow(self):
-        with open(self.path ,'rb') as inp:
-            for row in csv.reader(inp):
-                if int(row[0]) == self.Count:
-                    ClearRow = [row]
-        with open(self.path, 'wb') as csvfile:
-            csv_writer = csv.writer(csvfile)
-            csv_writer.writerows(ClearRow)
-    def checkLengthOfItemRafter (self):
-        with open(self.path) as csvFile:
-            readcsv =csv.reader(csvFile, delimiter=',')
-            sum = 0 
-            for row in readcsv:
-                if row[8] == "BAL":
-                    continue
-                else:
-                    sum = sum + float(row[8]) 
-        csvFile.close()
-        return sum
     def checkLengthAngGetSumOfItemRafterFromExcel (self,path_excel,lr_Row, lr_col):
         wb = xlrd.open_workbook(path_excel)
         sheet = wb.sheet_by_index(0)
@@ -122,13 +123,13 @@ class DataFromCSV:
             LengthRafter = sheet.cell_value(i,8)
             PlateThinessRaffter = sheet.cell_value(i,9)
             if LengthRafter == 'BAL':
-                sum = sum   + float (PlateThinessRaffter)*2
+                sum = sum   + float (PlateThinessRaffter) * 2
             else:
-                sum = sum + float (LengthRafter) + float (PlateThinessRaffter)*2
+                sum = sum + float(LengthRafter) + float(PlateThinessRaffter) * 2
         return sum
-    def LengthToTotalInlineFromGird (self):
+    def LengthToTotalInlineFromGird (self,Length_From_Gird):
         Slope = UnitUtils.ConvertToInternalUnits(float(self.Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
-        LineInline = (self.Length_From_Gird)/ (math.cos(Slope))
+        LineInline = (Length_From_Gird)/ (math.cos(Slope))
         return LineInline
     def GetSumLengthAndPlate(self):
         with open(self.path) as csvFile:
@@ -153,23 +154,33 @@ class DataFromCSV:
         Slope = UnitUtils.ConvertToInternalUnits(float(self.Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
         H_t = LIST[1]
         H_n = LIST[0]
+        Length_From_Gird_T = ConvertToInternalUnitsmm ( float (self.Length_From_Gird)) - H_n
+        Length_From_Gird = self.LengthToTotalInlineFromGird(Length_From_Gird_T)
+        print ("Length_From_Gird is",Length_From_Gird)
         for i in range(1,int(lr_Row)):
             ArrDataExcell = ArrDataExcell1(lr_Col)
             ArrDataExcell[0] = i 
             ArrDataExcell [10] = self.path
+            #print (i)
+            #DataFromCSV_DATA = DataFromCSV(int(i),None,None,None,None,None,None,None,None,None,self.path,None,None,None,None,None,None,None,None,None,None,None)
             DataFromCSV_DATA = DataFromCSV(*ArrDataExcell)
-            arr = DataFromCSV_DATA.GetContentDataFromExcel(self.path,lr_Col)
+            #(int(0),None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
+            arr = DataFromCSV_DATA.GetContentDataFromExcel(lr_Col)
+            #print ("test count ",arr[0])
             Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
-            Length_From_Gird =  arr[16]
+            #Length_From_Gird =  arr[16]
             SumLength = DataFromCSV_DATA.checkLengthAngGetSumOfItemRafterFromExcel(self.path,lr_Row,lr_Col)
+            print ("SumLength is", SumLength)
             Length_Rafter = arr[8]
+            print ("Length_Rafter",Length_Rafter)
             if Length_Rafter =="BAL":
-                Length_Rafter1 = ConvertToInternalUnitsmm(Length_From_Gird - float(SumLength))
+                Length_Rafter = (Length_From_Gird - ConvertToInternalUnitsmm(float(SumLength)))
+                print ("Length_Rafter1",Length_Rafter)
             else:
-                Length_Rafter1 = ConvertToInternalUnitsmm(Length_Rafter)
-            Arr_Point_Type_Length=[Point_Level,arr[6],Length_Rafter1,arr[9]]
+                Length_Rafter = ConvertToInternalUnitsmm(Length_Rafter)
+            Arr_Point_Type_Length=[Point_Level,arr[6],Length_Rafter,arr[9]]
             Thinkess_Plate1 = ConvertToInternalUnitsmm(arr[9])
-            GetHt_Hn = GetCoordinateContinnue(arr[6], Length_Rafter1,Thinkess_Plate1,Slope,H_n,H_t)
+            GetHt_Hn = GetCoordinateContinnue(arr[6], Length_Rafter,Thinkess_Plate1,Slope,H_n,H_t)
             H_n = GetHt_Hn[0]
             H_t = GetHt_Hn[1]
             ArrTotal.append(Arr_Point_Type_Length)
@@ -196,7 +207,6 @@ def CheckTypeLengthBal(Length_Rater):
         Length = float(Length_Rater)
     return Length
 def GetElementByName(Count, NameElement):
-    print ("Count is", Count, "NameElment is", NameElement)
     if any(str(Count) in s for s in [str(1),str(5)]):
         for vt in FilteredElementCollector(doc).OfClass(Family):
             if vt.Name == NameElement:

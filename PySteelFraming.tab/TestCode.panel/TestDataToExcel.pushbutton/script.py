@@ -20,6 +20,7 @@ from System import Array
 import xlsxwriter 
 import excel
 path_excel = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest8.xlsx"
+path_excel1 = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\ExcelTest9.xlsx"
 import xlrd 
 #Open workbook and Get data from Sheet 
 ex = excel.initialise()
@@ -45,11 +46,10 @@ class WPF_PYTHON(WPFWindow):
         ArrDataExcell [10] = path_excel
         DataFromdem = DataFromCSV(*ArrDataExcell)
         #DataFromdem = DataFromCSV(1,None,None,None,None,None,None,None,None,None,path_excel,None,None,None,None,None,None,None)
-        GetDataFirst = DataFromdem.GetContentDataFromExcel(path_excel,lr_Col)
+        GetDataFirst = DataFromdem.GetContentDataFromExcel(lr_Col)
         self.GetValueOfSelectedValue(GetDataFirst)
     def GetValueOfSelectedValue(self,GetDataFirst):
         self.Column_Left.SelectedValue = CheckSelectedValueForFamily(GetDataFirst[1])
-        print (CheckSelectedValueForFamily(GetDataFirst[2]))
         self.Column_Type.SelectedValue = CheckSelectedValueForFamily(GetDataFirst[2])
         self.Base_Level.SelectedValue  = CheckSelectedValueForFamily(GetDataFirst[3])
         self.Top_Level.SelectedValue = CheckSelectedValueForFamily(GetDataFirst[4])
@@ -111,10 +111,13 @@ class WPF_PYTHON(WPFWindow):
         #DataFromdem = DataFromCSV(None,None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
         #count_dem = DataFromdem.count_csv()
         count_dem = excel.FindLastRowOFData(sheet)
+        #print ("Count_Continue is", Count_Continue)
+        #print ("count_dem is",count_dem )
         #print ("count_dem is and Continue  ",count_dem , Count_Continue)'
         ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
         # Only Test
         if count_dem == 0 or Count_Continue > (count_dem-1):
+
             #print ("Rafter_Family_Lefted dem 0" ,Rafter_Family_Lefted)  
             DataFromCSV_1 = DataFromCSV(*ArraySelectedItem)
             DataFromCSV_1.writefileExcel(Count_Continue,sheet)
@@ -124,16 +127,20 @@ class WPF_PYTHON(WPFWindow):
             Return_Row1 =DataFromCSV_2.Return_Row_Excel()
             #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
             if (int(Count_Continue) == int(int(count_dem) - 1)):
+                ArrDataExcell [0] = Count_Continue
+                ArrDataExcell [10] = path_excel
                 DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
-                arr = DataFromCSV_DATA.GetContentDataFromExcel(path_excel,lr_Col)
+                arr = DataFromCSV_DATA.GetContentDataFromExcel(lr_Col)
             else:
                 ArraySelectedItem[0] = int(ArraySelectedItem[0])  + 1
                 DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
-                arr = DataFromCSV_DATA.GetContentDataFromExcel(path_excel,lr_Col)
+                arr = DataFromCSV_DATA.GetContentDataFromExcel(lr_Col)
             self.GetValueOfSelectedValue(arr)
             DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
             DataFromCSV_DATA.InputDataChangeToCSV_Excel(sheet,Return_Row1)
         self.InputNumberLeft.Text = str (int(Count_Continue + 1))
+        excel.release(ex)
+        workbook.Save()
     def Ok_Prevous(self, sender, e):
             count_dem =excel.FindLastRowOFData(sheet)
             Count_Continue = int(self.InputNumberLeft.Text)
@@ -141,10 +148,12 @@ class WPF_PYTHON(WPFWindow):
             DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
             Return_Row1 =DataFromCSV_2.Return_Row_Excel()
             #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
-            ArraySelectedItem[0] = int(ArraySelectedItem[0])  - 1
+            ArraySelectedItem[0] = int(Count_Continue) - 1
             DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
-            arr = DataFromCSV_DATA.GetContentDataFromExcel(path_excel,lr_Col)
+            arr = DataFromCSV_DATA.GetContentDataFromExcel1(lr_Col)
             self.GetValueOfSelectedValue(arr)
+            #print ("count_dem is",count_dem)
+            #print ("Count_Continue is",Count_Continue)
             DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
             if count_dem == Count_Continue - 1:
                 self.InputNumberLeft.Text = str (int(Count_Continue - 1))
@@ -152,10 +161,10 @@ class WPF_PYTHON(WPFWindow):
                 DataFromCSV_DATA.InputDataChangeToCSV_Excel(sheet,Return_Row1)
                 self.InputNumberLeft.Text = str (int(Count_Continue - 1))
     def Click_To_Start(self, sender, e):
-            ArrDataExcell [0] = 0
+            ArrDataExcell [0] = 1
             ArrDataExcell [10] = path_excel
             DataFromdem = DataFromCSV(*ArrDataExcell)
-            arr = DataFromdem.GetContentDataFromExcel(path_excel,lr_Col)
+            arr = DataFromdem.GetContentDataFromExcel(lr_Col)
             arr[0] = 0 
             DataFromdem = DataFromCSV(*arr)
             t = Transaction (doc,"Place Element")
@@ -164,4 +173,5 @@ class WPF_PYTHON(WPFWindow):
             lr_Row = excel.FindLastRowOFData(sheet)
             DataFromdem.PlaceElementRafterFather(CreateColumn,lr_Row + 1,lr_Col)
             t.Commit()
+            self.Close()
 WPF_PYTHON = WPF_PYTHON('WPF_PYTHON.xaml').ShowDialog()
