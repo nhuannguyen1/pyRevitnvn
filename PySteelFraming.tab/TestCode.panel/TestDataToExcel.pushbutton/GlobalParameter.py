@@ -47,12 +47,11 @@ class DataFromCSV:
     def writefileExcel(self,a,ws_Sheet1):
         from Autodesk.Revit.DB import Element
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]    
-        a = a + 2
+        a = a + 1
         for item, Element in enumerate(row_Str,1):
             ws_Sheet1.Cells(a,item).Value2 = str(Element)
         #workbook.Save()
     def GetContentDataFromExcel(self,Count):
-        print ("self.Count is",self.Count)
         GetContentDataFromExcelArr = []
         wb = xlrd.open_workbook(self.path)
         sheet = wb.sheet_by_index(0)
@@ -61,31 +60,19 @@ class DataFromCSV:
             ArrData = GetElementByName(str(i),Element)
             GetContentDataFromExcelArr.append(ArrData) 
         return GetContentDataFromExcelArr
-    def GetContentDataFromExcel1(self,Count):
-        print ("self.Count in GetContentDataFromExcel1 ",self.Count)
-        GetContentDataFromExcelArr1 = []
-        wb = xlrd.open_workbook(self.path)
-        sheet = wb.sheet_by_index(0)
-        values = [c.value for c in sheet.col(0)]
-        print (values)
-        for i in range (Count):
-            #Element = sheet.Cells(int(self.Count),i).Value2
-            Element = sheet.cell_value(int(self.Count), i)
-            #Element = sheet.cell_value(4, i)
-            print ("element is ",Element)
-            ArrData = GetElementByName(str(i),Element)
-            #GetContentDataFromExcelArr.append(ArrData) 
-            GetContentDataFromExcelArr1.append(ArrData)
-        return GetContentDataFromExcelArr1
     def Return_Row_Excel (self):
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]
         return row_Str
     def InputDataChangeToCSV_Excel(self,ws_Sheet1,row_input):
+        a= int(self.Count) + 1
+        for item,Element in enumerate(row_input,1):
+            ws_Sheet1.Cells(a,item).Value2 = str(Element)
+    
+    def InputDataChangeToCSV_Excel_Text(self,ws_Sheet1,row_input):
         a= int(self.Count) + 2
         for item,Element in enumerate(row_input,1):
             ws_Sheet1.Cells(a,item).Value2 = str(Element)
     def PlaceElement (self):
-        print ("self.Length_Rafter is",self.Length_Rafter)
         self.Length_Rafter = (UnitUtils.ConvertToInternalUnits(float(self.Length_Rafter), DisplayUnitType.DUT_MILLIMETERS))
         self.Move_Up  = ConvertToInternalUnitsmm (self.Move_Up)
         self.Move_Bottom  = ConvertToInternalUnitsmm (self.Move_Bottom)
@@ -154,7 +141,6 @@ class DataFromCSV:
         H_n = LIST[0]
         Length_From_Gird_T = ConvertToInternalUnitsmm ( float (self.Length_From_Gird)) - H_n
         Length_From_Gird = self.LengthToTotalInlineFromGird(Length_From_Gird_T)
-        print ("Length_From_Gird is",Length_From_Gird)
         for i in range(1,int(lr_Row)):
             ArrDataExcell = ArrDataExcell1(lr_Col)
             ArrDataExcell[0] = i 
@@ -168,12 +154,9 @@ class DataFromCSV:
             Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
             #Length_From_Gird =  arr[16]
             SumLength = DataFromCSV_DATA.checkLengthAngGetSumOfItemRafterFromExcel(self.path,lr_Row,lr_Col)
-            print ("SumLength is", SumLength)
             Length_Rafter = arr[8]
-            print ("Length_Rafter",Length_Rafter)
             if Length_Rafter =="BAL":
                 Length_Rafter = (Length_From_Gird - ConvertToInternalUnitsmm(float(SumLength)))
-                print ("Length_Rafter1",Length_Rafter)
             else:
                 Length_Rafter = ConvertToInternalUnitsmm(Length_Rafter)
             Arr_Point_Type_Length=[Point_Level,arr[6],Length_Rafter,arr[9]]

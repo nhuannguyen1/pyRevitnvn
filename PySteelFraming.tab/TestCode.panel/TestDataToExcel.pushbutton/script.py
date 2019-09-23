@@ -108,62 +108,70 @@ class WPF_PYTHON(WPFWindow):
                         float(self.Move_Left.Text),float(self.Move_Right.Text),float(self.Move_Up.Text),float(self.Move_Bottom.Text)]
         return ArraySelectedItem
     def Ok_Next(self, sender, e):
-        Count_Continue = int(self.InputNumberLeft.Text)
-        count_dem = excel.FindLastRowOFData(sheet)
-        ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
-        # Only Test
-        if count_dem == 0 or Count_Continue > (count_dem-1):
-
-            #print ("Rafter_Family_Lefted dem 0" ,Rafter_Family_Lefted)  
-            DataFromCSV_1 = DataFromCSV(*ArraySelectedItem)
-            DataFromCSV_1.writefileExcel(Count_Continue,sheet)
-        else:
-            #print ("Rafter_Family_Lefted dem 1" ,Rafter_Family_Lefted)
-            DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
-            Return_Row1 =DataFromCSV_2.Return_Row_Excel()
-            #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
-            if (int(Count_Continue) == int(int(count_dem) - 1)):
-                ArrDataExcell [0] = Count_Continue
-                ArrDataExcell [10] = path_excel
-                DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
-                arr = DataFromCSV_DATA.GetContentDataFromExcel(lr_Col)
+        #try:
+            Count_Continue = int(self.InputNumberLeft.Text)
+            count_dem = excel.FindLastRowOFData(sheet)
+            ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
+            # Only Test
+            if count_dem == 0 or Count_Continue > (count_dem-1):
+                ArraySelectedItem [0] = Count_Continue
+                #print ("Rafter_Family_Lefted dem 0" ,Rafter_Family_Lefted)  
+                DataFromCSV_1 = DataFromCSV(*ArraySelectedItem)
+                DataFromCSV_1.writefileExcel(Count_Continue,sheet)
             else:
-                ArraySelectedItem[0] = int(ArraySelectedItem[0])  + 1
+                #print ("Rafter_Family_Lefted dem 1" ,Rafter_Family_Lefted)
+                DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
+                Return_Row1 =DataFromCSV_2.Return_Row_Excel()
+                #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
+                if (int(Count_Continue) == int(int(count_dem) - 1)):
+                    ArrDataExcell [0] = Count_Continue
+                    ArrDataExcell [10] = path_excel
+                    DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
+                    arr = DataFromCSV_DATA.GetContentDataFromExcel(lr_Col)
+                else:
+                    ArraySelectedItem[0] = int(ArraySelectedItem[0])  + 1
+                    DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
+                    arr = DataFromCSV_DATA.GetContentDataFromExcel(lr_Col)
+                self.GetValueOfSelectedValue(arr)
                 DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
-                arr = DataFromCSV_DATA.GetContentDataFromExcel(lr_Col)
-            self.GetValueOfSelectedValue(arr)
-            DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
-            DataFromCSV_DATA.InputDataChangeToCSV_Excel(sheet,Return_Row1)
-        self.InputNumberLeft.Text = str (int(Count_Continue + 1))
+                DataFromCSV_DATA.InputDataChangeToCSV_Excel(sheet,Return_Row1)
+            self.InputNumberLeft.Text = str (int(Count_Continue + 1))
+        #except:
+            #print ("Check Ok_Next")
     def Ok_Prevous(self, sender, e):
+        try:
             sheet = excel.SaveAsFileExcelReturnSheet(ex,path_excel1)
             # Only Test
             count_dem =excel.FindLastRowOFData(sheet)
+            
             Count_Continue = int(self.InputNumberLeft.Text)
             ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
             DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
             Return_Row1 =DataFromCSV_2.Return_Row_Excel()
             #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
             ArraySelectedItem[0] = ArraySelectedItem[0] - 1
+            ArraySelectedItem[10] = path_excel1
+            print ("count_dem is",count_dem,"Count_Continue is",Count_Continue)
             DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
             #arr = DataFromCSV_DATA.GetContentDataFromExcel1(lr_Col)
             #self.GetValueOfSelectedValue(arr)
-            print ("count_dem,Count_Continue",count_dem,Count_Continue)
             DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
-            if count_dem == Count_Continue :
+            if count_dem == Count_Continue - 1 :
                 self.InputNumberLeft.Text = str (int(Count_Continue - 1))
             else:
-                arr = DataFromCSV_DATA.GetContentDataFromExcel1(lr_Col)
+                arr = DataFromCSV_DATA.GetContentDataFromExcel(lr_Col)
                 self.GetValueOfSelectedValue(arr)
-                DataFromCSV_DATA.InputDataChangeToCSV_Excel(sheet,Return_Row1)
+                DataFromCSV_DATA.InputDataChangeToCSV_Excel_Text(sheet,Return_Row1)
                 self.InputNumberLeft.Text = str (int(Count_Continue - 1))
+        except:
+                print ("Check OK_Prevous")
     def Click_To_Start(self, sender, e):
             sheet = excel.SaveAsFileExcelReturnSheet(ex,path_excel)
             ArrDataExcell [0] = 1
-            ArrDataExcell [10] = path_excel
+            ArrDataExcell [10] = path_excel1
             DataFromdem = DataFromCSV(*ArrDataExcell)
             arr = DataFromdem.GetContentDataFromExcel(lr_Col)
-            arr[0] = 0 
+            arr[0] = 1 
             DataFromdem = DataFromCSV(*arr)
             t = Transaction (doc,"Place Element")
             t.Start()
