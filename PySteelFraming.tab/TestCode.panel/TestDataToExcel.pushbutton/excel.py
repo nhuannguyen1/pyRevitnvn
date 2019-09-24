@@ -73,9 +73,15 @@ def SaveAsFileExcelReturnSheet(ex,path):
             os.remove(path)
             workbook.SaveAs(path)
             workbook.Close(False)
+            release(workbook)	
             workbook = ex.Workbooks.Open(path)
             sheet = workbook.Sheets("Sheet1")
-        except:
+        except :
             sheet = workbook.Sheets("Sheet1")
     #workbook.Save()
+    else:
+        workbook.SaveAs(path)
+        workbook.Close(False)
+        workbook = ex.Workbooks.Open(path)
+        sheet = workbook.Sheets("Sheet1")
     return sheet

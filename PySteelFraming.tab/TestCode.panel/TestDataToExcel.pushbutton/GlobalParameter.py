@@ -25,7 +25,7 @@ class DataFromCSV:
         self.LevelRafter = List[7]
         self.Length_Rafter = List[8]
         self.Thinkess_Plate = List[9]
-        self.path = List[10]
+        self.path = List[10] 
         self.Gird_Ver = List[11]
         self.Gird_hor = List[12]
         self.Slope = List[13]
@@ -50,6 +50,18 @@ class DataFromCSV:
         a = a + 1
         for item, Element in enumerate(row_Str,1):
             ws_Sheet1.Cells(a,item).Value2 = str(Element)
+
+    def GetContentDataFromExcel_Test(self,Count):
+        GetContentDataFromExcelArr = []
+        self.Count = int(self.Count)
+        wb = xlrd.open_workbook(self.path)
+        sheet = wb.sheet_by_index(0)
+        for i in range (Count):
+            Element = sheet.cell_value(int(self.Count), i)
+            ArrData = GetElementByName(str(i),Element)
+            GetContentDataFromExcelArr.append(ArrData) 
+        return GetContentDataFromExcelArr
+
         #workbook.Save()
     def GetContentDataFromExcel(self,Count):
         GetContentDataFromExcelArr = []
@@ -60,16 +72,19 @@ class DataFromCSV:
             ArrData = GetElementByName(str(i),Element)
             GetContentDataFromExcelArr.append(ArrData) 
         return GetContentDataFromExcelArr
+
+
+
     def Return_Row_Excel (self):
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]
         return row_Str
     def InputDataChangeToCSV_Excel(self,ws_Sheet1,row_input):
-        a= int(self.Count) + 1
+        a= int(self.Count)
         for item,Element in enumerate(row_input,1):
             ws_Sheet1.Cells(a,item).Value2 = str(Element)
     
     def InputDataChangeToCSV_Excel_Text(self,ws_Sheet1,row_input):
-        a= int(self.Count) + 2
+        a = int(self.Count) + 2
         for item,Element in enumerate(row_input,1):
             ws_Sheet1.Cells(a,item).Value2 = str(Element)
     def PlaceElement (self):

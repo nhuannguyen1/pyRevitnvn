@@ -112,6 +112,7 @@ class WPF_PYTHON(WPFWindow):
             sheet = excel.SaveAsFileExcelReturnSheet(ex,path_excel)
             Count_Continue = int(self.InputNumberLeft.Text)
             count_dem = excel.FindLastRowOFData(sheet)
+            print ("Count_Continue,count_dem",Count_Continue,count_dem)
             ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
             # Only Test
             if count_dem == 0 or Count_Continue > (count_dem-1):
@@ -124,15 +125,18 @@ class WPF_PYTHON(WPFWindow):
                 DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
                 Return_Row1 =DataFromCSV_2.Return_Row_Excel()
                 #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
-                if (int(Count_Continue) == int(int(count_dem) - 1)):
+                #if (int(Count_Continue) == int(int(count_dem) - 1)):
+                if int(Count_Continue) == 100:
                     ArrDataExcell [0] = Count_Continue
                     ArrDataExcell [10] = path_excel
                     DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
                     arr = DataFromCSV_DATA.GetContentDataFromExcel(lr_Col)
                 else:
-                    ArraySelectedItem[0] = int(ArraySelectedItem[0])  + 1
+                    ArraySelectedItem[0] = int(Count_Continue) + 1
+                    print ("ArraySelectedItem is",ArraySelectedItem[0])
+                    #ArraySelectedItem[0] = int(ArraySelectedItem[0])  + 1
                     DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
-                    arr = DataFromCSV_DATA.GetContentDataFromExcel(lr_Col)
+                    arr = DataFromCSV_DATA.GetContentDataFromExcel_Test(lr_Col)
                 self.GetValueOfSelectedValue(arr)
                 DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
                 DataFromCSV_DATA.InputDataChangeToCSV_Excel(sheet,Return_Row1)
@@ -164,7 +168,7 @@ class WPF_PYTHON(WPFWindow):
                 self.GetValueOfSelectedValue(arr)
                 DataFromCSV_DATA.InputDataChangeToCSV_Excel_Text(sheet,Return_Row1)
                 self.InputNumberLeft.Text = str (int(Count_Continue - 1))
-        except:
+        except AttributeError:
                 print ("Check OK_Prevous")
     def Click_To_Start(self, sender, e):
             sheet = excel.SaveAsFileExcelReturnSheet(ex,path_excel)
