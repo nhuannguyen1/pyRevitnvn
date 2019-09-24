@@ -109,6 +109,7 @@ class WPF_PYTHON(WPFWindow):
         return ArraySelectedItem
     def Ok_Next(self, sender, e):
         #try:
+            sheet = excel.SaveAsFileExcelReturnSheet(ex,path_excel)
             Count_Continue = int(self.InputNumberLeft.Text)
             count_dem = excel.FindLastRowOFData(sheet)
             ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
