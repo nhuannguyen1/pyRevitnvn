@@ -12,7 +12,33 @@ uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 import math 
 import xlrd 
-import excel
+import excel 
+from excel import DataExcel
+
+path_excel_Template = r"D:\ExcelTest8.xlsx"
+path_excel_Prevous =r"D:\ExcelTest8_Prevous.xlsx"
+path_excel_Export =r"D:\ExcelTest8_Export.xlsx"
+
+ex = excel.initialise()
+ex.Visible = True
+workbook = ex.Workbooks.Open(path_excel_Template)
+DataExcel1 = DataExcel(workbook, "Sheet1")
+
+
+
+def SaveAsFileExcelReturnSheet_ReturnPathNext():
+    DataExcel1.SaveAsFileExcelReturnSheet(path_excel_Export)
+    return path_excel_Export
+
+def SaveAsFileExcelReturnSheet_ReturnPathPrevous():
+    DataExcel1.SaveAsFileExcelReturnSheet(path_excel_Prevous)
+    return path_excel_Prevous
+def ArrFistForDefautValue():
+    Arr = DataExcel1.ArrFistForDefautValue()
+    return Arr
+def FindLastRowOFData():
+    L_Row = DataExcel1.FindLastRowOFData()
+    return L_Row
 class DataFromCSV:
     def  __init__(self, *List):
         self.Count = List[0]
@@ -44,14 +70,18 @@ class DataFromCSV:
                     self.Gird_Ver_Ged,self.Gird_Hor_Ged, self.Length_From_Gird,self.Plate_Column,\
                         self.Move_Left,self.Move_Right, self.Move_Up,self.Move_Bottom]
         return ArrDataList
-    def writefileExcel(self,a,ws_Sheet1):
-        from Autodesk.Revit.DB import Element
+    def writefileExcel(self,a):
+        #DataExcel1 = DataExcel(self.path, "Sheet1")
+        ws_Sheet1 = DataExcel1.ReturnSheet()
+        #from Autodesk.Revit.DB import Element
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]    
         a = a + 1
         for item, Element in enumerate(row_Str,1):
             ws_Sheet1.Cells(a,item).Value2 = str(Element)
-
-    def GetContentDataFromExcel_Test(self,Count):
+    """
+    def GetContentDataFromExcel_Test(self):
+        #DataExcel1 = DataExcel(self.path, "Sheet1")
+        Count  = DataExcel1.FindLastColumnOFData()
         GetContentDataFromExcelArr = []
         self.Count = int(self.Count)
         wb = xlrd.open_workbook(self.path)
@@ -61,9 +91,11 @@ class DataFromCSV:
             ArrData = GetElementByName(str(i),Element)
             GetContentDataFromExcelArr.append(ArrData) 
         return GetContentDataFromExcelArr
-
+    """
         #workbook.Save()
-    def GetContentDataFromExcel(self,Count):
+    def GetContentDataFromExcel(self):
+        #DataExcel1 = DataExcel(self.path, "Sheet1")
+        Count = DataExcel1.FindLastColumnOFData()
         GetContentDataFromExcelArr = []
         wb = xlrd.open_workbook(self.path)
         sheet = wb.sheet_by_index(0)
@@ -73,17 +105,18 @@ class DataFromCSV:
             GetContentDataFromExcelArr.append(ArrData) 
         return GetContentDataFromExcelArr
 
-
-
     def Return_Row_Excel (self):
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]
         return row_Str
-    def InputDataChangeToCSV_Excel(self,ws_Sheet1,row_input):
+    def InputDataChangeToCSV_Excel(self,row_input):
+        #DataExcel1 = DataExcel(self.path, "Sheet1")
+        ws_Sheet1 = DataExcel1.ReturnSheet()
         a= int(self.Count)
         for item,Element in enumerate(row_input,1):
             ws_Sheet1.Cells(a,item).Value2 = str(Element)
-    
-    def InputDataChangeToCSV_Excel_Text(self,ws_Sheet1,row_input):
+    def InputDataChangeToCSV_Excel_Text(self,row_input):
+        #DataExcel1 = DataExcel(self.path, "Sheet1")
+        ws_Sheet1 = DataExcel1.ReturnSheet()
         a = int(self.Count) + 2
         for item,Element in enumerate(row_input,1):
             ws_Sheet1.Cells(a,item).Value2 = str(Element)
@@ -111,12 +144,15 @@ class DataFromCSV:
         TopoffsetPam.Set(0)
         #t.Commit()
         return ColumnCreate
-    def PlaceElementRafterFather(self,ColumnCreate,lr_Row,lr_Col):
+    def PlaceElementRafterFather(self,ColumnCreate):
+        DataExcel1 = DataExcel(self.path, "Sheet1")
+        lr_Col = DataExcel1.FindLastColumnOFData()
+        lr_Row = DataExcel1.FindLastRowOFData() + 1
         Point_Levels = self.GetParameterFromSubElement (ColumnCreate,lr_Row,lr_Col)
         for Point_Level,FamilyRafterType,Length_Rafter, Thinkess_Plate in Point_Levels:
             PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate))
-    def checkLengthAngGetSumOfItemRafterFromExcel (self,path_excel,lr_Row, lr_col):
-        wb = xlrd.open_workbook(path_excel)
+    def checkLengthAngGetSumOfItemRafterFromExcel (self,path_excel_Template,lr_Row, lr_col):
+        wb = xlrd.open_workbook(path_excel_Template)
         sheet = wb.sheet_by_index(0)
         sum = 0 
         for i in range (1,lr_Row):
@@ -164,7 +200,7 @@ class DataFromCSV:
             #DataFromCSV_DATA = DataFromCSV(int(i),None,None,None,None,None,None,None,None,None,self.path,None,None,None,None,None,None,None,None,None,None,None)
             DataFromCSV_DATA = DataFromCSV(*ArrDataExcell)
             #(int(0),None,None,None,None,None,None,None,None,None,path,None,None,None,None,None,None,None)
-            arr = DataFromCSV_DATA.GetContentDataFromExcel(lr_Col)
+            arr = DataFromCSV_DATA.GetContentDataFromExcel()
             #print ("test count ",arr[0])
             Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
             #Length_From_Gird =  arr[16]

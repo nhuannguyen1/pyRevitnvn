@@ -21,8 +21,6 @@ def initialise():
 def release(com_object):
     """Release given Excel.Application COM Object"""
     Marshal.ReleaseComObject(com_object)
-
-
 def table_style(worksheet, xl_range):
     """
     Apply TableStyle to given Range on given Worksheet
@@ -42,19 +40,79 @@ def none():
         workbook = app.ActiveWorkbook
     except AttributeError:
         workbook = app.Workbooks.Add()
-
 def worksheet_by_name(workbook, name):
     for worksheet in workbook.Sheets:
         if worksheet.Name == name:
             return worksheet
-def FindLastRowOFData (sheet):
+#ex = initialise()
+#ex.Visible = True
+class DataExcel:
+    def  __init__(self, workbook,SheetName):
+        self.workbook = workbook
+        self.SheetName = SheetName
+    def ReturnSheet (self):
+        sheet = self.workbook.Sheets(self.SheetName)	
+        return sheet
+    def FindLastRowOFData (self):
+        #workbook = ex.Workbooks.Open(self.path)
+        sheet = self.workbook.Sheets(self.SheetName)
+        #sheet = self.ReturnSheet()
+        i = 1
+        while True:
+            if (sheet.Cells(i, 1).Value2 == None):
+                break 
+            i +=1
+        return  i -2
+    def FindLastColumnOFData (self):
+        sheet = self.workbook.Sheets(self.SheetName)
+        i = 1
+        while True:
+            if (sheet.Cells(2, i).Value2 == None):
+                break 
+            i +=1 
+        return  i - 1
+    def ArrFistForDefautValue(self):
+        col = self.FindLastColumnOFData() 
+        ArrDataExcell = []
+        for i in range (0,col):
+            ArrDataExcell.append(None)
+            i +=1
+        return ArrDataExcell
+    def SaveAsFileExcelReturnSheet(self,path):
+        ex = initialise()
+        if os.path.isfile(path):
+            self.workbook.Close (True)
+            workbook = ex.Workbooks.Open(path)
+            self.workbook = workbook
+            #workbook.Close(False)
+            #os.remove(path)
+            #self.workbook.SaveAs(path)
+            #self.workbook.Save()	                                                                                   
+            #workbook = self.Workbook.Open(path)
+            sheet = workbook.Sheets(self.SheetName)
+            print ("sheet is path ",sheet)
+            workbook.Save()
+            
+        else:
+            workbook = ex.ActiveWorkbook
+            workbook.SaveAs(path)
+            #self.workbook.Close(False)
+            #workbook = self.workbook.Open(path)
+            sheet = workbook.Sheets(self.SheetName)
+            print ("sheet is sheet ",sheet)
+            workbook.Save()
+        return sheet
+
+"""
+def FindLastRowOFData (sheet): 
     i = 1
     while True:
         if (sheet.Cells(i, 1).Value2 == None):
             break 
         i +=1        
     return  i - 2
-def FindLastColumnOFData (sheet):
+def FindLastColumnOFData (path,SheetName):
+    sheet = ReturnSheet (path,SheetName)
     i = 1
     while True:
         if (sheet.Cells(2, i).Value2 == None):
@@ -66,14 +124,16 @@ def delete_multiple_rows(worksheet):
     for k in range (3,18):
         for i in range(1,19):
             worksheet.Cells(k,i).Value2 = ""
-def SaveAsFileExcelReturnSheet(ex,path):
+def SaveAsFileExcelReturnSheet(path):
+    ex = initialise()
     workbook = ex.ActiveWorkbook
     if os.path.isfile(path):
         try:
             os.remove(path)
             workbook.SaveAs(path)
+            workbook.Save()
             workbook.Close(False)
-            release(workbook)	
+            release(workbook)	                                                                                   
             workbook = ex.Workbooks.Open(path)
             sheet = workbook.Sheets("Sheet1")
         except :
@@ -81,7 +141,25 @@ def SaveAsFileExcelReturnSheet(ex,path):
     #workbook.Save()
     else:
         workbook.SaveAs(path)
+        workbook.Save()
         workbook.Close(False)
         workbook = ex.Workbooks.Open(path)
         sheet = workbook.Sheets("Sheet1")
     return sheet
+def ReturnSheet (path_excel,SheetName):
+    ex = initialise()
+    ex.Visible = True
+    ex.ScreenUpdating = True
+    workbook = ex.Workbooks.Open(path_excel)
+    sheet = workbook.Sheets(SheetName)
+    workbook.Save()
+    #workbook.Close(False)
+    release(workbook)	
+    return sheet
+def ArrDataExcell1(Col):
+    ArrDataExcell = []
+    for i in range (0,Col):
+        ArrDataExcell.append(None)
+        i +=1
+    return ArrDataExcell
+"""
