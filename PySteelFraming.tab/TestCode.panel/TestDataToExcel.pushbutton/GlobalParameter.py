@@ -61,8 +61,14 @@ class DataFromCSV:
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]    
         DataFromCsv.writefilecsvFromRowArr(row_Str)
     def GetContentDataFromExcel(self):
-        ArrGetContentData = DataFromCsv.GetContentDataByName(self.Count)
+        a = self.Count
+        ArrGetContentData = DataFromCsv.GetContentDataByName(a)
         return ArrGetContentData
+    def GetContentDataFromExcel_Test2(self):
+        a = self.Count + 1
+        ArrGetContentData = DataFromCsv.GetContentDataByName(a)
+        return ArrGetContentData
+
     def GetContentDataFromExcel_Test(self):
         a = self.Count - 1
         ArrGetContentData = DataFromCsv.GetContentDataByName(a)

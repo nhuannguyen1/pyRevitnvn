@@ -19,6 +19,8 @@ from pyrevit import script
 import csv
 DataToolTemplate = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataToolTemplate.csv"
 ArrDataExcell = ArrFistForDefautValue()
+count_dem = CountNumberOfRow() - 1
+print ("count_dem",count_dem)
 print (ArrDataExcell)
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
@@ -100,31 +102,42 @@ class WPF_PYTHON(WPFWindow):
         #try:
             #DataExcel1 = DataExcel(path_excel, "Sheet1")
             Count_Continue = int(self.InputNumberLeft.Text)
-            count_dem = CountNumberOfRow()
-            ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
-            if count_dem == 0 or Count_Continue > (count_dem-1):
-                ArraySelectedItem [0] = Count_Continue
+            count_dem = CountNumberOfRow() - 1
+            #ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
+            #ArraySelectedItem [10] = DataToolTemplate
+            print ("Count_Continue, count_dem",Count_Continue, count_dem)
+            if count_dem == 1 or Count_Continue > (count_dem):
+                a = Count_Continue
+                ArraySelectedItem = self.ArraySelectedItemfs(a)
+                ArraySelectedItem [0] = a
                 #print ("Rafter_Family_Lefted dem 0" ,Rafter_Family_Lefted)  
                 DataFromCSV_1 = DataFromCSV(*ArraySelectedItem)
                 DataFromCSV_1.writefileExcel(Count_Continue)
             else:
+                ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
                 #print ("Rafter_Family_Lefted dem 1" ,Rafter_Family_Lefted)
                 DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
                 Return_Row1 =DataFromCSV_2.Return_Row_Excel()
                 #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
-                if (int(Count_Continue) == int(count_dem) - 1):
-                    ArrDataExcell [0] = Count_Continue
-                    ArrDataExcell [10] = DataToolTemplate
+
+                #if (int(Count_Continue) == int(count_dem) - 1) or (int(Count_Continue) == 1):
+                if (int(Count_Continue) < int(count_dem)) or (int(Count_Continue) == 1):
+                    ArraySelectedItem [0] = Count_Continue 
                     DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
-                    arr = DataFromCSV_DATA.GetContentDataFromExcel()
+                    arr = DataFromCSV_DATA.GetContentDataFromExcel_Test2()
+                    self.GetValueOfSelectedValue(arr)
+                    print ("Test 1")
+                    DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1)
+                """
                 else:
                     ArraySelectedItem[0] = int(Count_Continue) + 1
-                    #ArraySelectedItem[0] = int(ArraySelectedItem[0])  + 1
+                    print ("Test 2")
                     DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
                     arr = DataFromCSV_DATA.GetContentDataFromExcel()
-                self.GetValueOfSelectedValue(arr)
-                DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
-                DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1)
+                    self.GetValueOfSelectedValue(arr)
+                    DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
+                    DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1)
+                """
             self.InputNumberLeft.Text = str (int(Count_Continue + 1))
         #except:
             #print ("Check Ok_Next")
