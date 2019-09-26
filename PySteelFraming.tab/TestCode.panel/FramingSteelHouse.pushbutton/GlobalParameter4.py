@@ -170,8 +170,6 @@ class DataFromCSV:
         self.Plate_Column = Plate_Column
 
     def writefilecsv(self,a):
-        t = Transaction(doc, 'Write an external file.')
-        t.Start()
         #row = [str(self.Count), str(self.FamilyRafterType.Id), self.FamilyRafterType.Id,str(self.Length_Rafter) ]
         row = [self.Count, self.FamilyCol.Id, self.FamilyColType.Id,self.Base_Level_Col.Id,self.Top_Level_Col.Id,\
             self.FamilyRafter.Id,self.FamilyRafterType.Id,self.LevelRafter.Id,self.Length_Rafter,\
@@ -180,7 +178,6 @@ class DataFromCSV:
             writer = csv.writer(csvFile)
             writer.writerow(row)
         csvFile.close()
-        t.Commit()
     def Getcontentdata (self):
         with open(self.path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')

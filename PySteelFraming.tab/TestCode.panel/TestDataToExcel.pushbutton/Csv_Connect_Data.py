@@ -1,0 +1,77 @@
+# coding: utf8
+import csv
+import GetElementByName
+class DataCSV:
+    def  __init__(self, path):
+        self.path = path
+    def CountNumberOfRow (self):
+        with open(self.path, 'r') as readFile:
+            a = sum (1 for row in readFile)
+        readFile.close
+        return a
+    def CountNumberOfColumn (self):
+        file = self.path
+        reader = csv.reader(open(file,'r'),delimiter=",")
+        num_cols = len(next(reader))
+        return num_cols
+    def ArrFistForDefautValue(self):
+        col = self.CountNumberOfColumn() 
+        ArrFisrtData = []
+        for i in range (0,col):
+            ArrFisrtData.append(None)
+            i +=1
+        return ArrFisrtData
+    def writefilecsvFromRowArr(self,Str_Row):
+        with open(self.path, 'a') as csvFile:
+            writer = csv.writer(csvFile)
+            writer.writerow(Str_Row)
+        csvFile.close()
+    def GetContentDataByName(self,Count):
+        GetContentDataFromCsv = []
+        with open(self.path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            for row in readcsv:
+                if (row[0]) == str(Count):
+                    for Index,element in enumerate(row,0):
+                        elementChecked = GetElementByName.GetElementByName(str(Index),element)
+                        GetContentDataFromCsv.append(elementChecked) 
+        csvFile.close()
+        return GetContentDataFromCsv
+    def InputDataChangeToCSV(self,Count,row_input):
+        with open(self.path, 'r') as readFile:
+            reader = csv.reader(readFile)
+            lines = list(reader)
+            lines[Count] = row_input
+        with open(self.path, 'w') as writeFile:
+            writer = csv.writer(writeFile)
+            writer.writerows(lines)
+        writeFile.close()
+        readFile.close()
+    def checkLengthAngGetSumOfItemRafterFromCsv (self):
+        with open(self.path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            sum = 0 
+            for row in readcsv:
+                LengthRafter = row[8]
+                PlateThinessRaffter = row[9]
+                if row[8] == "BAL":
+                    sum = sum   + float (PlateThinessRaffter) * 2
+                else:
+                    sum = sum + float(LengthRafter) + float(PlateThinessRaffter) * 2 
+        csvFile.close()
+        return sum
+    def DeleteRow(self,Count):
+        ClearRow = []
+        with open(self.path ,'rb') as inp:
+            Count_Row = 0 
+            for row in csv.reader(inp):
+                    Count_Row += 1
+                    if Count_Row > 2:
+                        break
+                    else:
+                        ClearRow.append(row)
+        with open(self.path, 'wb') as csvfile:
+            csv_writer = csv.writer(csvfile)
+            csv_writer.writerows(ClearRow)
+        inp.close()
+        csvfile.close()
