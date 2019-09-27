@@ -34,12 +34,13 @@ class WPF_PYTHON(WPFWindow):
         self.Gird_Ver.DataContext = self.Girds
         self.Gird_Ver_G.DataContext = self.Girds
         self.Level_Rater_Type_Left.DataContext = self.levels
-        ArrDataExcell [0] = 1
+        ArrDataExcell [0] = 0
         ArrDataExcell [10] = DataToolTemplate
         DataFromdem = DataFromCSV(*ArrDataExcell)
         GetDataFirst = DataFromdem.GetContentDataFromExcel()
         self.GetValueOfSelectedValue(GetDataFirst)
     def GetValueOfSelectedValue(self,GetDataFirst):
+        print ("nhuan",CheckSelectedValueForFamily(GetDataFirst[1]))
         self.Column_Left.SelectedValue = CheckSelectedValueForFamily(GetDataFirst[1])
         self.Column_Type.SelectedValue = CheckSelectedValueForFamily(GetDataFirst[2])
         self.Base_Level.SelectedValue  = CheckSelectedValueForFamily(GetDataFirst[3])
@@ -62,7 +63,7 @@ class WPF_PYTHON(WPFWindow):
         self.Move_Up.Text = CheckSelectedValueForFamily((GetDataFirst[20]))
         self.Move_Bottom.Text = CheckSelectedValueForFamily((GetDataFirst[21]))
     def Reset_Data(self, sender, e):
-        ArrDataExcell [0] = 2
+        ArrDataExcell [0] = 1
         ArrDataExcell [10] = DataToolTemplate
         DataFromdem = DataFromCSV(*ArrDataExcell)
         DataFromdem.DeleteRowToReset()

@@ -68,7 +68,6 @@ class DataFromCSV:
         a = self.Count + 1
         ArrGetContentData = DataFromCsv.GetContentDataByName(a)
         return ArrGetContentData
-
     def GetContentDataFromExcel_Test(self):
         a = self.Count - 1
         ArrGetContentData = DataFromCsv.GetContentDataByName(a)
