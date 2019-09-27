@@ -70,8 +70,13 @@ class DataCSV:
                         break
                     else:
                         ClearRow.append(row)
+        ClearRow_N = [ClearRow[0],"",ClearRow[1]]
         with open(self.path, 'wb') as csvfile:
             csv_writer = csv.writer(csvfile)
-            csv_writer.writerows(ClearRow)
+            csv_writer.writerows(ClearRow_N)
         inp.close()
         csvfile.close()
+    def writeRowTitle(self):   
+        with open(self.path,'w') as f:
+            f.write('STT,Family Column,Family Column Type,Base Level,Top Level,Family Rafter,Family Type Rafter,Level Rafter,Length,Plate,Path,Gird_Ver,Gird_Hor,Slope,Gird_Ver,Gird_Hor,Length From Gird,Plate Column,Move Left,Move Right,Move Up,Move Bottom\n') 
+        f.close()

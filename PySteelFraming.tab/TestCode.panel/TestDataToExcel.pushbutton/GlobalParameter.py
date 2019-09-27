@@ -24,6 +24,8 @@ def CountNumberOfRow():
 def CountNumberOfColumn():
     L_Column = DataFromCsv.CountNumberOfColumn()
     return L_Column
+def writeRowTitle():
+    DataFromCsv.writeRowTitle()
 
 class DataFromCSV:
     def  __init__(self, *List):
@@ -172,20 +174,23 @@ def CheckTypeLengthBal(Length_Rater):
         Length = float(Length_Rater)
     return Length
 def CheckSelectedValueForFamily(SelectedValue):
-    try:
-        SelectedValue1 = SelectedValue.Name
-        return SelectedValue1
-    except:
-            try:
-                SelectedValue1 = Element.Name.__get__(SelectedValue)
-                return SelectedValue1
-            except:
+    if SelectedValue == None:
+        return None
+    else:
+        try:
+            SelectedValue1 = SelectedValue.Name
+            return SelectedValue1
+        except:
                 try:
-                    if(type (SelectedValue) is str) or (type (SelectedValue) is float) or (type (SelectedValue) is int) :
-                        SelectedValue1 = str(SelectedValue)
-                        return SelectedValue1
+                    SelectedValue1 = Element.Name.__get__(SelectedValue)
+                    return SelectedValue1
                 except:
-                    pass
+                    try:
+                        if(type (SelectedValue) is str) or (type (SelectedValue) is float) or (type (SelectedValue) is int) :
+                            SelectedValue1 = str(SelectedValue)
+                            return SelectedValue1
+                    except:
+                        pass
 def ArrDataExcell1(Col):
     ArrDataExcell = []
     for i in range (0,Col):

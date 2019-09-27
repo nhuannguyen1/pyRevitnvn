@@ -11,13 +11,17 @@ from pyrevit import script, forms
 import os.path
 import clr
 import rpw
-from GlobalParameter import setparameterfromvalue,DataFromCSV,CheckTypeLengthBal,CheckSelectedValueForFamily,ArrFistForDefautValue,CountNumberOfRow,CountNumberOfColumn
+from GlobalParameter import setparameterfromvalue,DataFromCSV,CheckTypeLengthBal,CheckSelectedValueForFamily,ArrFistForDefautValue,CountNumberOfRow,CountNumberOfColumn,writeRowTitle
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
 from pyrevit import script
 import csv
 DataToolTemplate = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataToolTemplate.csv"
+#writeRowTitle1 = writeRowTitle()
+import os
+if os.stat(DataToolTemplate).st_size == 0:
+    writeRowTitle()
 ArrDataExcell = ArrFistForDefautValue()
 count_dem = CountNumberOfRow() - 1
 print ("count_dem",count_dem)
@@ -34,13 +38,16 @@ class WPF_PYTHON(WPFWindow):
         self.Gird_Ver.DataContext = self.Girds
         self.Gird_Ver_G.DataContext = self.Girds
         self.Level_Rater_Type_Left.DataContext = self.levels
-        ArrDataExcell [0] = 0
-        ArrDataExcell [10] = DataToolTemplate
-        DataFromdem = DataFromCSV(*ArrDataExcell)
-        GetDataFirst = DataFromdem.GetContentDataFromExcel()
-        self.GetValueOfSelectedValue(GetDataFirst)
+        if count_dem != 0:
+            ArrDataExcell [0] = 1
+            ArrDataExcell [10] = DataToolTemplate
+            DataFromdem = DataFromCSV(*ArrDataExcell)
+            GetDataFirst = DataFromdem.GetContentDataFromExcel()
+            self.GetValueOfSelectedValue(GetDataFirst)
+        else:
+            GetDataFirst = ArrDataExcell
+            self.GetValueOfSelectedValue(GetDataFirst)
     def GetValueOfSelectedValue(self,GetDataFirst):
-        print ("nhuan",CheckSelectedValueForFamily(GetDataFirst[1]))
         self.Column_Left.SelectedValue = CheckSelectedValueForFamily(GetDataFirst[1])
         self.Column_Type.SelectedValue = CheckSelectedValueForFamily(GetDataFirst[2])
         self.Base_Level.SelectedValue  = CheckSelectedValueForFamily(GetDataFirst[3])
@@ -129,6 +136,7 @@ class WPF_PYTHON(WPFWindow):
                     self.GetValueOfSelectedValue(arr)
                     print ("Test 1")
                     DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1)
+
                 """
                 else:
                     ArraySelectedItem[0] = int(Count_Continue) + 1
