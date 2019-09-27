@@ -20,12 +20,12 @@ import csv
 DataToolTemplate = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataToolTemplate.csv"
 #writeRowTitle1 = writeRowTitle()
 import os
+
 if os.stat(DataToolTemplate).st_size == 0:
     writeRowTitle()
 ArrDataExcell = ArrFistForDefautValue()
 count_dem = CountNumberOfRow() - 1
-print ("count_dem",count_dem)
-print (ArrDataExcell)
+print ("count_dem is",count_dem)
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
@@ -107,27 +107,39 @@ class WPF_PYTHON(WPFWindow):
                         float(self.Move_Left.Text),float(self.Move_Right.Text),float(self.Move_Up.Text),float(self.Move_Bottom.Text)]
         return ArraySelectedItem
     def Ok_Next(self, sender, e):
-        #try:
+        try:
             #DataExcel1 = DataExcel(path_excel, "Sheet1")
             Count_Continue = int(self.InputNumberLeft.Text)
             count_dem = CountNumberOfRow() - 1
             #ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
             #ArraySelectedItem [10] = DataToolTemplate
             print ("Count_Continue, count_dem",Count_Continue, count_dem)
-            if count_dem == 1 or Count_Continue > (count_dem):
+            # only Test 
+            #if (Count_Continue == 1 and count_dem == 1):
+            if Count_Continue > (count_dem):
                 a = Count_Continue
                 ArraySelectedItem = self.ArraySelectedItemfs(a)
                 ArraySelectedItem [0] = a
                 #print ("Rafter_Family_Lefted dem 0" ,Rafter_Family_Lefted)  
                 DataFromCSV_1 = DataFromCSV(*ArraySelectedItem)
                 DataFromCSV_1.writefileExcel(Count_Continue)
+            elif (Count_Continue == 1 and count_dem == 1):
+                print ("Count_Continue, count_dem test",Count_Continue, count_dem)
+                ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
+                #print ("Rafter_Family_Lefted dem 1" ,Rafter_Family_Lefted)
+                DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
+                Return_Row1 =DataFromCSV_2.Return_Row_Excel()
+                ArraySelectedItem [0] = Count_Continue 
+                DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
+                arr = DataFromCSV_DATA.GetContentDataFromExcel()
+                self.GetValueOfSelectedValue(arr)
+                DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1)
             else:
                 ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
                 #print ("Rafter_Family_Lefted dem 1" ,Rafter_Family_Lefted)
                 DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
                 Return_Row1 =DataFromCSV_2.Return_Row_Excel()
                 #Return_Row1 = Return_Row(Count_Continue,Rafter_Family_Lefted,Rafter_Type_Lefted,Length_Rater_Lefted_n)
-
                 #if (int(Count_Continue) == int(count_dem) - 1) or (int(Count_Continue) == 1):
                 if (int(Count_Continue) < int(count_dem)) or (int(Count_Continue) == 1):
                     ArraySelectedItem [0] = Count_Continue 
@@ -136,7 +148,6 @@ class WPF_PYTHON(WPFWindow):
                     self.GetValueOfSelectedValue(arr)
                     print ("Test 1")
                     DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1)
-
                 """
                 else:
                     ArraySelectedItem[0] = int(Count_Continue) + 1
@@ -148,8 +159,8 @@ class WPF_PYTHON(WPFWindow):
                     DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1)
                 """
             self.InputNumberLeft.Text = str (int(Count_Continue + 1))
-        #except:
-            #print ("Check Ok_Next")
+        except  :
+            print ("Check Ok_Next")
     def Ok_Prevous(self, sender, e):
         try:
             count_dem = CountNumberOfRow()
@@ -170,7 +181,7 @@ class WPF_PYTHON(WPFWindow):
                 self.GetValueOfSelectedValue(arr)
                 DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1)
                 self.InputNumberLeft.Text = str (int(Count_Continue - 1))
-        except AttributeError:
+        except :
                 print ("Check OK_Prevous")
     def Click_To_Start(self, sender, e):
             #DataExcel1 = DataExcel(self.path, "Sheet1")

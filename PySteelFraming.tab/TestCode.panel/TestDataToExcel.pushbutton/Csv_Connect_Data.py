@@ -1,6 +1,7 @@
 # coding: utf8
 import csv
 import GetElementByName
+import os.path
 class DataCSV:
     def  __init__(self, path):
         self.path = path
@@ -70,13 +71,14 @@ class DataCSV:
                         break
                     else:
                         ClearRow.append(row)
-        ClearRow_N = [ClearRow[0],"",ClearRow[1]]
+        ClearRow_N = [ClearRow[0],ClearRow[1]]
         with open(self.path, 'wb') as csvfile:
             csv_writer = csv.writer(csvfile)
             csv_writer.writerows(ClearRow_N)
         inp.close()
         csvfile.close()
-    def writeRowTitle(self):   
+    def writeRowTitle(self): 
         with open(self.path,'w') as f:
             f.write('STT,Family Column,Family Column Type,Base Level,Top Level,Family Rafter,Family Type Rafter,Level Rafter,Length,Plate,Path,Gird_Ver,Gird_Hor,Slope,Gird_Ver,Gird_Hor,Length From Gird,Plate Column,Move Left,Move Right,Move Up,Move Bottom\n') 
         f.close()
+    
