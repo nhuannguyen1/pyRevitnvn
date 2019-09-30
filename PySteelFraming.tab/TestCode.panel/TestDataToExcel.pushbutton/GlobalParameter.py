@@ -2,6 +2,7 @@ from Autodesk.Revit.DB import Transaction,Element, FilteredElementCollector,\
     BuiltInCategory,FamilySymbol,XYZ,Structure,Family,Level,\
     BuiltInParameter,Grid,SetComparisonResult,IntersectionResultArray,\
     UnitUtils,DisplayUnitType,GlobalParametersManager,DoubleParameterValue,ElementId, Element
+from Autodesk.Revit.DB.UnitUtils import ConvertFromInternalUnits
 import rpw
 import csv
 import clr
@@ -15,7 +16,9 @@ doc = rpw.revit.doc  # type: Document
 import math 
 DataToolTemplate = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataToolTemplate.csv"
 DataFromCsv  = DataCSV (DataToolTemplate)
-def ArrFistForDefautValue():
+def GetPath ():
+    return DataToolTemplate
+def ArrFistForDefautValue_FC():
     Arr = DataFromCsv.ArrFistForDefautValue()
     return Arr
 def CountNumberOfRow():
@@ -26,7 +29,6 @@ def CountNumberOfColumn():
     return L_Column
 def writeRowTitle():
     DataFromCsv.writeRowTitle()
-
 class DataFromCSV:
     def  __init__(self, *List):
         self.Count = List[0]
@@ -81,7 +83,7 @@ class DataFromCSV:
     def InputDataChangeToCSV_Excel(self,row_input):
         DataFromCsv.InputDataChangeToCSV(self.Count,row_input)
     def PlaceElement (self):
-        self.Length_Rafter = (UnitUtils.ConvertToInternalUnits(float(self.Length_Rafter), DisplayUnitType.DUT_MILLIMETERS))
+        #self.Length_Rafter = (UnitUtils.ConvertToInternalUnits(float(self.Length_Rafter), DisplayUnitType.DUT_MILLIMETERS))
         self.Move_Up  = ConvertToInternalUnitsmm (self.Move_Up)
         self.Move_Bottom  = ConvertToInternalUnitsmm (self.Move_Bottom)
         self.Move_Left  = ConvertToInternalUnitsmm (self.Move_Left)
@@ -94,8 +96,8 @@ class DataFromCSV:
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,\
             self.Base_Level_Col, Structure.StructuralType.NonStructural)
         #LIST = GetParameterFromSubElement(ColumnCreate,self.Slope)
-        a= Global(self.Slope,None,None)
-        a.globalparameterchange(ColumnCreate)
+        Global1= Global(self.Slope,None,None)
+        Global1.globalparameterchange(ColumnCreate)
         a = Global(self.Plate_Column,"Pl_Rafter",ColumnCreate)
         a.SetParameterInstance()
         paramerTopLeve = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM)
@@ -105,11 +107,6 @@ class DataFromCSV:
         #t.Commit()
         return ColumnCreate
     def PlaceElementRafterFather(self,ColumnCreate):
-        """
-        DataExcel1 = DataExcel(self.path, "Sheet1")
-        lr_Col = DataExcel1.FindLastColumnOFData()
-        lr_Row = DataExcel1.FindLastRowOFData() + 1
-        """
         Point_Levels = self.GetParameterFromSubElement (ColumnCreate)
         for Point_Level,FamilyRafterType,Length_Rafter, Thinkess_Plate in Point_Levels:
             PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate))
@@ -128,23 +125,26 @@ class DataFromCSV:
         H_t = LIST[1]
         H_n = LIST[0]
         Length_From_Gird_T = ConvertToInternalUnitsmm(float (self.Length_From_Gird)) - H_n
+        #Length_From_Gird_Dis = ConvertFromInternalUnits(float(Length_From_Gird_T),DisplayUnitType.DUT_MILLIMETERS)
         Length_From_Gird = self.LengthToTotalInlineFromGird(Length_From_Gird_T)
-
         for i in range(1,int(lr_Row)):
-            ArrFistForDefautValue = ArrFistForDefautValue()
+            ArrFistForDefautValue = ArrFistForDefautValue_FC()
             ArrFistForDefautValue[0] = i 
             ArrFistForDefautValue [10] = self.path
             DataFromCSV_DATA = DataFromCSV(*ArrFistForDefautValue)
             arr = DataFromCSV_DATA.GetContentDataFromExcel()
             Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
-            SumLength = DataFromCsv.checkLengthAngGetSumOfItemRafterFromCsv()
+            SumLength = DataFromCsv.checkLengthAngGetSumOfItemRafterFromCsv(lr_Row)
             Length_Rafter = arr[8]
             if Length_Rafter =="BAL":
                 Length_Rafter = (Length_From_Gird - ConvertToInternalUnitsmm(float(SumLength)))
+                if Length_Rafter < 0:
+                    print ("check length again ")
             else:
                 Length_Rafter = ConvertToInternalUnitsmm(Length_Rafter)
             Arr_Point_Type_Length=[Point_Level,arr[6],Length_Rafter,arr[9]]
             Thinkess_Plate1 = ConvertToInternalUnitsmm(arr[9])
+            print ("arr[6] is ",arr[6])
             GetHt_Hn = GetCoordinateContinnue(arr[6], Length_Rafter,Thinkess_Plate1,Slope,H_n,H_t)
             H_n = GetHt_Hn[0]
             H_t = GetHt_Hn[1]
@@ -157,6 +157,7 @@ def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Le
     Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)
     a= Global(Slope_Type,None,None)
     a.globalparameterchange(Elementinstance)
+    #print ("Elementinstance is",Elementinstance.Name )
     a= Global(Thinkess_Plate,"Pl_Right",Elementinstance)
     a.SetParameterInstance()
     setparameterfromvalue(Elementinstance,'Length',Length_Rater_Lefted)
@@ -164,7 +165,7 @@ def Getintersection (line1, line2):
     results = clr.Reference[IntersectionResultArray]()
     result = line1.Intersect(line2, results)
     if result != SetComparisonResult.Overlap:
-	    print('No Intesection, Review Gird was chose')
+	    print('No Intesection, Review Gird was choise')
     res = results.Item[0]
     return res.XYZPoint
 def CheckTypeLengthBal(Length_Rater):

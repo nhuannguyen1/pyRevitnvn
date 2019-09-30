@@ -2,7 +2,7 @@ from Autodesk.Revit.DB import Element, FilteredElementCollector,FamilySymbol,XYZ
 import rpw
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
-def GetElementByName(Count, NameElement):
+def GetElementByName(Count, NameElement,row):
     if any(str(Count) in s for s in [str(1),str(5)]):
         for vt in FilteredElementCollector(doc).OfClass(Family):
             if vt.Name == NameElement:
@@ -11,7 +11,7 @@ def GetElementByName(Count, NameElement):
     elif  any(Count in s for s in [str(2),str(6)]):
         for vt in FilteredElementCollector(doc).OfClass(FamilySymbol):
         #for vt in FilteredElementCollector(doc).OfClass(FamilySymbol).WhereElementIsElementType().ToElements():
-            if Element.Name.__get__(vt)  == NameElement:
+            if (Element.Name.__get__(vt)  == NameElement) and vt.FamilyName in [str(row[1]),str(row[5])] :
                 vt_Element = vt
                 return vt_Element  
     elif any(Count in s for s in [str(3),str(4),str(7)]):

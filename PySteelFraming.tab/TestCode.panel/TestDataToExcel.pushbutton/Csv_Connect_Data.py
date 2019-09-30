@@ -2,6 +2,8 @@
 import csv
 import GetElementByName
 import os.path
+import math
+import ConvertAndCaculation
 class DataCSV:
     def  __init__(self, path):
         self.path = path
@@ -34,7 +36,7 @@ class DataCSV:
             for row in readcsv:
                 if (row[0]) == str(Count):
                     for Index,element in enumerate(row,0):
-                        elementChecked = GetElementByName.GetElementByName(str(Index),element)
+                        elementChecked = GetElementByName.GetElementByName(str(Index),element,row)
                         GetContentDataFromCsv.append(elementChecked) 
         csvFile.close()
         return GetContentDataFromCsv
@@ -48,17 +50,31 @@ class DataCSV:
             writer.writerows(lines)
         writeFile.close()
         readFile.close()
-    def checkLengthAngGetSumOfItemRafterFromCsv (self):
+    def checkLengthAngGetSumOfItemRafterFromCsv (self,Lr_Row):
         with open(self.path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
             sum = 0 
-            for row in readcsv:
+            for index,row in enumerate(readcsv):
                 LengthRafter = row[8]
-                PlateThinessRaffter = row[9]
+                if row[8] == "Length":
+                    continue
+                RafterName = row[5]
+                Slope = row[13]
+                #Slope = ConvertAndCaculation.ConvertToInternalUnitsmm(float(Slope))
+                Slope = ConvertAndCaculation.ConvertToInternalUnitDegree(Slope)
+                PlateThinessRaffter = float(row[9])
+                if index==Lr_Row - 1 :
+                    PlateThinessRaffter = float(row[9])/2
                 if row[8] == "BAL":
+                    if "4111" in RafterName: 
+                        PlateThinessRaffter = PlateThinessRaffter/(math.cos(Slope))
                     sum = sum   + float (PlateThinessRaffter) * 2
                 else:
-                    sum = sum + float(LengthRafter) + float(PlateThinessRaffter) * 2 
+                    if ("4111" in RafterName) or (index==Lr_Row - 1) : 
+                        PlateThinessRaffter = (PlateThinessRaffter * 2)/math.cos(Slope)
+                        sum = sum + float(LengthRafter) + float(PlateThinessRaffter)
+                    else:
+                        sum = sum + float(LengthRafter) + float(PlateThinessRaffter) * 2
         csvFile.close()
         return sum
     def DeleteRow(self,Count):
@@ -79,6 +95,9 @@ class DataCSV:
         csvfile.close()
     def writeRowTitle(self): 
         with open(self.path,'w') as f:
-            f.write('STT,Family Column,Family Column Type,Base Level,Top Level,Family Rafter,Family Type Rafter,Level Rafter,Length,Plate,Path,Gird_Ver,Gird_Hor,Slope,Gird_Ver,Gird_Hor,Length From Gird,Plate Column,Move Left,Move Right,Move Up,Move Bottom\n') 
+            f.write('STT,Family Column,Family Column Type,Base Level,Top Level,Family Rafter,\
+                Family Type Rafter,Level Rafter,Length,Plate,Path,Gird_Ver,Gird_Hor,Slope,\
+                    Gird_Ver,Gird_Hor,Length From Gird,Plate Column,\
+                        Move Left,Move Right,Move Up,Move Bottom\n') 
         f.close()
     
