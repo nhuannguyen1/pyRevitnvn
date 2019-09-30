@@ -98,6 +98,6 @@ class DataCSV:
             f.write('STT,Family Column,Family Column Type,Base Level,Top Level,Family Rafter,\
                 Family Type Rafter,Level Rafter,Length,Plate,Path,Gird_Ver,Gird_Hor,Slope,\
                     Gird_Ver,Gird_Hor,Length From Gird,Plate Column,\
-                        Move Left,Move Right,Move Up,Move Bottom\n') 
+                        Move Left,Move Right,Move Up,Move Bottom,TopOffsetLevel\n') 
         f.close()
     

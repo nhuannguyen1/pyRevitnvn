@@ -22,7 +22,6 @@ class Global:
         ParameterName = self.Element.LookupParameter(self.ParameterName)
         ParameterValue = UnitUtils.ConvertToInternalUnits(float(self.ParameterValue), DisplayUnitType.DUT_MILLIMETERS)
         ParameterName.Set(ParameterValue)
-        print ("Element is",self.Element, "ParameterName is",ParameterName)
 class ConvertToInternalUnits:
     def  __init__(self, ParameterValue):
         self.ParameterValue = ParameterValue
@@ -42,7 +41,8 @@ def ConvertToInternalUnitDegree(Parameter):
 def setparameterfromvalue (elemeninstance,ValueName,setvalue):
     Tw2_Rafter = elemeninstance.LookupParameter(ValueName)
     Tw2_Rafter.Set(setvalue)
-def GetCondinationH_nAndH_V (ElementInstance,Slope,Plate_Column,X_Left_X,X_Right_X):
+def GetCondinationH_nAndH_V (ElementInstance,Slope,Plate_Column,X_Left_X,X_Right_X,Offset_Top_Level):
+    Offset_Top_Level  = ConvertToInternalUnitsmm (Offset_Top_Level)
     Slope = UnitUtils.ConvertToInternalUnits( float(Slope) , DisplayUnitType.DUT_DECIMAL_DEGREES)
     Plate_Column  = ConvertToInternalUnitsmm (Plate_Column)
     Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
@@ -62,7 +62,7 @@ def GetCondinationH_nAndH_V (ElementInstance,Slope,Plate_Column,X_Left_X,X_Right
     G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
     V34 = v34u - V4u
     h_t = V34 + G2_V1  - math.tan(Slope) * Pl_Total + math.sin(Slope) * (Plate_Column * 2)
-    return [h_n - X_Left_X + X_Right_X,h_t]
+    return [h_n - X_Left_X + X_Right_X,h_t  + Offset_Top_Level]
 def GetCoordinateContinnue (ElementType, Length_Rafter,Thinkess_Plate1,Slope,H_n,H_t):
     FamilyRafterName = ElementType.FamilyName 
     if "4111" in FamilyRafterName:

@@ -16,6 +16,7 @@
                 <ColumnDefinition Width="174*"/>
                 <ColumnDefinition Width="174*"/>
                 <ColumnDefinition Width="174*"/>
+                <ColumnDefinition Width="174*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
@@ -58,26 +59,34 @@
 
             <TextBlock Text="Top Level" Margin="0 0 0 0 " HorizontalAlignment="Center" Grid.Column="4" Grid.Row="0" VerticalAlignment ="Center"/>
 
-            <TextBlock Text="Move Left" Margin="0 0 0 0 " HorizontalAlignment="Center" Grid.Column="5" Grid.Row="0" VerticalAlignment ="Center"/>
 
-            <TextBox x:Name="Move_Left"  HorizontalAlignment="Center" Text="12" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Column="5" Grid.Row="1" Width="41" Height="22" 
+            <TextBlock Text= "Offset Top Level" Margin="0 0 0 0 " HorizontalAlignment="Center" Grid.Column="5" Grid.Row="0" VerticalAlignment ="Center"/>
+
+            <TextBox x:Name="Offset_Top_Level"  HorizontalAlignment="Center" Text="12" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Column="5" Grid.Row="1" Width="41" Height="22" 
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.76,0.503" Grid.ColumnSpan="1"/>
 
 
-            <TextBlock Text="Move Right" Margin="0 0 0 0 " HorizontalAlignment="Center" Grid.Column="6" Grid.Row="0" VerticalAlignment ="Center"/>
 
-            <TextBox x:Name="Move_Right"  HorizontalAlignment="Center" Text="12" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Column="6" Grid.Row="1" Width="41" Height="22" 
-                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.76,0.503" Grid.ColumnSpan="1"/>
+            <TextBlock Text="Move Left" Margin="0 0 0 0 " HorizontalAlignment="Center" Grid.Column="6" Grid.Row="0" VerticalAlignment ="Center"/>
 
-            <TextBlock Text="Move Up" Margin="0 0 0 0 " HorizontalAlignment="Center" Grid.Column="7" Grid.Row="0" VerticalAlignment ="Center"/>
-
-            <TextBox x:Name="Move_Up"  HorizontalAlignment="Center" Text="12" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Column="7" Grid.Row="1" Width="41" Height="22" 
+            <TextBox x:Name="Move_Left"  HorizontalAlignment="Center" Text="12" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Column="6" Grid.Row="1" Width="41" Height="22" 
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.76,0.503" Grid.ColumnSpan="1"/>
 
 
-            <TextBlock Text="Move Bottom" Margin="0 0 0 0 " HorizontalAlignment="Center" Grid.Column="8" Grid.Row="0" VerticalAlignment ="Center"/>
+            <TextBlock Text="Move Right" Margin="0 0 0 0 " HorizontalAlignment="Center" Grid.Column="7" Grid.Row="0" VerticalAlignment ="Center"/>
 
-            <TextBox x:Name="Move_Bottom"  HorizontalAlignment="Center" Text="12" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Column="8" Grid.Row="1" Width="41" Height="22" 
+            <TextBox x:Name="Move_Right"  HorizontalAlignment="Center" Text="12" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Column="7" Grid.Row="1" Width="41" Height="22" 
+                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.76,0.503" Grid.ColumnSpan="1"/>
+
+            <TextBlock Text="Move Up" Margin="0 0 0 0 " HorizontalAlignment="Center" Grid.Column="8" Grid.Row="0" VerticalAlignment ="Center"/>
+
+            <TextBox x:Name="Move_Up"  HorizontalAlignment="Center" Text="12" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Column="8" Grid.Row="1" Width="41" Height="22" 
+                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.76,0.503" Grid.ColumnSpan="1"/>
+
+
+            <TextBlock Text="Move Bottom" Margin="0 0 0 0 " HorizontalAlignment="Center" Grid.Column="9" Grid.Row="0" VerticalAlignment ="Center"/>
+
+            <TextBox x:Name="Move_Bottom"  HorizontalAlignment="Center" Text="12" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Column="9" Grid.Row="1" Width="41" Height="22" 
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.76,0.503" Grid.ColumnSpan="1"/>
         </Grid>
         <Grid Height="60">

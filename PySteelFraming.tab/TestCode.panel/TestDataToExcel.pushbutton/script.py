@@ -41,6 +41,7 @@ class WPF_PYTHON(WPFWindow):
             ArrDataExcell [10] = DataToolTemplate
             DataFromdem = DataFromCSV(*ArrDataExcell)
             GetDataFirst = DataFromdem.GetContentDataFromExcel()
+            print (GetDataFirst)
             self.GetValueOfSelectedValue(GetDataFirst)
         else:
             GetDataFirst = ArrDataExcell
@@ -103,7 +104,7 @@ class WPF_PYTHON(WPFWindow):
             self.Top_Level.SelectedItem,self.Rafter_Left.SelectedItem,self.Rater_Type_Left.SelectedItem,\
                 self.Level_Rater_Type_Left.SelectedItem,self.Length_Rater_Left.Text,float(self.Plate_Pt.Text),DataToolTemplate,self.Gird_Ver.SelectedItem,self.Gird_Hor.SelectedItem,\
                     float(self.Slope.Text),self.Gird_Ver_G.SelectedItem,self.Gird_Hor_G.SelectedItem,float(self.Length_From_Gird.Text),float(self.Plate_Column.Text),\
-                        float(self.Move_Left.Text),float(self.Move_Right.Text),float(self.Move_Up.Text),float(self.Move_Bottom.Text)]
+                        float(self.Move_Left.Text),float(self.Move_Right.Text),float(self.Move_Up.Text),float(self.Move_Bottom.Text),float(self.Offset_Top_Level.Text)]
         return ArraySelectedItem
     def Ok_Next(self, sender, e):
         try:

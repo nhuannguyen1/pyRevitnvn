@@ -53,12 +53,13 @@ class DataFromCSV:
         self.Move_Right =  List[19]
         self.Move_Up = List[20]
         self.Move_Bottom = List[21]
+        self.Offset_Top_Level = List[22]
     def ArrDataList(self):
         ArrDataList = [self.Count,self.FamilyCol, self.FamilyColType ,self.Base_Level_Col,\
             self.Top_Level_Col,self.FamilyRafter,self.FamilyRafterType,self.LevelRafter,\
                 self.Length_Rafter, self.Thinkess_Plate,self.path,self.Gird_Ver,self.Gird_hor,self.Slope,\
                     self.Gird_Ver_Ged,self.Gird_Hor_Ged, self.Length_From_Gird,self.Plate_Column,\
-                        self.Move_Left,self.Move_Right, self.Move_Up,self.Move_Bottom]
+                        self.Move_Left,self.Move_Right, self.Move_Up,self.Move_Bottom,self.Offset_Top_Level]
         return ArrDataList
     def writefileExcel(self,a):
         #DataExcel1 = DataExcel(self.path, "Sheet1")
@@ -100,10 +101,12 @@ class DataFromCSV:
         Global1.globalparameterchange(ColumnCreate)
         a = Global(self.Plate_Column,"Pl_Rafter",ColumnCreate)
         a.SetParameterInstance()
-        paramerTopLeve = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM)
-        paramerTopLeve.Set(self.Top_Level_Col.Id)
-        TopoffsetPam = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM)
-        TopoffsetPam.Set(0)
+        SetTopLevel = Global(self.Offset_Top_Level,"Top Offset",ColumnCreate)
+        SetTopLevel.SetParameterInstance()
+        paramerTopLevel = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM)
+        paramerTopLevel.Set(self.Top_Level_Col.Id)
+        #TopoffsetPam = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM)
+        #TopoffsetPam.Set(0)
         #t.Commit()
         return ColumnCreate
     def PlaceElementRafterFather(self,ColumnCreate):
@@ -116,11 +119,10 @@ class DataFromCSV:
         return LineInline
     def GetParameterFromSubElement (self,ElementInstance):
         lr_Row = CountNumberOfRow()
-        lr_Col = CountNumberOfColumn
         Arr_Point_Type_Length = []
         ArrTotal = []
         Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve)
-        LIST =  GetCondinationH_nAndH_V (ElementInstance,self.Slope,self.Plate_Column,self.Move_Left,self.Move_Right)
+        LIST =  GetCondinationH_nAndH_V (ElementInstance,self.Slope,self.Plate_Column,self.Move_Left,self.Move_Right,self.Offset_Top_Level)
         Slope = UnitUtils.ConvertToInternalUnits(float(self.Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
         H_t = LIST[1]
         H_n = LIST[0]
@@ -144,7 +146,7 @@ class DataFromCSV:
                 Length_Rafter = ConvertToInternalUnitsmm(Length_Rafter)
             Arr_Point_Type_Length=[Point_Level,arr[6],Length_Rafter,arr[9]]
             Thinkess_Plate1 = ConvertToInternalUnitsmm(arr[9])
-            print ("arr[6] is ",arr[6])
+            #print ("arr[6] is ",arr[6])
             GetHt_Hn = GetCoordinateContinnue(arr[6], Length_Rafter,Thinkess_Plate1,Slope,H_n,H_t)
             H_n = GetHt_Hn[0]
             H_t = GetHt_Hn[1]
