@@ -10,6 +10,8 @@ import Csv_Connect_Data
 from Csv_Connect_Data import DataCSV
 import FamilySymbol
 from ConvertAndCaculation import Global,ConvertToInternalUnits,ConvertToInternalUnitsmm,setparameterfromvalue,GetCondinationH_nAndH_V,GetCoordinateContinnue
+import CreateMiddlemenElement
+from System.Collections.Generic import List
 # import the Excel Interop. 
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
@@ -94,6 +96,8 @@ class DataFromCSV:
         Base_Leveled_Point =XYZ (Getcondination.X - self.Move_Left + self.Move_Right ,\
             Getcondination.Y,(LEVEL_ELEV_Base_Level + self.Move_Up - self.Move_Bottom))
         FamilySymbol.FamilySymbolAtive(self.FamilyColType)
+        t = Transaction (doc,"Place Element 1")
+        t.Start()
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,\
             self.Base_Level_Col, Structure.StructuralType.NonStructural)
         #LIST = GetParameterFromSubElement(ColumnCreate,self.Slope)
@@ -107,12 +111,27 @@ class DataFromCSV:
         paramerTopLevel.Set(self.Top_Level_Col.Id)
         #TopoffsetPam = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM)
         #TopoffsetPam.Set(0)
-        #t.Commit()
+        t.Commit()
         return ColumnCreate
+    def CreateElement(self):
+        ColumnCreate = self.PlaceElement()
+        RaffterElment = self.PlaceElementRafterFather(ColumnCreate)
+        RaffterElment.Add(ColumnCreate.Id)
+        t = Transaction (doc,"Place Element 3")
+        t.Start()
+        Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve)
+        CreateMiddlemenElement.CreateElementByMirror(RaffterElment,Getcondination,self.Length_From_Gird)
+        t.Commit()
     def PlaceElementRafterFather(self,ColumnCreate):
+        ArrPlaceElementRafterFather = List[ElementId]()
+        t = Transaction (doc,"Place Element 2")
+        t.Start()
         Point_Levels = self.GetParameterFromSubElement (ColumnCreate)
         for Point_Level,FamilyRafterType,Length_Rafter, Thinkess_Plate in Point_Levels:
-            PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate))
+            PlaceElementRafter_FN = PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate))
+            ArrPlaceElementRafterFather.Add(PlaceElementRafter_FN.Id)
+        t.Commit()
+        return ArrPlaceElementRafterFather
     def LengthToTotalInlineFromGird (self,Length_From_Gird):
         Slope = UnitUtils.ConvertToInternalUnits(float(self.Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
         LineInline = (Length_From_Gird)/ (math.cos(Slope))
@@ -163,6 +182,7 @@ def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Le
     a= Global(Thinkess_Plate,"Pl_Right",Elementinstance)
     a.SetParameterInstance()
     setparameterfromvalue(Elementinstance,'Length',Length_Rater_Lefted)
+    return Elementinstance
 def Getintersection (line1, line2):
     results = clr.Reference[IntersectionResultArray]()
     result = line1.Intersect(line2, results)
