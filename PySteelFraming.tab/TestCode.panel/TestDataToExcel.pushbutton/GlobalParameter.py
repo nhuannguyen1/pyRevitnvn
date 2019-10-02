@@ -7,7 +7,7 @@ import rpw
 import csv
 import clr
 import Csv_Connect_Data
-from Csv_Connect_Data import DataCSV
+from Csv_Connect_Data import DataCSV,SaveDataToCSV
 import FamilySymbol
 from ConvertAndCaculation import Global,ConvertToInternalUnits,ConvertToInternalUnitsmm,setparameterfromvalue,GetCondinationH_nAndH_V,GetCoordinateContinnue
 import CreateMiddlemenElement
@@ -17,7 +17,10 @@ uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 import math 
 DataToolTemplate = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataToolTemplate.csv"
+Path_Config_Setting = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\Config_Setting.csv"
+DataSaveToCaculation = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataSaveToCaculation.csv"
 DataFromCsv  = DataCSV (DataToolTemplate)
+SaveDataToCSV = SaveDataToCSV(DataSaveToCaculation)
 def GetPath ():
     return DataToolTemplate
 def ArrFistForDefautValue_FC():
@@ -31,6 +34,8 @@ def CountNumberOfColumn():
     return L_Column
 def writeRowTitle():
     DataFromCsv.writeRowTitle()
+def SynChronizeValueToCSV_T():
+    DataFromCsv.SynChronizeValueToCSV(Path_Config_Setting)
 class DataFromCSV:
     def  __init__(self, *List):
         self.Count = List[0]
@@ -170,9 +175,13 @@ class DataFromCSV:
             H_n = GetHt_Hn[0]
             H_t = GetHt_Hn[1]
             ArrTotal.append(Arr_Point_Type_Length)
+        #print ("(H_n,H_t)",H_n,H_t)
+        SaveDataToCSV.SaveDataH_tAndH_N(H_n,H_t)
         return ArrTotal
     def DeleteRowToReset(self):
         DataFromCsv.DeleteRow(self.Count)
+    def Set_Count (self,CountNew):
+        self.Count = CountNew
 def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate):
     FamilySymbol.FamilySymbolAtive(Rater_Type_Lefted)
     Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)

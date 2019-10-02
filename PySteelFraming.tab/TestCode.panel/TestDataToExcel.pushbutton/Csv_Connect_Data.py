@@ -61,6 +61,7 @@ class DataCSV:
                 RafterName = row[5]
                 Slope = row[13]
                 #Slope = ConvertAndCaculation.ConvertToInternalUnitsmm(float(Slope))
+
                 Slope = ConvertAndCaculation.ConvertToInternalUnitDegree(Slope)
                 PlateThinessRaffter = float(row[9])
                 if index==Lr_Row - 1 :
@@ -77,6 +78,7 @@ class DataCSV:
                         sum = sum + float(LengthRafter) + float(PlateThinessRaffter) * 2
         csvFile.close()
         return sum
+   
     def DeleteRow(self,Count):
         ClearRow = []
         with open(self.path ,'rb') as inp:
@@ -98,6 +100,46 @@ class DataCSV:
             f.write('STT,Family Column,Family Column Type,Base Level,Top Level,Family Rafter,\
                 Family Type Rafter,Level Rafter,Length,Plate,Path,Gird_Ver,Gird_Hor,Slope,\
                     Gird_Ver,Gird_Hor,Length From Gird,Plate Column,\
-                        Move Left,Move Right,Move Up,Move Bottom,TopOffsetLevel\n') 
+                        Move Left,Move Right,Move Up,Move Bottom,Top Offset Level\n') 
         f.close()
-    
+    def SynChronizeValueToCSV (self,path):
+        countRow = self.CountNumberOfRow()
+        with open(path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            for row in readcsv:
+                if row[0] == "Index Value change":
+                    del row[0]
+                    rowF = row
+        csvFile.close() 
+        with open(self.path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            lines = list(readcsv)
+            ReturnFirstRow = self.ReturnFirstRow()
+            for indexCol in rowF:
+                for IndexRow in range(2,int(countRow)): 
+                    lines[int(IndexRow)][int(indexCol)] = ReturnFirstRow[int(indexCol)]
+                    #print ("lines is",lines)
+        csvFile.close() 
+        with open(self.path, 'w') as writeFile:
+                 writer = csv.writer(writeFile)
+                 writer.writerows(lines)
+        writeFile.close()
+    def ReturnFirstRow(self):
+        with open(self.path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            for row in readcsv:
+                if row[0] =='1':
+                    rowF  = row
+                    break
+        csvFile.close()
+        return rowF
+class SaveDataToCSV:
+    def  __init__(self, path):
+        self.path = path
+    def SaveDataH_tAndH_N(self,H_n,H_t):
+        lines = [["H_n","H_t"],[H_n,H_t]]
+        print ("Lines iss",lines)
+        with open(self.path, 'w') as csvFile:
+            writer = csv.writer(csvFile)
+            writer.writerows(lines)
+        csvFile.close()

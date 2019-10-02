@@ -72,3 +72,7 @@ def GetCoordinateContinnue (ElementType, Length_Rafter,Thinkess_Plate1,Slope,H_n
         H_n = H_n + (Length_Rafter + Thinkess_Plate1 * 2 ) * math.cos(Slope) 
         H_t = H_t + (Length_Rafter + Thinkess_Plate1 * 2 ) * math.sin(Slope)
     return [H_n,H_t]
+def ConvertFromInteralUnitToMM (Parameter):
+    Parameter = UnitUtils.ConvertFromInternalUnits(float(Parameter), DisplayUnitType.DUT_MILLIMETERS)
+    return Parameter
+
