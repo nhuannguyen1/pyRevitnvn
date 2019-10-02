@@ -17,20 +17,27 @@ uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 import math 
 DataToolTemplate = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataToolTemplate.csv"
+DataToolTemplate_Right = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataToolTemplate_Right.csv"
+DataToolTemplate_Left = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataToolTemplate_Left.csv"
 Path_Config_Setting = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\Config_Setting.csv"
 DataSaveToCaculation = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataSaveToCaculation.csv"
 DataFromCsv  = DataCSV (DataToolTemplate)
+DataFromCsv_Right  = DataCSV (DataToolTemplate_Right)
 SaveDataToCSV = SaveDataToCSV(DataSaveToCaculation)
 def GetPath ():
     return DataToolTemplate
+def GetPath_Right ():
+    return DataToolTemplate_Right
 def ArrFistForDefautValue_FC():
     Arr = DataFromCsv.ArrFistForDefautValue()
     return Arr
-def CountNumberOfRow():
-    L_Row = DataFromCsv.CountNumberOfRow()
+def CountNumberOfRow(path):
+    DataFromCsv_New  = DataCSV (path)
+    L_Row = DataFromCsv_New.CountNumberOfRow()
     return L_Row
-def CountNumberOfColumn():
-    L_Column = DataFromCsv.CountNumberOfColumn()
+def CountNumberOfColumn(path):
+    DataFromCsv_New  = DataCSV (path)
+    L_Column = DataFromCsv_New.CountNumberOfColumn()
     return L_Column
 def writeRowTitle():
     DataFromCsv.writeRowTitle()
@@ -142,7 +149,7 @@ class DataFromCSV:
         LineInline = (Length_From_Gird)/ (math.cos(Slope))
         return LineInline
     def GetParameterFromSubElement (self,ElementInstance):
-        lr_Row = CountNumberOfRow()
+        lr_Row = CountNumberOfRow(DataToolTemplate)
         Arr_Point_Type_Length = []
         ArrTotal = []
         Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve)
