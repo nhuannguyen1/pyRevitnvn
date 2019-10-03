@@ -60,8 +60,6 @@ class DataCSV:
                     continue
                 RafterName = row[5]
                 Slope = row[13]
-                #Slope = ConvertAndCaculation.ConvertToInternalUnitsmm(float(Slope))
-
                 Slope = ConvertAndCaculation.ConvertToInternalUnitDegree(Slope)
                 PlateThinessRaffter = float(row[9])
                 if index==Lr_Row - 1 :
@@ -103,27 +101,28 @@ class DataCSV:
                         Move Left,Move Right,Move Up,Move Bottom,Top Offset Level\n') 
         f.close()
     def SynChronizeValueToCSV (self,path):
+        RowF0 = self.ReturnDataAllRowByIndexpath(path,0)
+        del RowF0[0]
         countRow = self.CountNumberOfRow()
-        with open(path) as csvFile:
-            readcsv =csv.reader(csvFile, delimiter=',')
-            for row in readcsv:
-                if row[0] == "Index Value change":
-                    del row[0]
-                    rowF = row
-        csvFile.close() 
         with open(self.path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
             lines = list(readcsv)
-            ReturnFirstRow = self.ReturnFirstRow()
-            for indexCol in rowF:
+            ReturnFirstRow = self.ReturnDataAllRowByIndex(1)
+            for indexCol in RowF0:
                 for IndexRow in range(2,int(countRow)): 
                     lines[int(IndexRow)][int(indexCol)] = ReturnFirstRow[int(indexCol)]
-                    #print ("lines is",lines)
         csvFile.close() 
         with open(self.path, 'w') as writeFile:
                  writer = csv.writer(writeFile)
                  writer.writerows(lines)
         writeFile.close()
+    def ReturnDataAllRowByIndexpath (self,path,NumberRow):
+        with open(path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            readcsv = list(readcsv)
+            RowNumber = readcsv[NumberRow]
+        csvFile.close()
+        return RowNumber
     def ReturnFirstRow(self):
         with open(self.path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
@@ -133,12 +132,18 @@ class DataCSV:
                     break
         csvFile.close()
         return rowF
+    def ReturnDataAllRowByIndex (self,NumberRow):
+        with open(self.path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            readcsv = list(readcsv)
+            RowNumber = readcsv[NumberRow]
+        csvFile.close()
+        return RowNumber
 class SaveDataToCSV:
     def  __init__(self, path):
         self.path = path
     def SaveDataH_tAndH_N(self,H_n,H_t):
         lines = [["H_n","H_t"],[H_n,H_t]]
-        print ("Lines iss",lines)
         with open(self.path, 'w') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerows(lines)

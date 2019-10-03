@@ -16,20 +16,24 @@ from System.Collections.Generic import List
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 import math 
-DataToolTemplate = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataToolTemplate.csv"
-DataToolTemplate_Right = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataToolTemplate_Right.csv"
-DataToolTemplate_Left = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataToolTemplate_Left.csv"
 Path_Config_Setting = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\Config_Setting.csv"
-DataSaveToCaculation = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataSaveToCaculation.csv"
-DataFromCsv  = DataCSV (DataToolTemplate)
+PathTemplate = DataCSV (Path_Config_Setting)
+ArrPath = PathTemplate.ReturnDataAllRowByIndex(2)
+
+DataToolTemplate_Left = ArrPath[1]
+DataToolTemplate_Right = ArrPath[0]
+DataSaveToCaculation = ArrPath[2]
+
+DataFromCsv_Left  = DataCSV (DataToolTemplate_Left)
 DataFromCsv_Right  = DataCSV (DataToolTemplate_Right)
 SaveDataToCSV = SaveDataToCSV(DataSaveToCaculation)
-def GetPath ():
-    return DataToolTemplate
+def GetPath_Left ():
+    return DataToolTemplate_Left
 def GetPath_Right ():
     return DataToolTemplate_Right
-def ArrFistForDefautValue_FC():
-    Arr = DataFromCsv.ArrFistForDefautValue()
+def ArrFistForDefautValue_FC(path):
+    DataFromCsv_New  = DataCSV (path)
+    Arr = DataFromCsv_New.ArrFistForDefautValue()
     return Arr
 def CountNumberOfRow(path):
     DataFromCsv_New  = DataCSV (path)
@@ -40,9 +44,10 @@ def CountNumberOfColumn(path):
     L_Column = DataFromCsv_New.CountNumberOfColumn()
     return L_Column
 def writeRowTitle():
-    DataFromCsv.writeRowTitle()
-def SynChronizeValueToCSV_T():
-    DataFromCsv.SynChronizeValueToCSV(Path_Config_Setting)
+    DataFromCsv_Left.writeRowTitle()
+def SynChronizeValueToCSV_T(path):
+    DataFromCsv_New  = DataCSV (path)
+    DataFromCsv_New.SynChronizeValueToCSV(Path_Config_Setting)
 class DataFromCSV:
     def  __init__(self, *List):
         self.Count = List[0]
@@ -75,30 +80,34 @@ class DataFromCSV:
                     self.Gird_Ver_Ged,self.Gird_Hor_Ged, self.Length_From_Gird,self.Plate_Column,\
                         self.Move_Left,self.Move_Right, self.Move_Up,self.Move_Bottom,self.Offset_Top_Level]
         return ArrDataList
-    def writefileExcel(self,a):
+    def writefileExcel(self,a,path):
         #DataExcel1 = DataExcel(self.path, "Sheet1")
-        row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]    
-        DataFromCsv.writefilecsvFromRowArr(row_Str)
-    def GetContentDataFromExcel(self):
+        row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]   
+        DataFromCsv_New  = DataCSV(path)
+        DataFromCsv_New.writefilecsvFromRowArr(row_Str)
+    def GetContentDataFromExcel(self,path):
         a = self.Count
-        ArrGetContentData = DataFromCsv.GetContentDataByName(a)
+        DataFromCsv_New  = DataCSV(path)
+        ArrGetContentData = DataFromCsv_New.GetContentDataByName(a)
         return ArrGetContentData
-    def GetContentDataFromExcel_Test2(self):
+    def GetContentDataFromExcel_Test2(self,path):
         a = self.Count + 1
-        ArrGetContentData = DataFromCsv.GetContentDataByName(a)
+        DataFromCsv_New  = DataCSV(path)
+        ArrGetContentData = DataFromCsv_New.GetContentDataByName(a)
         return ArrGetContentData
-    def GetContentDataFromExcel_Test(self):
+    def GetContentDataFromExcel_Test(self,path):
         a = self.Count - 1
-        ArrGetContentData = DataFromCsv.GetContentDataByName(a)
+        DataFromCsv_New  = DataCSV(path)
+        ArrGetContentData = DataFromCsv_New.GetContentDataByName(a)
         #print ("ArrGetContentData",ArrGetContentData)
         return ArrGetContentData
     def Return_Row_Excel (self):
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]
         return row_Str
-    def InputDataChangeToCSV_Excel(self,row_input):
-        DataFromCsv.InputDataChangeToCSV(self.Count,row_input)
+    def InputDataChangeToCSV_Excel(self,row_input,path):
+        DataFromCsv_New  = DataCSV(path)
+        DataFromCsv_New.InputDataChangeToCSV(self.Count,row_input)
     def PlaceElement (self):
-        #self.Length_Rafter = (UnitUtils.ConvertToInternalUnits(float(self.Length_Rafter), DisplayUnitType.DUT_MILLIMETERS))
         self.Move_Up  = ConvertToInternalUnitsmm (self.Move_Up)
         self.Move_Bottom  = ConvertToInternalUnitsmm (self.Move_Bottom)
         self.Move_Left  = ConvertToInternalUnitsmm (self.Move_Left)
@@ -112,7 +121,6 @@ class DataFromCSV:
         t.Start()
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,\
             self.Base_Level_Col, Structure.StructuralType.NonStructural)
-        #LIST = GetParameterFromSubElement(ColumnCreate,self.Slope)
         Global1= Global(self.Slope,None,None)
         Global1.globalparameterchange(ColumnCreate)
         a = Global(self.Plate_Column,"Pl_Rafter",ColumnCreate)
@@ -121,19 +129,14 @@ class DataFromCSV:
         SetTopLevel.SetParameterInstance()
         paramerTopLevel = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM)
         paramerTopLevel.Set(self.Top_Level_Col.Id)
-        #TopoffsetPam = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM)
-        #TopoffsetPam.Set(0)
         t.Commit()
         return ColumnCreate
     def CreateElement(self):
         ColumnCreate = self.PlaceElement()
         RaffterElment = self.PlaceElementRafterFather(ColumnCreate)
         RaffterElment.Add(ColumnCreate.Id)
-        t = Transaction (doc,"Place Element 3")
-        t.Start()
         Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve)
-        CreateMiddlemenElement.CreateElementByMirror(RaffterElment,Getcondination,self.Length_From_Gird)
-        t.Commit()
+        return [RaffterElment,Getcondination,self.Length_From_Gird] 
     def PlaceElementRafterFather(self,ColumnCreate):
         ArrPlaceElementRafterFather = List[ElementId]()
         t = Transaction (doc,"Place Element 2")
@@ -149,7 +152,7 @@ class DataFromCSV:
         LineInline = (Length_From_Gird)/ (math.cos(Slope))
         return LineInline
     def GetParameterFromSubElement (self,ElementInstance):
-        lr_Row = CountNumberOfRow(DataToolTemplate)
+        lr_Row = CountNumberOfRow(self.path)
         Arr_Point_Type_Length = []
         ArrTotal = []
         Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve)
@@ -161,13 +164,14 @@ class DataFromCSV:
         #Length_From_Gird_Dis = ConvertFromInternalUnits(float(Length_From_Gird_T),DisplayUnitType.DUT_MILLIMETERS)
         Length_From_Gird = self.LengthToTotalInlineFromGird(Length_From_Gird_T)
         for i in range(1,int(lr_Row)):
-            ArrFistForDefautValue = ArrFistForDefautValue_FC()
+            ArrFistForDefautValue = ArrFistForDefautValue_FC(self.path )
             ArrFistForDefautValue[0] = i 
             ArrFistForDefautValue [10] = self.path
             DataFromCSV_DATA = DataFromCSV(*ArrFistForDefautValue)
-            arr = DataFromCSV_DATA.GetContentDataFromExcel()
+            arr = DataFromCSV_DATA.GetContentDataFromExcel(self.path)
             Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
-            SumLength = DataFromCsv.checkLengthAngGetSumOfItemRafterFromCsv(lr_Row)
+            DataFromCsv_New  = DataCSV(self.path)
+            SumLength = DataFromCsv_New.checkLengthAngGetSumOfItemRafterFromCsv(lr_Row)
             Length_Rafter = arr[8]
             if Length_Rafter =="BAL":
                 Length_Rafter = (Length_From_Gird - ConvertToInternalUnitsmm(float(SumLength)))
@@ -185,10 +189,13 @@ class DataFromCSV:
         #print ("(H_n,H_t)",H_n,H_t)
         SaveDataToCSV.SaveDataH_tAndH_N(H_n,H_t)
         return ArrTotal
-    def DeleteRowToReset(self):
-        DataFromCsv.DeleteRow(self.Count)
+    def DeleteRowToReset(self,path):
+        DataFromCsv_New  = DataCSV(path)
+        DataFromCsv_New.DeleteRow(self.Count)
     def Set_Count (self,CountNew):
         self.Count = CountNew
+    def SetPath (self,path):
+        self.path = path
 def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate):
     FamilySymbol.FamilySymbolAtive(Rater_Type_Lefted)
     Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)
@@ -236,3 +243,6 @@ def ArrDataExcell1(Col):
         ArrDataExcell.append(None)
         i +=1
     return ArrDataExcell
+def SetValueForARR(Arr1,Arr2):
+    for i in range (0,len(Arr1)-1):
+        Arr1[i] = Arr2[1]
