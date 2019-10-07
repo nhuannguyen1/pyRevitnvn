@@ -9,23 +9,21 @@ import clr
 import Csv_Connect_Data
 from Csv_Connect_Data import DataCSV,SaveDataToCSV
 import FamilySymbol
+import CheckAndChoice
 from ConvertAndCaculation import Global,ConvertToInternalUnits,ConvertToInternalUnitsmm,setparameterfromvalue,GetCondinationH_nAndH_V,GetCoordinateContinnue
 import CreateMiddlemenElement
 from System.Collections.Generic import List
-# import the Excel Interop. 
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 import math 
-Path_Config_Setting = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\Config_Setting.csv"
-PathTemplate = DataCSV (Path_Config_Setting)
-ArrPath = PathTemplate.ReturnDataAllRowByIndex(2)
-
-DataToolTemplate_Left = ArrPath[1]
-DataToolTemplate_Right = ArrPath[0]
+import DirectoryPath
+from DirectoryPath import Path_Config_Setting
+ArrPath = DirectoryPath.ReturnPath()
+DataToolTemplate_Right = ArrPath[1]
+DataToolTemplate_Left = ArrPath[0]
 DataSaveToCaculation = ArrPath[2]
-
-DataFromCsv_Left  = DataCSV (DataToolTemplate_Left)
 DataFromCsv_Right  = DataCSV (DataToolTemplate_Right)
+DataFromCsv_Left  = DataCSV (DataToolTemplate_Left)
 SaveDataToCSV = SaveDataToCSV(DataSaveToCaculation)
 def GetPath_Left ():
     return DataToolTemplate_Left
@@ -121,8 +119,10 @@ class DataFromCSV:
         t.Start()
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,\
             self.Base_Level_Col, Structure.StructuralType.NonStructural)
-        Global1= Global(self.Slope,None,None)
-        Global1.globalparameterchange(ColumnCreate)
+        NameParameter = CheckAndChoice.GetParameterName(self.path)
+        print ("NameParameter is",NameParameter)
+        Global1= Global(self.Slope,NameParameter,ColumnCreate)
+        Global1.globalparameterchange()
         a = Global(self.Plate_Column,"Pl_Rafter",ColumnCreate)
         a.SetParameterInstance()
         SetTopLevel = Global(self.Offset_Top_Level,"Top Offset",ColumnCreate)
@@ -143,7 +143,7 @@ class DataFromCSV:
         t.Start()
         Point_Levels = self.GetParameterFromSubElement (ColumnCreate)
         for Point_Level,FamilyRafterType,Length_Rafter, Thinkess_Plate in Point_Levels:
-            PlaceElementRafter_FN = PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate))
+            PlaceElementRafter_FN = PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate),self.path)
             ArrPlaceElementRafterFather.Add(PlaceElementRafter_FN.Id)
         t.Commit()
         return ArrPlaceElementRafterFather
@@ -196,11 +196,13 @@ class DataFromCSV:
         self.Count = CountNew
     def SetPath (self,path):
         self.path = path
-def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate):
+def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate,path):
     FamilySymbol.FamilySymbolAtive(Rater_Type_Lefted)
     Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)
-    a= Global(Slope_Type,None,None)
-    a.globalparameterchange(Elementinstance)
+    #RowValue = PathTemplate.ReturnDataAllRowByIndex(3)
+    NameParameter = CheckAndChoice.GetParameterName(path)
+    a= Global(Slope_Type,NameParameter,Elementinstance)
+    a.globalparameterchange()
     #print ("Elementinstance is",Elementinstance.Name )
     a= Global(Thinkess_Plate,"Pl_Right",Elementinstance)
     a.SetParameterInstance()

@@ -8,6 +8,7 @@ class DataCSV:
     def  __init__(self, path):
         self.path = path
     def CountNumberOfRow (self):
+        print (self.path)
         with open(self.path, 'r') as readFile:
             a = sum (1 for row in readFile)
         readFile.close
@@ -123,15 +124,6 @@ class DataCSV:
             RowNumber = readcsv[NumberRow]
         csvFile.close()
         return RowNumber
-    def ReturnFirstRow(self):
-        with open(self.path) as csvFile:
-            readcsv =csv.reader(csvFile, delimiter=',')
-            for row in readcsv:
-                if row[0] =='1':
-                    rowF  = row
-                    break
-        csvFile.close()
-        return rowF
     def ReturnDataAllRowByIndex (self,NumberRow):
         with open(self.path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')

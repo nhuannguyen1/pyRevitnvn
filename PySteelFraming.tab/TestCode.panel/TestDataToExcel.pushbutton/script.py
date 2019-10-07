@@ -2,25 +2,27 @@ __doc__ = 'Training Revit At Itivs '
 __author__ = 'Nguyen Nhuan'
 __title__ = 'Test Code'
 from Autodesk.Revit.DB import Transaction, FilteredElementCollector,\
-BuiltInCategory,FamilySymbol,Element,XYZ,Structure,Family,Level,BuiltInParameter,\
-Grid,SetComparisonResult,IntersectionResultArray,UnitUtils,DisplayUnitType,\
-GlobalParametersManager,DoubleParameterValue,FamilyInstance,ElementId
+BuiltInCategory,FamilySymbol,Element,Family,Level,Grid
 from Autodesk.Revit.UI.Selection import ObjectType
 from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
-import os.path
+import os.path 
 import clr
 import CreatePrimaryFraming
 import rpw
-from GlobalParameter import setparameterfromvalue,DataFromCSV,CheckTypeLengthBal,\
+from GlobalParameter import setparameterfromvalue,DataFromCSV,\
     CheckSelectedValueForFamily,ArrFistForDefautValue_FC,CountNumberOfRow,\
         CountNumberOfColumn,writeRowTitle,GetPath_Left,SynChronizeValueToCSV_T,GetPath_Right
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow, alert
 from pyrevit import script
-import csv
-import os
+from DirectoryPath import Path_Config_Setting
+from Csv_Connect_Data import DataCSV
+def GetFixLevel (count):
+    GetFixLevel = DataCSV(Path_Config_Setting)
+    GetFixLevelrt = GetFixLevel.ReturnDataAllRowByIndex(count)
+    return GetFixLevelrt
 def GetArrDataExcell(DataToolTemplate):
     if os.stat(DataToolTemplate).st_size == 0:
         writeRowTitle()
@@ -34,11 +36,19 @@ class WPF_PYTHON(WPFWindow):
         self.levels = FilteredElementCollector(doc).OfClass(Level)
         self.Base_Level.DataContext = self.levels
         self.Top_Level.DataContext = self.levels
+        #Note 
+        #self.Eave_Height.DataContext = self.levels
+        #self.Peak_Height.DataContext = self.levels
+        #Note 
         self.Girds = FilteredElementCollector(doc).OfClass(Grid)
         self.Gird_Ver.DataContext = self.Girds
         self.Gird_Ver_G.DataContext = self.Girds
-        self.Level_Rater_Type_Left.DataContext = self.levels
-        self.Select_Member.DataContext = ["Member Left","Member Right"]
+        self.Level_Rater_Type_Left.DataContext = self.levels\
+
+        self.Select_Member.DataContext = GetFixLevel(4)
+
+        self.Select_Level.DataContext = GetFixLevel(5)
+        self.Choose_Purlin.DataContext = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
     def Ok_Member_Select(self, sender, e):
         try:
             self.InputNumberLeft.Text = str (1)
@@ -59,12 +69,14 @@ class WPF_PYTHON(WPFWindow):
         else:
             GetDataFirst = ArrDataExcell
             self.GetValueOfSelectedValue(GetDataFirst)
+        print (GetDataFirst)
     def ReturnPath(self):
+        GetFixLevellr4 =GetFixLevel(4)
         Select_Membered = self.Select_Member.SelectedItem
         try:
-            if Select_Membered == "Member Left":
+            if Select_Membered == GetFixLevellr4[0]:
                 DataToolTemplate = GetPath_Left()
-            elif Select_Membered == "Member Right":
+            elif Select_Membered == GetFixLevellr4[1]:
                 DataToolTemplate = GetPath_Right() 
             else:
                 DataToolTemplate = ""
@@ -94,6 +106,7 @@ class WPF_PYTHON(WPFWindow):
         self.Move_Up.Text = CheckSelectedValueForFamily((GetDataFirst[20]))
         self.Move_Bottom.Text = CheckSelectedValueForFamily((GetDataFirst[21]))
         self.Offset_Top_Level.Text = CheckSelectedValueForFamily((GetDataFirst[22]))
+        
     def Reset_Data(self, sender, e):
         DataToolTemplate = self.ReturnPath()
         ArrDataExcell = GetArrDataExcell(DataToolTemplate)
@@ -102,6 +115,29 @@ class WPF_PYTHON(WPFWindow):
         DataFromdem.SetPath(DataToolTemplate)
         DataFromdem.DeleteRowToReset(DataToolTemplate)
         self.InputNumberLeft.Text = str (1)
+
+    def ChangeSelectType (self,sender,e):
+        GetFixLevellr =GetFixLevel(5)
+        self.LevelSelected = sender.SelectedItem
+        if (self.LevelSelected ==GetFixLevellr[0]):
+            self.Clear_Height.DataContext = self.levels
+            self.Eave_Height.DataContext = None
+            self.Peak_Height.DataContext = None
+        elif (self.LevelSelected == GetFixLevellr[1]):
+            self.Clear_Height.DataContext = self.levels
+            self.Peak_Height.DataContext = self.levels
+            self.Eave_Height.DataContext = None
+        elif (self.LevelSelected == GetFixLevellr[2]):
+            self.Clear_Height.DataContext = None
+            self.Peak_Height.DataContext = None
+            self.Eave_Height.DataContext = self.levels
+        elif (self.LevelSelected == GetFixLevellr[3]):
+            self.Clear_Height.DataContext = None
+            self.Peak_Height.DataContext = self.levels
+            self.Eave_Height.DataContext = self.levels
+        else:
+            print ("Pls check")
+
     def source_Family_selection_changed(self, sender, e):
         try:
             self.Column_Left_SD = sender.SelectedItem
@@ -126,6 +162,12 @@ class WPF_PYTHON(WPFWindow):
             self.Gird_Hor_G.DataContext =[vt for vt in FilteredElementCollector(doc).OfClass(Grid) if vt.Name != self.ChangedGrid.Name]
         except:
             pass   
+    def ChangedPurlinName(self, sender, e):
+        try:
+            self.ChangedPurlin = sender.SelectedItem
+            self.Choose_Type_Purlin.DataContext =[vt for vt in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).OfClass(FamilySymbol) if vt.FamilyName ==  self.ChangedPurlin.Name]
+        except:
+            pass   
     def ArraySelectedItemfs(self,Count_Continue):
         DataToolTemplate = self.ReturnPath()
         ArraySelectedItem = [Count_Continue,self.Column_Left.SelectedItem,self.Column_Type.SelectedItem,self.Base_Level.SelectedItem,\
@@ -138,7 +180,6 @@ class WPF_PYTHON(WPFWindow):
         try:
             Count_Continue = int(self.InputNumberLeft.Text)
             DataToolTemplate = self.ReturnPath()
-            print ("DataToolTemplate IS",DataToolTemplate)
             count_dem = CountNumberOfRow(DataToolTemplate) - 1
             if Count_Continue > (count_dem):
                 a = Count_Continue
@@ -186,7 +227,6 @@ class WPF_PYTHON(WPFWindow):
                 self.InputNumberLeft.Text = str (int(Count_Continue) - 1)
             else:
                 ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
-                #ArraySelectedItem[10] = DataToolTemplate
                 DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
                 Return_Row1 =DataFromCSV_2.Return_Row_Excel()
                 ArraySelectedItem[0] = int(Count_Continue)
