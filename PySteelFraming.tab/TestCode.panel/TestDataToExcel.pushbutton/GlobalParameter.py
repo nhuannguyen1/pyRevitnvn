@@ -120,7 +120,6 @@ class DataFromCSV:
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,\
             self.Base_Level_Col, Structure.StructuralType.NonStructural)
         NameParameter = CheckAndChoice.GetParameterName(self.path)
-        print ("NameParameter is",NameParameter)
         Global1= Global(self.Slope,NameParameter,ColumnCreate)
         Global1.globalparameterchange()
         a = Global(self.Plate_Column,"Pl_Rafter",ColumnCreate)
