@@ -40,9 +40,7 @@ class WPF_PYTHON(WPFWindow):
         self.Gird_Ver.DataContext = self.Girds
         self.Gird_Ver_G.DataContext = self.Girds
         self.Level_Rater_Type_Left.DataContext = self.levels
-
         self.Select_Member.DataContext = GetFixLevel(4)
-
         self.Select_Level.DataContext = GetFixLevel(5)
         self.Choose_Purlin.DataContext = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
     def Ok_Member_Select(self, sender, e):
