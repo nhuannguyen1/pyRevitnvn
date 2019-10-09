@@ -15,8 +15,7 @@ from GlobalParameter import setparameterfromvalue,DataFromCSV,\
         CountNumberOfColumn,writeRowTitle,GetPath_Left,SynChronizeValueToCSV_T,GetPath_Right
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
-from pyrevit.forms import WPFWindow, alert
-from pyrevit import script
+from pyrevit.forms import WPFWindow
 from DirectoryPath import Path_Config_Setting
 from Csv_Connect_Data import DataCSV,ReturnArrContainSelectedAndText
 def GetFixLevel (count):
@@ -91,7 +90,6 @@ class WPF_PYTHON(WPFWindow):
         DataFromdem.SetPath(DataToolTemplate)
         DataFromdem.DeleteRowToReset(DataToolTemplate)
         self.InputNumberLeft.Text = str (1)
-
     def ChangeSelectType (self,sender,e):
         GetFixLevellr =GetFixLevel(5)
         self.LevelSelected = sender.SelectedItem
@@ -113,7 +111,6 @@ class WPF_PYTHON(WPFWindow):
             self.Eave_Height.DataContext = self.levels
         else:
             print ("Pls check")
-
     def source_Family_selection_changed(self, sender, e):
         try:
             self.Column_Left_SD = sender.SelectedItem
@@ -184,8 +181,8 @@ class WPF_PYTHON(WPFWindow):
                     self.GetValueOfSelectedValue(arr)
                     DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1,DataToolTemplate)
             self.InputNumberLeft.Text = str (int(Count_Continue + 1))
-        except AttributeError  :
-            print ("Check Ok_Next")
+        except:
+            print ("Check Ok_Next And Path Selected Yes Or No")
     def Ok_Prevous(self, sender, e):
         try:
             DataToolTemplate = self.ReturnPath()
