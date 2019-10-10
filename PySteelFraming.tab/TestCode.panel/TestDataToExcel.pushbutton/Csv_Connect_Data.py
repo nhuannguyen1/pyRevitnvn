@@ -25,11 +25,23 @@ class DataCSV:
             ArrFisrtData.append(None)
             i +=1
         return ArrFisrtData
+    """
     def writefilecsvFromRowArr(self,Str_Row):
         with open(self.path, 'a') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerow(Str_Row)
         csvFile.close()
+    """
+    def writefilecsvFromRowArr(self,Str_Row):
+        print ("Str_Row IS",Str_Row)
+        print ("PATH",self.path)
+
+        with open(self.path, 'w') as csvFile:
+            writer = csv.writer(csvFile)
+            writer.writerow(Str_Row)
+        csvFile.close()
+
+
     def GetContentDataByName(self,Count):
         GetContentDataFromCsv = []
         with open(self.path) as csvFile:

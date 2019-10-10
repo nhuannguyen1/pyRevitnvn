@@ -12,7 +12,8 @@ import CreatePrimaryFraming
 import rpw
 from GlobalParameter import setparameterfromvalue,DataFromCSV,\
     CheckSelectedValueForFamily,ArrFistForDefautValue_FC,CountNumberOfRow,\
-        CountNumberOfColumn,writeRowTitle,GetPath_Left,SynChronizeValueToCSV_T,GetPath_Right
+        CountNumberOfColumn,writeRowTitle,SynChronizeValueToCSV_T,\
+            GetPath_Left_Member_Change_U,GetPath_Right_Member_Change_U,GetPath_Left_Member_All,GetPath_Right_Member_All
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow
@@ -67,9 +68,9 @@ class WPF_PYTHON(WPFWindow):
         Select_Membered = self.Select_Member.SelectedItem
         try:
             if Select_Membered == GetFixLevellr4[0]:
-                DataToolTemplate = GetPath_Left()
+                DataToolTemplate = GetPath_Left_Member_All()
             elif Select_Membered == GetFixLevellr4[1]:
-                DataToolTemplate = GetPath_Right() 
+                DataToolTemplate = GetPath_Right_Member_All() 
             else:
                 DataToolTemplate = ""
             return DataToolTemplate
@@ -150,7 +151,7 @@ class WPF_PYTHON(WPFWindow):
             Count_Continue = int(self.InputNumberLeft.Text)
             DataToolTemplate = self.ReturnPath()
             count_dem = CountNumberOfRow(DataToolTemplate) - 1
-            if Count_Continue > (count_dem):
+            if Count_Continue >= (count_dem):
                 a = Count_Continue
                 ArraySelectedItem = self.ArraySelectedItemfs(a)
                 DataFromCSV_1 = DataFromCSV(*ArraySelectedItem)
@@ -181,7 +182,7 @@ class WPF_PYTHON(WPFWindow):
                     self.GetValueOfSelectedValue(arr)
                     DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1,DataToolTemplate)
             self.InputNumberLeft.Text = str (int(Count_Continue + 1))
-        except:
+        except AttributeError:
             print ("Check Ok_Next And Path Selected Yes Or No")
     def Ok_Prevous(self, sender, e):
         try:
