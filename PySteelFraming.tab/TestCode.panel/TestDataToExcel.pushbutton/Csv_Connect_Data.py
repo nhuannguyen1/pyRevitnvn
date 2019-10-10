@@ -152,18 +152,3 @@ class SaveDataToCSV:
             writer = csv.writer(csvFile)
             writer.writerows(lines)
         csvFile.close()
-def ReturnArrContainSelectedAndText (path,NumberRowSelectedItem,NumberRowText, NumberTextModify,SelectedItem,Text):
-        with open(path) as csvFile:
-            readcsv =csv.reader(csvFile, delimiter=',')
-            readcsv = list(readcsv)
-            NumberRowSelectedItems = readcsv[NumberRowSelectedItem]
-            NumberRowSelectedItems.pop(0)
-            NumberRowTexts = readcsv[NumberRowText]
-            NumberRowTexts.pop(0)
-            arrTextModifyNumber = readcsv[NumberTextModify]
-            for NumberRowSelectedItem in NumberRowSelectedItems:
-                arrTextModifyNumber[int(NumberRowSelectedItem)] = arrTextModifyNumber[int(NumberRowSelectedItem)] + "." + SelectedItem
-            for NumberRowText in NumberRowTexts:
-                arrTextModifyNumber[int(NumberRowText)] = arrTextModifyNumber[int(NumberRowText)] + "." + Text
-        csvFile.close()
-        return arrTextModifyNumber
