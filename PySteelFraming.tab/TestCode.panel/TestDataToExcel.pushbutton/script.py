@@ -18,7 +18,6 @@ from GlobalParameter import setparameterfromvalue,DataFromCSV,CheckTypeLengthBal
             GetPath_Left_Member_Change_U,GetPath_Right_Member_Change_U,GetPath_Left_Member_All,GetPath_Right_Member_All
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
-<<<<<<< HEAD
 from pyrevit.forms import WPFWindow
 from DirectoryPath import Path_Config_Setting
 from Csv_Connect_Data import DataCSV
@@ -26,12 +25,6 @@ def GetFixLevel (count):
     GetFixLevel = DataCSV(Path_Config_Setting)
     GetFixLevelrt = GetFixLevel.ReturnDataAllRowByIndex(count)
     return GetFixLevelrt
-=======
-from pyrevit.forms import WPFWindow, alert
-from pyrevit import script
-import csv
-import os
->>>>>>> parent of 55ef9e5... all
 def GetArrDataExcell(DataToolTemplate):
     if os.stat(DataToolTemplate).st_size == 0:
         writeRowTitle()
@@ -45,35 +38,13 @@ class WPF_PYTHON(WPFWindow):
         self.levels = FilteredElementCollector(doc).OfClass(Level)
         self.Base_Level.DataContext = self.levels
         self.Top_Level.DataContext = self.levels
-        #Note 
-        #self.Eave_Height.DataContext = self.levels
-        #self.Peak_Height.DataContext = self.levels
-        #Note 
         self.Girds = FilteredElementCollector(doc).OfClass(Grid)
         self.Gird_Ver.DataContext = self.Girds
         self.Gird_Ver_G.DataContext = self.Girds
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
         self.Level_Rater_Type_Left.DataContext = self.levels
-<<<<<<< HEAD
-=======
-=======
->>>>>>> parent of 042e750... all
-        self.Level_Rater_Type_Left.DataContext = self.levels\
-
->>>>>>> parent of 042e750... all
-=======
-
->>>>>>> parent of f76d991... all
         self.Select_Member.DataContext = GetFixLevel(4)
-
         self.Select_Level.DataContext = GetFixLevel(5)
         self.Choose_Purlin.DataContext = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
-=======
-        self.Level_Rater_Type_Left.DataContext = self.levels
-        self.Select_Member.DataContext = ["Member Left","Member Right"]
->>>>>>> parent of 55ef9e5... all
     def Ok_Member_Select(self, sender, e):
         try:
             self.InputNumberLeft.Text = str (1)
@@ -98,17 +69,10 @@ class WPF_PYTHON(WPFWindow):
     def ReturnPath(self):
         Select_Membered = self.Select_Member.SelectedItem
         try:
-<<<<<<< HEAD
             if Select_Membered == GetFixLevellr4[0]:
                 DataToolTemplate = GetPath_Left_Member_All()
             elif Select_Membered == GetFixLevellr4[1]:
                 DataToolTemplate = GetPath_Right_Member_All() 
-=======
-            if Select_Membered == "Member Left":
-                DataToolTemplate = GetPath_Left()
-            elif Select_Membered == "Member Right":
-                DataToolTemplate = GetPath_Right() 
->>>>>>> parent of 55ef9e5... all
             else:
                 DataToolTemplate = ""
             return DataToolTemplate
@@ -137,10 +101,6 @@ class WPF_PYTHON(WPFWindow):
         self.Move_Up.Text = CheckSelectedValueForFamily((GetDataFirst[20]))
         self.Move_Bottom.Text = CheckSelectedValueForFamily((GetDataFirst[21]))
         self.Offset_Top_Level.Text = CheckSelectedValueForFamily((GetDataFirst[22]))
-<<<<<<< HEAD
-=======
-        
->>>>>>> parent of 042e750... all
     def Reset_Data(self, sender, e):
         DataToolTemplate = self.ReturnPath()
         ArrDataExcell = GetArrDataExcell(DataToolTemplate)
@@ -149,7 +109,6 @@ class WPF_PYTHON(WPFWindow):
         DataFromdem.SetPath(DataToolTemplate)
         DataFromdem.DeleteRowToReset(DataToolTemplate)
         self.InputNumberLeft.Text = str (1)
-<<<<<<< HEAD
     def ChangeSelectType (self,sender,e):
         GetFixLevellr =GetFixLevel(5)
         self.LevelSelected = sender.SelectedItem
@@ -171,8 +130,6 @@ class WPF_PYTHON(WPFWindow):
             self.Eave_Height.DataContext = self.levels
         else:
             print ("Pls check")
-=======
->>>>>>> parent of 55ef9e5... all
     def source_Family_selection_changed(self, sender, e):
         try:
             self.Column_Left_SD = sender.SelectedItem
