@@ -189,8 +189,15 @@ class DataFromCSV:
         t.Start()
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,\
             self.Base_Level_Col, Structure.StructuralType.NonStructural)
+<<<<<<< HEAD
         Global1= Global(self.Slope,None,None)
         Global1.globalparameterchange(ColumnCreate)
+=======
+        NameParameter = CheckAndChoice.GetParameterName(self.path)
+        print ("NameParameter is",NameParameter)
+        Global1= Global(self.Slope,NameParameter,ColumnCreate)
+        Global1.globalparameterchange()
+>>>>>>> parent of 042e750... all
         a = Global(self.Plate_Column,"Pl_Rafter",ColumnCreate)
         a.SetParameterInstance()
         SetTopLevel = Global(self.Offset_Top_Level,"Top Offset",ColumnCreate)

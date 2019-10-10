@@ -45,13 +45,20 @@ class WPF_PYTHON(WPFWindow):
         self.levels = FilteredElementCollector(doc).OfClass(Level)
         self.Base_Level.DataContext = self.levels
         self.Top_Level.DataContext = self.levels
+        #Note 
+        #self.Eave_Height.DataContext = self.levels
+        #self.Peak_Height.DataContext = self.levels
+        #Note 
         self.Girds = FilteredElementCollector(doc).OfClass(Grid)
         self.Gird_Ver.DataContext = self.Girds
         self.Gird_Ver_G.DataContext = self.Girds
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.Level_Rater_Type_Left.DataContext = self.levels
 =======
+=======
+>>>>>>> parent of 042e750... all
         self.Level_Rater_Type_Left.DataContext = self.levels\
 
 >>>>>>> parent of 042e750... all
@@ -82,6 +89,7 @@ class WPF_PYTHON(WPFWindow):
         else:
             GetDataFirst = ArrDataExcell
             self.GetValueOfSelectedValue(GetDataFirst)
+        print (GetDataFirst)
     def ReturnPath(self):
         Select_Membered = self.Select_Member.SelectedItem
         try:
@@ -124,6 +132,10 @@ class WPF_PYTHON(WPFWindow):
         self.Move_Up.Text = CheckSelectedValueForFamily((GetDataFirst[20]))
         self.Move_Bottom.Text = CheckSelectedValueForFamily((GetDataFirst[21]))
         self.Offset_Top_Level.Text = CheckSelectedValueForFamily((GetDataFirst[22]))
+<<<<<<< HEAD
+=======
+        
+>>>>>>> parent of 042e750... all
     def Reset_Data(self, sender, e):
         DataToolTemplate = self.ReturnPath()
         ArrDataExcell = GetArrDataExcell(DataToolTemplate)
