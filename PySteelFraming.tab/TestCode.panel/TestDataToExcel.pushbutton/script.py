@@ -56,13 +56,18 @@ class WPF_PYTHON(WPFWindow):
 <<<<<<< HEAD
 <<<<<<< HEAD
         self.Level_Rater_Type_Left.DataContext = self.levels
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> parent of 042e750... all
         self.Level_Rater_Type_Left.DataContext = self.levels\
 
 >>>>>>> parent of 042e750... all
+=======
+
+>>>>>>> parent of f76d991... all
         self.Select_Member.DataContext = GetFixLevel(4)
+
         self.Select_Level.DataContext = GetFixLevel(5)
         self.Choose_Purlin.DataContext = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
 =======
