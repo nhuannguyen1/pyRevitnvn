@@ -10,13 +10,13 @@ class Global:
         self.ParameterValue = ParameterValue
         self.ParameterName = ParameterName
         self.Element = Element
-    def globalparameterchange(self):
-        paramId = GlobalParametersManager.FindByName(doc,self.ParameterName)
+    def globalparameterchange(self,ColumnCreate):
+        paramId = GlobalParametersManager.FindByName(doc,"Slope")
         param = doc.GetElement(paramId) 
         kkkk = ConvertToInternalUnits(float(self.ParameterValue))
         ParameterValue = kkkk.DUT_DECIMAL_DEGREES1()
         param.SetValue(DoubleParameterValue(ParameterValue))
-        Slope = self.Element.LookupParameter("Slope")
+        Slope = ColumnCreate.LookupParameter("Slope")
         Slope.AssociateWithGlobalParameter(param.Id)
     def SetParameterInstance (self):
         ParameterName = self.Element.LookupParameter(self.ParameterName)
