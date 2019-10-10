@@ -55,9 +55,12 @@ class WPF_PYTHON(WPFWindow):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.Level_Rater_Type_Left.DataContext = self.levels
 <<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of 042e750... all
 =======
 >>>>>>> parent of 042e750... all
         self.Level_Rater_Type_Left.DataContext = self.levels\
@@ -138,6 +141,10 @@ class WPF_PYTHON(WPFWindow):
         self.Move_Bottom.Text = CheckSelectedValueForFamily((GetDataFirst[21]))
         self.Offset_Top_Level.Text = CheckSelectedValueForFamily((GetDataFirst[22]))
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+        
+>>>>>>> parent of 042e750... all
 =======
         
 >>>>>>> parent of 042e750... all
