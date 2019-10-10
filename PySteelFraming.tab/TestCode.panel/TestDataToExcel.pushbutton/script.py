@@ -19,7 +19,12 @@ from GlobalParameter import setparameterfromvalue,DataFromCSV,CheckTypeLengthBal
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 <<<<<<< HEAD
+<<<<<<< HEAD
 from pyrevit.forms import WPFWindow
+=======
+from pyrevit.forms import WPFWindow, alert
+from pyrevit import script
+>>>>>>> parent of cb66258... Hay
 from DirectoryPath import Path_Config_Setting
 from Csv_Connect_Data import DataCSV
 def GetFixLevel (count):
@@ -150,6 +155,10 @@ class WPF_PYTHON(WPFWindow):
         DataFromdem.DeleteRowToReset(DataToolTemplate)
         self.InputNumberLeft.Text = str (1)
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of cb66258... Hay
     def ChangeSelectType (self,sender,e):
         GetFixLevellr =GetFixLevel(5)
         self.LevelSelected = sender.SelectedItem
@@ -171,8 +180,12 @@ class WPF_PYTHON(WPFWindow):
             self.Eave_Height.DataContext = self.levels
         else:
             print ("Pls check")
+<<<<<<< HEAD
 =======
 >>>>>>> parent of 55ef9e5... all
+=======
+
+>>>>>>> parent of cb66258... Hay
     def source_Family_selection_changed(self, sender, e):
         try:
             self.Column_Left_SD = sender.SelectedItem
@@ -246,8 +259,13 @@ class WPF_PYTHON(WPFWindow):
                     self.GetValueOfSelectedValue(arr)
                     DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1,DataToolTemplate)
             self.InputNumberLeft.Text = str (int(Count_Continue + 1))
+<<<<<<< HEAD
         except AttributeError:
             print ("Check Ok_Next And Path Selected Yes Or No")
+=======
+        except AttributeError  :
+            print ("Check Ok_Next")
+>>>>>>> parent of cb66258... Hay
     def Ok_Prevous(self, sender, e):
         try:
             DataToolTemplate = self.ReturnPath()

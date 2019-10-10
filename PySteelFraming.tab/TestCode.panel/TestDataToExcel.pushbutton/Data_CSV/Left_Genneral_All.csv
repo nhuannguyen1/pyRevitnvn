@@ -1,2 +1,0 @@
-STT,Family Column,Family Column Type,Base Level,Top Level,Family Rafter,Family Type Rafter,Level Rafter,Length,Plate,Path,Gird_Ver,Gird_Hor,Slope,Gird_Ver,Gird_Hor,Length From Gird,Plate Column,Move Left,Move Right,Move Up,Move Bottom,Offset_Top_Level
-1,3611a.Column-Connection-Flange -Up-Up-VE_V02,Type 3,G.R,EX,4111b.Rafter-Tapper-Vertical-Right_Tool,VERTICAL RIGHT,EX,2000,12,C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\DataToolTemplate_Right.csv,B,3,10,3,B,23000,12,0,0,0,0,10
