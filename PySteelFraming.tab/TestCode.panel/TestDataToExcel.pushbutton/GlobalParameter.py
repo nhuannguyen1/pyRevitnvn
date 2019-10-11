@@ -16,7 +16,6 @@ from System.Collections.Generic import List
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 import math 
-<<<<<<< HEAD
 import DirectoryPath
 from DirectoryPath import Path_Config_Setting
 ArrPath = DirectoryPath.ReturnPath()
@@ -35,24 +34,11 @@ SaveDataToCSV = SaveDataToCSV(Left_DataSaveToCaculation)
 """
 DataToolTemplate_Right = ArrPath[1]
 DataToolTemplate_Left = ArrPath[0]
-=======
-Path_Config_Setting = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\Config_Setting.csv"
-PathTemplate = DataCSV (Path_Config_Setting)
-ArrPath = PathTemplate.ReturnDataAllRowByIndex(2)
-
-DataToolTemplate_Left = ArrPath[1]
-DataToolTemplate_Right = ArrPath[0]
->>>>>>> parent of 55ef9e5... all
 DataSaveToCaculation = ArrPath[2]
 
 DataFromCsv_Left  = DataCSV (DataToolTemplate_Left)
-<<<<<<< HEAD
 
 
-=======
-DataFromCsv_Right  = DataCSV (DataToolTemplate_Right)
-SaveDataToCSV = SaveDataToCSV(DataSaveToCaculation)
->>>>>>> parent of 55ef9e5... all
 def GetPath_Left ():
     return DataToolTemplate_Left
 def GetPath_Right ():
@@ -77,8 +63,6 @@ def GetPath_Left_Member_All():
     return Left_Member_All
 def GetPath_Right_Member_All():
     return Right_Member_All
-
-
 
 def ArrFistForDefautValue_FC(path):
     DataFromCsv_New  = DataCSV (path)
@@ -136,8 +120,29 @@ class DataFromCSV:
         Genneral_Data = [self.Gird_Ver,self.Gird_hor,self.Gird_Ver_Ged,self.Gird_Hor_Ged,self.Length_From_Gird]
         return [Path_Member_Change_U,Path_Member_Change,Genneral_Data]
         """
-
+        return ArrDataList
     def writefileExcel(self,a,CheckPath):
+        if CheckPath ==Left_Member_All:
+            Path_Member_Change_U = Left_Member_Change_U
+            Path_Member_Change = Left_Member_Change
+        elif CheckPath ==Right_Member_All:
+            Path_Member_Change_U = Right_Member_Change_U
+            Path_Member_Change = Right_Member_Change
+        else:
+            pass
+        row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]    
+        DataFromCsv  = DataCSV (CheckPath)
+        DataFromCsv.writefilecsvFromRowArr(row_Str)
+
+        """
+         if CheckPath ==Left_Member_All:
+            Path_Member_Change_U = Left_Member_Change_U
+            Path_Member_Change = Left_Member_Change
+        elif CheckPath ==Right_Member_All:
+            Path_Member_Change_U = Right_Member_Change_U
+            Path_Member_Change = Right_Member_Change
+        else:
+            pass
         if CheckPath ==Left_Member_All:
             Path_Member_Change_U = Left_Member_Change_U
             Path_Member_Change = Left_Member_Change
@@ -153,6 +158,7 @@ class DataFromCSV:
             row_Str = [CheckSelectedValueForFamily(vt) for vt in ArrData[index]]
             DataWriteCSV  = DataCSV(ElementPath)
             DataWriteCSV.writefilecsvFromRowArr(row_Str)
+        """
     def GetContentDataFromExcel(self,path):
         a = self.Count
         DataFromCsv_New  = DataCSV(path)
@@ -170,6 +176,7 @@ class DataFromCSV:
         #print ("ArrGetContentData",ArrGetContentData)
         return ArrGetContentData
     def Return_Row_Excel (self):
+        print (self.ArrDataList())
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]
         return row_Str
     def InputDataChangeToCSV_Excel(self,row_input,path):
@@ -189,15 +196,8 @@ class DataFromCSV:
         t.Start()
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,\
             self.Base_Level_Col, Structure.StructuralType.NonStructural)
-<<<<<<< HEAD
         Global1= Global(self.Slope,None,None)
         Global1.globalparameterchange(ColumnCreate)
-=======
-        NameParameter = CheckAndChoice.GetParameterName(self.path)
-        print ("NameParameter is",NameParameter)
-        Global1= Global(self.Slope,NameParameter,ColumnCreate)
-        Global1.globalparameterchange()
->>>>>>> parent of 042e750... all
         a = Global(self.Plate_Column,"Pl_Rafter",ColumnCreate)
         a.SetParameterInstance()
         SetTopLevel = Global(self.Offset_Top_Level,"Top Offset",ColumnCreate)

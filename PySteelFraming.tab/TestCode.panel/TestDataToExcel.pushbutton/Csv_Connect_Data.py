@@ -24,12 +24,13 @@ class DataCSV:
             ArrFisrtData.append(None)
             i +=1
         return ArrFisrtData
-    """
+    
     def writefilecsvFromRowArr(self,Str_Row):
         with open(self.path, 'a') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerow(Str_Row)
         csvFile.close()
+
     """
     def writefilecsvFromRowArr(self,Str_Row):
         print ("Str_Row IS",Str_Row)
@@ -39,7 +40,7 @@ class DataCSV:
             writer = csv.writer(csvFile)
             writer.writerow(Str_Row)
         csvFile.close()
-
+    """
 
     def GetContentDataByName(self,Count):
         GetContentDataFromCsv = []
@@ -160,3 +161,18 @@ class SaveDataToCSV:
             writer = csv.writer(csvFile)
             writer.writerows(lines)
         csvFile.close()
+def ReturnArrContainSelectedAndText (path,NumberRowSelectedItem,NumberRowText, NumberTextModify,SelectedItem,Text):
+        with open(path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            readcsv = list(readcsv)
+            NumberRowSelectedItems = readcsv[NumberRowSelectedItem]
+            NumberRowSelectedItems.pop(0)
+            NumberRowTexts = readcsv[NumberRowText]
+            NumberRowTexts.pop(0)
+            arrTextModifyNumber = readcsv[NumberTextModify]
+            for NumberRowSelectedItem in NumberRowSelectedItems:
+                arrTextModifyNumber[int(NumberRowSelectedItem)] = arrTextModifyNumber[int(NumberRowSelectedItem)] + "." + SelectedItem
+            for NumberRowText in NumberRowTexts:
+                arrTextModifyNumber[int(NumberRowText)] = arrTextModifyNumber[int(NumberRowText)] + "." + Text
+        csvFile.close()
+        return arrTextModifyNumber
