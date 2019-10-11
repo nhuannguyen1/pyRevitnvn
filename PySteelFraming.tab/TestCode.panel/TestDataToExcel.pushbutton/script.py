@@ -12,9 +12,9 @@ import CreatePrimaryFraming
 import rpw
 from GlobalParameter import setparameterfromvalue,DataFromCSV,\
     CheckSelectedValueForFamily,ArrFistForDefautValue_FC,CountNumberOfRow,\
-        CountNumberOfColumn,SynChronizeValueToCSV_T,\
+        CountNumberOfColumn,\
             GetPath_Left_Member_Change_U,GetPath_Right_Member_Change_U,\
-                GetPath_Left_Member_All,GetPath_Right_Member_All
+                GetPath_Left_Member_All,GetPath_Right_Member_All,writeRowTitle
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow
@@ -24,13 +24,11 @@ def GetFixLevel (count):
     GetFixLevel = DataCSV(Path_Config_Setting)
     GetFixLevelrt = GetFixLevel.ReturnDataAllRowByIndex(count)
     return GetFixLevelrt
-
 def GetArrDataExcell(DataToolTemplate):
     if os.stat(DataToolTemplate).st_size == 0:
-        writeRowTitle()
+        writeRowTitle(DataToolTemplate)
     ArrDataExcell = ArrFistForDefautValue_FC(DataToolTemplate)
     return ArrDataExcell
-
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
@@ -184,6 +182,8 @@ class WPF_PYTHON(WPFWindow):
                     arr = DataFromCSV_DATA.GetContentDataFromExcel_Test2(DataToolTemplate)
                     self.GetValueOfSelectedValue(arr)
                     DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1,DataToolTemplate)
+            DataCSV1 = DataCSV(DataToolTemplate)
+            DataCSV1.SynChronizeValueToCSV1(Path_Config_Setting,Count_Continue)
             self.InputNumberLeft.Text = str (int(Count_Continue + 1))
         except AttributeError:
             print ("Check Ok_Next And Path Selected Yes Or No")
@@ -204,10 +204,22 @@ class WPF_PYTHON(WPFWindow):
                 arr = DataFromCSV_DATA.GetContentDataFromExcel_Test(DataToolTemplate)
                 self.GetValueOfSelectedValue(arr)
                 DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1,DataToolTemplate)
+                DataCSV1 = DataCSV(DataToolTemplate)
+                DataCSV1.SynChronizeValueToCSV1(Path_Config_Setting,Count_Continue)
                 self.InputNumberLeft.Text = str (int(Count_Continue - 1))
         except :
                 print ("Check OK_Prevous")
     def Click_To_Start(self, sender, e):
+            Count_Continue = int(self.InputNumberLeft.Text)
+            DataToolTemplate = self.ReturnPath()
+            ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
+            DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
+            DataFromCSV_2.SetPath(DataToolTemplate)
+            Return_Row1 =DataFromCSV_2.Return_Row_Excel()
+
+            #Fill in form to cv 
+            DataCSV1 = DataCSV(DataToolTemplate)
+            DataCSV1.DataForLastRowIndex(Count_Continue,Return_Row1)
             self.Close()
             CreatePrimaryFraming.PrimaryFraming()
 WPF_PYTHON = WPF_PYTHON('WPF_PYTHON.xaml').ShowDialog()

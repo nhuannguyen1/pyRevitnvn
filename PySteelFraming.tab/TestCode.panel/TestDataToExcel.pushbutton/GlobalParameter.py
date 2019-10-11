@@ -19,8 +19,6 @@ import math
 import DirectoryPath
 from DirectoryPath import Path_Config_Setting
 ArrPath = DirectoryPath.ReturnPath()
-
-
 Genneral_Parameter =ArrPath[0]
 Left_DataSaveToCaculation = ArrPath[1]
 Left_Member_Change = ArrPath[2]
@@ -31,20 +29,6 @@ Right_Member_Change_U = ArrPath[6]
 Left_Member_All = ArrPath[7]
 Right_Member_All = ArrPath[8]
 SaveDataToCSV = SaveDataToCSV(Left_DataSaveToCaculation)
-"""
-DataToolTemplate_Right = ArrPath[1]
-DataToolTemplate_Left = ArrPath[0]
-DataSaveToCaculation = ArrPath[2]
-
-DataFromCsv_Left  = DataCSV (DataToolTemplate_Left)
-
-
-def GetPath_Left ():
-    return DataToolTemplate_Left
-def GetPath_Right ():
-    return DataToolTemplate_Right
-"""
-
 def GetPath_Genneral_Parameter():
     return Genneral_Parameter
 def GetPath_Left_DataSaveToCaculation ():
@@ -63,7 +47,6 @@ def GetPath_Left_Member_All():
     return Left_Member_All
 def GetPath_Right_Member_All():
     return Right_Member_All
-
 def ArrFistForDefautValue_FC(path):
     DataFromCsv_New  = DataCSV (path)
     Arr = DataFromCsv_New.ArrFistForDefautValue()
@@ -76,11 +59,13 @@ def CountNumberOfColumn(path):
     DataFromCsv_New  = DataCSV (path)
     L_Column = DataFromCsv_New.CountNumberOfColumn()
     return L_Column
-#def writeRowTitle():
-    #DataFromCsv_Left.writeRowTitle()
+def writeRowTitle(path):
+    DataFromCsv  = DataCSV (path)
+    DataFromCsv.writeRowTitle(Path_Config_Setting)
 def SynChronizeValueToCSV_T(path):
     DataFromCsv_New  = DataCSV (path)
     DataFromCsv_New.SynChronizeValueToCSV(Path_Config_Setting)
+    
 class DataFromCSV:
     def  __init__(self, *List):
         self.Count = List[0]
@@ -112,14 +97,6 @@ class DataFromCSV:
                 self.Length_Rafter, self.Thinkess_Plate,self.path,self.Gird_Ver,self.Gird_hor,self.Slope,\
                     self.Gird_Ver_Ged,self.Gird_Hor_Ged, self.Length_From_Gird,self.Plate_Column,\
                         self.Move_Left,self.Move_Right, self.Move_Up,self.Move_Bottom,self.Offset_Top_Level]
-        """
-        Path_Member_Change_U = [self.Count,self.FamilyRafter,self.FamilyRafterType,\
-                self.Length_Rafter, self.Thinkess_Plate,self.Plate_Column]
-        Path_Member_Change = [self.FamilyCol,self.FamilyColType,self.Base_Level_Col,self.Top_Level_Col,self.LevelRafter,self.path,\
-            self.Slope,self.Move_Left,self.Move_Right, self.Move_Up,self.Move_Bottom,self.Offset_Top_Level]
-        Genneral_Data = [self.Gird_Ver,self.Gird_hor,self.Gird_Ver_Ged,self.Gird_Hor_Ged,self.Length_From_Gird]
-        return [Path_Member_Change_U,Path_Member_Change,Genneral_Data]
-        """
         return ArrDataList
     def writefileExcel(self,a,CheckPath):
         if CheckPath ==Left_Member_All:
@@ -133,32 +110,6 @@ class DataFromCSV:
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]    
         DataFromCsv  = DataCSV (CheckPath)
         DataFromCsv.writefilecsvFromRowArr(row_Str)
-
-        """
-         if CheckPath ==Left_Member_All:
-            Path_Member_Change_U = Left_Member_Change_U
-            Path_Member_Change = Left_Member_Change
-        elif CheckPath ==Right_Member_All:
-            Path_Member_Change_U = Right_Member_Change_U
-            Path_Member_Change = Right_Member_Change
-        else:
-            pass
-        if CheckPath ==Left_Member_All:
-            Path_Member_Change_U = Left_Member_Change_U
-            Path_Member_Change = Left_Member_Change
-        elif CheckPath ==Right_Member_All:
-            Path_Member_Change_U = Right_Member_Change_U
-            Path_Member_Change = Right_Member_Change
-        else:
-            pass
-        #DataExcel1 = DataExcel(self.path, "Sheet1")
-        ArrData = self.ArrDataList()
-        PathArr = [Path_Member_Change_U,Path_Member_Change,Genneral_Parameter]
-        for index,ElementPath in enumerate(PathArr,0):
-            row_Str = [CheckSelectedValueForFamily(vt) for vt in ArrData[index]]
-            DataWriteCSV  = DataCSV(ElementPath)
-            DataWriteCSV.writefilecsvFromRowArr(row_Str)
-        """
     def GetContentDataFromExcel(self,path):
         a = self.Count
         DataFromCsv_New  = DataCSV(path)

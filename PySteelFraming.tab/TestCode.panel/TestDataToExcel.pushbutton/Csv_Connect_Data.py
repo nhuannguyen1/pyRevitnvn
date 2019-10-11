@@ -30,18 +30,6 @@ class DataCSV:
             writer = csv.writer(csvFile)
             writer.writerow(Str_Row)
         csvFile.close()
-
-    """
-    def writefilecsvFromRowArr(self,Str_Row):
-        print ("Str_Row IS",Str_Row)
-        print ("PATH",self.path)
-
-        with open(self.path, 'w') as csvFile:
-            writer = csv.writer(csvFile)
-            writer.writerow(Str_Row)
-        csvFile.close()
-    """
-
     def GetContentDataByName(self,Count):
         GetContentDataFromCsv = []
         with open(self.path) as csvFile:
@@ -106,12 +94,11 @@ class DataCSV:
             csv_writer.writerows(ClearRow_N)
         inp.close()
         csvfile.close()
-    def writeRowTitle(self): 
+    def writeRowTitle(self,Path_Conf):
+        Str_Path_Conf =  self.ReturnDataAllRowByIndexpath(Path_Conf,10)
         with open(self.path,'w') as f:
-            f.write('STT,Family Column,Family Column Type,Base Level,Top Level,Family Rafter,\
-                Family Type Rafter,Level Rafter,Length,Plate,Path,Gird_Ver,Gird_Hor,Slope,\
-                    Gird_Ver,Gird_Hor,Length From Gird,Plate Column,\
-                        Move Left,Move Right,Move Up,Move Bottom,Top Offset Level\n') 
+            writer = csv.writer(f)
+            writer.writerow (Str_Path_Conf)
         f.close()
     def SynChronizeValueToCSV (self,path):
         RowF0 = self.ReturnDataAllRowByIndexpath(path,0)
@@ -129,6 +116,23 @@ class DataCSV:
                  writer = csv.writer(writeFile)
                  writer.writerows(lines)
         writeFile.close()
+    def SynChronizeValueToCSV1(self,path,Count):
+        RowF0 = self.ReturnDataAllRowByIndexpath(path,0)
+        del RowF0[0]
+        countRow = self.CountNumberOfRow()
+        with open(self.path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            lines = list(readcsv)
+            ReturnFirstRow = self.ReturnDataAllRowByIndex(Count)
+            for indexCol in RowF0:
+                for IndexRow in range(1,int(countRow)): 
+                    lines[int(IndexRow)][int(indexCol)] = ReturnFirstRow[int(indexCol)]
+        csvFile.close() 
+        with open(self.path, 'w') as writeFile:
+                 writer = csv.writer(writeFile)
+                 writer.writerows(lines)
+        writeFile.close()
+
     def ReturnDataAllRowByIndexpath (self,path,NumberRow):
         with open(path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
@@ -152,6 +156,14 @@ class DataCSV:
             RowNumber = readcsv[NumberRow]
         csvFile.close()
         return RowNumber
+    def DataForLastRowIndex (self,CurrentCount,Str_Row):
+        LastCount = self.CountNumberOfRow()
+        print ("CurrentCount,LastCount",CurrentCount,LastCount)
+        if CurrentCount == LastCount:
+            with open(self.path, 'a') as csvFile:
+                writer = csv.writer(csvFile)
+                writer.writerow(Str_Row)
+            csvFile.close()
 class SaveDataToCSV:
     def  __init__(self, path):
         self.path = path
@@ -176,3 +188,6 @@ def ReturnArrContainSelectedAndText (path,NumberRowSelectedItem,NumberRowText, N
                 arrTextModifyNumber[int(NumberRowText)] = arrTextModifyNumber[int(NumberRowText)] + "." + Text
         csvFile.close()
         return arrTextModifyNumber
+
+
+

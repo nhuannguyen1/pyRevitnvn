@@ -8,3 +8,4 @@ Count_Continue,self.Column_Left.SelectedItem,self.Column_Type.SelectedItem,self.
 IndexValueHasSelectedItem,1,2,3,4,5,6,7,11,12,14,15
 IndexValueHasText,8,9,13,16,17,18,19,20,21,22
 Count_Continue,self.Column_Left,self.Column_Type,self.Base_Level,self.Top_Level,self.Rafter_Left,self.Rater_Type_Left,self.Level_Rater_Type_Left,self.Length_Rater_Left,self.Plate_Pt,"self.ReturnPath()",self.Gird_Ver,self.Gird_Hor,self.Slope,self.Gird_Ver_G,self.Gird_Hor_G,self.Length_From_Gird,self.Plate_Column,self.Move_Left,self.Move_Right,self.Move_Up,self.Move_Bottom,self.Offset_Top_Level
+STT,Family Column,Family Column Type,Base Level,Top Level,Family Rafter,Family Type Rafter,Level Rafter,Length,Plate,Path,Gird_Ver,Gird_Hor,Slope,Gird_Ver,Gird_Hor,Length From Gird,Plate Column,Move Left,Move Right,Move Up,Move Bottom,Offset_Top_Level\n
