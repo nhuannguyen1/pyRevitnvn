@@ -59,11 +59,11 @@ class WPF_PYTHON(WPFWindow):
             DataFromdem = DataFromCSV(*ArrDataExcell)
             DataFromdem.Set_Count(1)
             DataFromdem.SetPath(DataToolTemplate)
-            GetDataFirst = DataFromdem.GetContentDataFromExcel(DataToolTemplate)
-            self.GetValueOfSelectedValue(GetDataFirst)
+            GetDataFirst = DataFromdem.GetContentDataFromExcel(DataToolTemplate,0)
+            self.GetValueOfSelectedValue(GetDataFirst,"P")
         else:
             GetDataFirst = ArrDataExcell
-            self.GetValueOfSelectedValue(GetDataFirst)
+            self.GetValueOfSelectedValue(GetDataFirst,"P")
     def ReturnPath(self):
         GetFixLevellr4 =GetFixLevel(4)
         Select_Membered = self.Select_Member.SelectedItem
@@ -77,11 +77,17 @@ class WPF_PYTHON(WPFWindow):
             return DataToolTemplate
         except:
             print ("Check again")
-    def GetValueOfSelectedValue(self,GetDataFirst):
+    def GetValueOfSelectedValue(self,GetDataFirst,P):
+        DATAS = DataCSV(Path_Config_Setting)
+        strIndex = DATAS.ReturnDataAllRowByIndexpath(Path_Config_Setting,0)
         ArrContainSelectedAndText = ReturnArrContainSelectedAndText(Path_Config_Setting,7,8,9,"SelectedValue","Text")
         for i in range(1,len(ArrContainSelectedAndText)):
-            if i == 10:
-                continue
+            if P=="P":
+                if  i == 10:
+                    continue
+            else:
+                if str(i) in strIndex:
+                    continue
             arrTotal = ArrContainSelectedAndText[i] + " = "+ "CheckSelectedValueForFamily(GetDataFirst[{}])".format(i)
             exec(arrTotal)
     def Reset_Data(self, sender, e):
@@ -152,12 +158,12 @@ class WPF_PYTHON(WPFWindow):
             Count_Continue = int(self.InputNumberLeft.Text)
             DataToolTemplate = self.ReturnPath()
             count_dem = CountNumberOfRow(DataToolTemplate) - 1
-            if Count_Continue > (count_dem):
-                a = Count_Continue
-                ArraySelectedItem = self.ArraySelectedItemfs(a)
+            if (Count_Continue > (count_dem) and Count_Continue != 1):
+                #a = Count_Continue
+                ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
                 DataFromCSV_1 = DataFromCSV(*ArraySelectedItem)
                 DataFromCSV_1.SetPath(DataToolTemplate)
-                DataFromCSV_1.Set_Count(a)
+                DataFromCSV_1.Set_Count(Count_Continue)
                 DataFromCSV_1.writefileExcel(Count_Continue,DataToolTemplate)
             elif (Count_Continue == 1 and count_dem == 1):
                 ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
@@ -167,21 +173,28 @@ class WPF_PYTHON(WPFWindow):
                 ArraySelectedItem [0] = Count_Continue 
                 DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
                 DataFromCSV_DATA.SetPath(DataToolTemplate)
-                arr = DataFromCSV_DATA.GetContentDataFromExcel(DataToolTemplate)
-                self.GetValueOfSelectedValue(arr)
+                arr = DataFromCSV_DATA.GetContentDataFromExcel(DataToolTemplate,0)
+                self.GetValueOfSelectedValue(arr,"")
+                DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1,DataToolTemplate)
+            
+            elif (Count_Continue == count_dem):
+                ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
+                DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
+                DataFromCSV_DATA.SetPath(DataToolTemplate)
+                DataFromCSV_DATA.Set_Count(Count_Continue)
+                Return_Row1 =DataFromCSV_DATA.Return_Row_Excel()
+                arr = DataFromCSV_DATA.GetContentDataFromExcel(DataToolTemplate,0)
+                self.GetValueOfSelectedValue(arr,"")
                 DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1,DataToolTemplate)
             else:
                 ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
-                DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
-                DataFromCSV_2.SetPath(DataToolTemplate)
-                Return_Row1 =DataFromCSV_2.Return_Row_Excel()
-                if (int(Count_Continue) < int(count_dem)) or (int(Count_Continue) == 1):
-                    ArraySelectedItem [0] = Count_Continue 
-                    DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
-                    DataFromCSV_DATA.SetPath(DataToolTemplate)
-                    arr = DataFromCSV_DATA.GetContentDataFromExcel_Test2(DataToolTemplate)
-                    self.GetValueOfSelectedValue(arr)
-                    DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1,DataToolTemplate)
+                DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
+                DataFromCSV_DATA.SetPath(DataToolTemplate)
+                DataFromCSV_DATA.Set_Count(Count_Continue)
+                Return_Row1 =DataFromCSV_DATA.Return_Row_Excel()
+                arr = DataFromCSV_DATA.GetContentDataFromExcel(DataToolTemplate,1)
+                self.GetValueOfSelectedValue(arr,"")
+                DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1,DataToolTemplate)
             DataCSV1 = DataCSV(DataToolTemplate)
             DataCSV1.SynChronizeValueToCSV1(Path_Config_Setting,Count_Continue)
             self.InputNumberLeft.Text = str (int(Count_Continue + 1))
@@ -193,7 +206,19 @@ class WPF_PYTHON(WPFWindow):
             count_dem = CountNumberOfRow(DataToolTemplate)
             Count_Continue = int(self.InputNumberLeft.Text)
             if count_dem == Count_Continue:
+                Count_Continue = int(self.InputNumberLeft.Text)
+                DataToolTemplate = self.ReturnPath()
+                ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
+                DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
+                DataFromCSV_2.SetPath(DataToolTemplate)
+                Return_Row1 =DataFromCSV_2.Return_Row_Excel()
+                DataCSV1 = DataCSV(DataToolTemplate)
+                DataCSV1.DataForLastRowIndex(Count_Continue,Return_Row1)
                 self.InputNumberLeft.Text = str (int(Count_Continue) - 1)
+                DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
+                DataFromCSV_DATA.SetPath(DataToolTemplate)
+                arr = DataFromCSV_DATA.GetContentDataFromExcel(DataToolTemplate,-1)
+                self.GetValueOfSelectedValue(arr,"")
             else:
                 ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
                 DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
@@ -201,13 +226,13 @@ class WPF_PYTHON(WPFWindow):
                 ArraySelectedItem[0] = int(Count_Continue)
                 DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
                 DataFromCSV_DATA.SetPath(DataToolTemplate)
-                arr = DataFromCSV_DATA.GetContentDataFromExcel_Test(DataToolTemplate)
-                self.GetValueOfSelectedValue(arr)
+                arr = DataFromCSV_DATA.GetContentDataFromExcel(DataToolTemplate,-1)
+                self.GetValueOfSelectedValue(arr,"")
                 DataFromCSV_DATA.InputDataChangeToCSV_Excel(Return_Row1,DataToolTemplate)
-                DataCSV1 = DataCSV(DataToolTemplate)
-                DataCSV1.SynChronizeValueToCSV1(Path_Config_Setting,Count_Continue)
                 self.InputNumberLeft.Text = str (int(Count_Continue - 1))
-        except :
+            DataCSV1 = DataCSV(DataToolTemplate)
+            DataCSV1.SynChronizeValueToCSV1(Path_Config_Setting,Count_Continue)
+        except AttributeError :
                 print ("Check OK_Prevous")
     def Click_To_Start(self, sender, e):
             Count_Continue = int(self.InputNumberLeft.Text)
@@ -216,7 +241,6 @@ class WPF_PYTHON(WPFWindow):
             DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
             DataFromCSV_2.SetPath(DataToolTemplate)
             Return_Row1 =DataFromCSV_2.Return_Row_Excel()
-
             #Fill in form to cv 
             DataCSV1 = DataCSV(DataToolTemplate)
             DataCSV1.DataForLastRowIndex(Count_Continue,Return_Row1)

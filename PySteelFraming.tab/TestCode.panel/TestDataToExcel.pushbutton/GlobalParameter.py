@@ -65,7 +65,7 @@ def writeRowTitle(path):
 def SynChronizeValueToCSV_T(path):
     DataFromCsv_New  = DataCSV (path)
     DataFromCsv_New.SynChronizeValueToCSV(Path_Config_Setting)
-    
+
 class DataFromCSV:
     def  __init__(self, *List):
         self.Count = List[0]
@@ -110,24 +110,12 @@ class DataFromCSV:
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]    
         DataFromCsv  = DataCSV (CheckPath)
         DataFromCsv.writefilecsvFromRowArr(row_Str)
-    def GetContentDataFromExcel(self,path):
-        a = self.Count
+    def GetContentDataFromExcel(self,path,index):
+        a = self.Count + index
         DataFromCsv_New  = DataCSV(path)
         ArrGetContentData = DataFromCsv_New.GetContentDataByName(a)
-        return ArrGetContentData
-    def GetContentDataFromExcel_Test2(self,path):
-        a = self.Count + 1
-        DataFromCsv_New  = DataCSV(path)
-        ArrGetContentData = DataFromCsv_New.GetContentDataByName(a)
-        return ArrGetContentData
-    def GetContentDataFromExcel_Test(self,path):
-        a = self.Count - 1
-        DataFromCsv_New  = DataCSV(path)
-        ArrGetContentData = DataFromCsv_New.GetContentDataByName(a)
-        #print ("ArrGetContentData",ArrGetContentData)
         return ArrGetContentData
     def Return_Row_Excel (self):
-        print (self.ArrDataList())
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]
         return row_Str
     def InputDataChangeToCSV_Excel(self,row_input,path):
@@ -139,7 +127,7 @@ class DataFromCSV:
         self.Move_Left  = ConvertToInternalUnitsmm (self.Move_Left)
         self.Move_Right  = ConvertToInternalUnitsmm (self.Move_Right)
         LEVEL_ELEV_Base_Level= self.Top_Level_Col.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
-        Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve)
+        Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged,self.Gird_Hor_Ged,self.path)
         Base_Leveled_Point =XYZ (Getcondination.X - self.Move_Left + self.Move_Right ,\
             Getcondination.Y,(LEVEL_ELEV_Base_Level + self.Move_Up - self.Move_Bottom))
         FamilySymbol.FamilySymbolAtive(self.FamilyColType)
@@ -161,7 +149,7 @@ class DataFromCSV:
         ColumnCreate = self.PlaceElement()
         RaffterElment = self.PlaceElementRafterFather(ColumnCreate)
         RaffterElment.Add(ColumnCreate.Id)
-        Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve)
+        Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged,self.Gird_Hor_Ged,self.path)
         return [RaffterElment,Getcondination,self.Length_From_Gird] 
     def PlaceElementRafterFather(self,ColumnCreate):
         ArrPlaceElementRafterFather = List[ElementId]()
@@ -181,7 +169,7 @@ class DataFromCSV:
         lr_Row = CountNumberOfRow(self.path)
         Arr_Point_Type_Length = []
         ArrTotal = []
-        Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve)
+        Getcondination =  Getintersection (self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged,self.Gird_Hor_Ged,self.path)
         LIST =  GetCondinationH_nAndH_V (ElementInstance,self.Slope,self.Plate_Column,self.Move_Left,self.Move_Right,self.Offset_Top_Level)
         Slope = UnitUtils.ConvertToInternalUnits(float(self.Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
         H_t = LIST[1]
@@ -194,7 +182,7 @@ class DataFromCSV:
             ArrFistForDefautValue[0] = i 
             ArrFistForDefautValue [10] = self.path
             DataFromCSV_DATA = DataFromCSV(*ArrFistForDefautValue)
-            arr = DataFromCSV_DATA.GetContentDataFromExcel(self.path)
+            arr = DataFromCSV_DATA.GetContentDataFromExcel(self.path,0)
             Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
             DataFromCsv_New  = DataCSV(self.path)
             SumLength = DataFromCsv_New.checkLengthAngGetSumOfItemRafterFromCsv(lr_Row)
@@ -232,7 +220,10 @@ def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Le
     a.SetParameterInstance()
     setparameterfromvalue(Elementinstance,'Length',Length_Rater_Lefted)
     return Elementinstance
-def Getintersection (line1, line2):
+def Getintersection (line1, line2,line3,line4,path ):
+    if path == Right_Member_All:
+        line1 = line3
+        line2 = line4
     results = clr.Reference[IntersectionResultArray]()
     result = line1.Intersect(line2, results)
     if result != SetComparisonResult.Overlap:
