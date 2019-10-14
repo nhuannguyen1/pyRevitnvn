@@ -1,13 +1,14 @@
 import csv
 from Csv_Connect_Data import DataCSV
-Path_Config_Setting = r"C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\Config_Setting.csv"
+import DirectoryPath
+from DirectoryPath import Path_Config_Setting
 from GlobalParameter import DataFromCSV
 import CreateMiddlemenElement
 DataCSV_C = DataCSV(Path_Config_Setting)
-ArrPath = DataCSV_C.ReturnDataAllRowByIndex(2)
+ArrPathIn = DirectoryPath.ReturnPath()
 def PrimaryFraming():
-    for index,path in enumerate(ArrPath):
-        if index in [int(0),int(1)]:
+    for index,path in enumerate(ArrPathIn):
+        if index in [int(7),int(8)]:
             DataCSV_C = DataCSV(path)
             DataCSV_C.SynChronizeValueToCSV(Path_Config_Setting)
             DataFromCsv_New  = DataCSV(path)
@@ -15,9 +16,9 @@ def PrimaryFraming():
             DataFromdem = DataFromCSV(*ArrDataExcell)
             DataFromdem.Set_Count(1)
             DataFromdem.SetPath(path)
-            arr = DataFromdem.GetContentDataFromExcel(path)
+            arr = DataFromdem.GetContentDataFromExcel(path,1)
             DataFromdem = DataFromCSV(*arr)
-            if index == 1 :
+            if index == 7 :
                 DataFromdem.CreateElement()
             else:
                 ReturnARR = DataFromdem.CreateElement()

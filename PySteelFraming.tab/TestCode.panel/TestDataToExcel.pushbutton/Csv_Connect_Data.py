@@ -77,7 +77,6 @@ class DataCSV:
                         sum = sum + float(LengthRafter) + float(PlateThinessRaffter) * 2
         csvFile.close()
         return sum
-   
     def DeleteRow(self,Count):
         ClearRow = []
         with open(self.path ,'rb') as inp:
@@ -132,7 +131,22 @@ class DataCSV:
                  writer = csv.writer(writeFile)
                  writer.writerows(lines)
         writeFile.close()
-
+    def SysWhenStart(self,Row,Count,path):
+        RowF0 = self.ReturnDataAllRowByIndexpath(path,0)
+        del RowF0[0]
+        countRow = self.CountNumberOfRow()
+        with open(self.path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            lines = list(readcsv)
+            #ReturnFirstRow = self.ReturnDataAllRowByIndex(Count)
+            for indexCol in RowF0:
+                for IndexRow in range(1,int(countRow)): 
+                    lines[int(IndexRow)][int(indexCol)] = Row[int(indexCol)]
+        csvFile.close() 
+        with open(self.path, 'w') as writeFile:
+                 writer = csv.writer(writeFile)
+                 writer.writerows(lines)
+        writeFile.close()
     def ReturnDataAllRowByIndexpath (self,path,NumberRow):
         with open(path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
@@ -158,12 +172,12 @@ class DataCSV:
         return RowNumber
     def DataForLastRowIndex (self,CurrentCount,Str_Row):
         LastCount = self.CountNumberOfRow()
-        print ("CurrentCount,LastCount",CurrentCount,LastCount)
         if CurrentCount == LastCount:
             with open(self.path, 'a') as csvFile:
                 writer = csv.writer(csvFile)
                 writer.writerow(Str_Row)
             csvFile.close()
+            
 class SaveDataToCSV:
     def  __init__(self, path):
         self.path = path
@@ -188,6 +202,27 @@ def ReturnArrContainSelectedAndText (path,NumberRowSelectedItem,NumberRowText, N
                 arrTextModifyNumber[int(NumberRowText)] = arrTextModifyNumber[int(NumberRowText)] + "." + Text
         csvFile.close()
         return arrTextModifyNumber
-
-
-
+def GetDataToPrimaryFile (path1,path2,path_Conf,Count):
+    DataCSVP2 = DataCSV(path2)
+    DataCSVP1 = DataCSV(path1)
+    DataCSVPConf = DataCSV(path_Conf)
+    RowCount = DataCSVP2.CountNumberOfRow()
+    RowF0 = DataCSVPConf.ReturnDataAllRowByIndexpath(path_Conf,11)
+    del RowF0[0]
+    with open(path1, 'r') as readFile:
+            reader = csv.reader(readFile)
+            lines = list(reader)
+            row_input = lines[Count]
+            Row_Input1 = [row_input[int(vt)] for vt in RowF0]          
+    with open(path2, 'r') as writeFile:
+        reader = csv.reader(writeFile)
+        lines = list(reader)
+        for count,index in enumerate(RowF0,0) :
+            for i in range(1,RowCount):
+                lines[int(i)][int(index)] = Row_Input1[count]
+    with open(path2, 'w') as writeFile1:
+                writer = csv.writer(writeFile1)
+                writer.writerows(lines)
+    writeFile.close()
+    readFile.close()
+    writeFile1.close()
