@@ -125,6 +125,8 @@ class DataCSV:
             ReturnFirstRow = self.ReturnDataAllRowByIndex(Count)
             for indexCol in RowF0:
                 for IndexRow in range(1,int(countRow)): 
+                    print ("IndexRow,indexCol",IndexRow,indexCol)
+                    print (lines[int(IndexRow)][int(indexCol)])
                     lines[int(IndexRow)][int(indexCol)] = ReturnFirstRow[int(indexCol)]
         csvFile.close() 
         with open(self.path, 'w') as writeFile:

@@ -1,7 +1,7 @@
 from Autodesk.Revit.DB import Element, FilteredElementCollector,FamilySymbol,XYZ,Structure,Family,Level,Grid
 import rpw
 import csv
-Path_Config_Setting = r'C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\Data_CSV\Config_Setting.csv'
+from DirectoryPath import Path_Config_Setting
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 def GetElementByName(Count, NameElement,row):

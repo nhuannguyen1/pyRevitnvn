@@ -92,12 +92,18 @@ class DataFromCSV:
         self.Move_Up = List[20]
         self.Move_Bottom = List[21]
         self.Offset_Top_Level = List[22]
+        self.Select_Level = List[23]
+        self.Clear_Height = List[24]
+        self.Peak_Height = List[25]
+        self.Eave_Height = List[26]
     def ArrDataList(self):
         ArrDataList = [self.Count,self.FamilyCol, self.FamilyColType ,self.Base_Level_Col,\
             self.Top_Level_Col,self.FamilyRafter,self.FamilyRafterType,self.LevelRafter,\
                 self.Length_Rafter, self.Thinkess_Plate,self.path,self.Gird_Ver,self.Gird_hor,self.Slope,\
                     self.Gird_Ver_Ged,self.Gird_Hor_Ged, self.Length_From_Gird,self.Plate_Column,\
-                        self.Move_Left,self.Move_Right, self.Move_Up,self.Move_Bottom,self.Offset_Top_Level]
+                        self.Move_Left,self.Move_Right, self.Move_Up,self.Move_Bottom,\
+                            self.Offset_Top_Level,self.Select_Level,self.Clear_Height,\
+                                self.Peak_Height,self.Eave_Height]
         return ArrDataList
     def writefileExcel(self,a,CheckPath):
         if CheckPath ==Left_Member_All:

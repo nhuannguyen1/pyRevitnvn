@@ -1,12 +1,16 @@
-Index Value change,1,2,3,4,7,10,11,12,13,14,15,16,18,19,20,21,22
+Index Value change,1,2,3,4,7,10,11,12,13,14,15,16,18,19,20,21,22,23,24,25,26
 DataToolTemplate_Left,DataToolTemplate_Right,DataSaveToCaculation
 Genneral_Parameter.csv,Left_DataSaveToCaculation.csv,Left_Member_Change.csv,Left_Member_Change_U.csv,Right_DataSaveToCaculation.csv,Right_Member_Change.csv,Right_Member_Change_U.csv,Left_Genneral_All.csv,Right_Genneral_All.csv
 Slope_Left,Slope_Right
 Member Left,Member Right
 Clear Height & Slope,Clear Height & Peak Height,Eave Height & Slope,Eave Height & Peak Height
 Count_Continue,self.Column_Left.SelectedItem,self.Column_Type.SelectedItem,self.Base_Level.SelectedItem,self.Top_Level.SelectedItem,self.Rafter_Left.SelectedItem,self.Rater_Type_Left.SelectedItem,self.Level_Rater_Type_Left.SelectedItem,self.Length_Rater_Left.Text,float(self.Plate_Pt.Text),self.ReturnPath(),self.Gird_Ver.SelectedItem,self.Gird_Hor.SelectedItem,self.Slope.Text,self.Gird_Ver_G.SelectedItem,self.Gird_Hor_G.SelectedItem,self.Length_From_Gird.Text,self.Plate_Column.Text,self.Move_Left.Text,self.Move_Right.Text,self.Move_Up.Text,self.Move_Bottom.Text,self.Offset_Top_Level.Text
-IndexValueHasSelectedItem,1,2,3,4,5,6,7,11,12,14,15
+IndexValueHasSelectedItem,1,2,3,4,5,6,7,11,12,14,15,23
 IndexValueHasText,8,9,13,16,17,18,19,20,21,22
-Count_Continue,self.Column_Left,self.Column_Type,self.Base_Level,self.Top_Level,self.Rafter_Left,self.Rater_Type_Left,self.Level_Rater_Type_Left,self.Length_Rater_Left,self.Plate_Pt,"self.ReturnPath()",self.Gird_Ver,self.Gird_Hor,self.Slope,self.Gird_Ver_G,self.Gird_Hor_G,self.Length_From_Gird,self.Plate_Column,self.Move_Left,self.Move_Right,self.Move_Up,self.Move_Bottom,self.Offset_Top_Level
-STT,Family Column,Family Column Type,Base Level,Top Level,Family Rafter,Family Type Rafter,Level Rafter,Length,Plate,Path,Gird_Ver,Gird_Hor,Slope,Gird_Ver,Gird_Hor,Length From Gird,Plate Column,Move Left,Move Right,Move Up,Move Bottom,Offset_Top_Level\n
+Count_Continue,self.Column_Left,self.Column_Type,self.Base_Level,self.Top_Level,self.Rafter_Left,self.Rater_Type_Left,self.Level_Rater_Type_Left,self.Length_Rater_Left,self.Plate_Pt,"self.ReturnPath()",self.Gird_Ver,self.Gird_Hor,self.Slope,self.Gird_Ver_G,self.Gird_Hor_G,self.Length_From_Gird,self.Plate_Column,self.Move_Left,self.Move_Right,self.Move_Up,self.Move_Bottom,self.Offset_Top_Level,self.Select_Level,self.Clear_Height,self.Peak_Height,self.Eave_Height
+STT,Family Column,Family Column Type,Base Level,Top Level,Family Rafter,Family Type Rafter,Level Rafter,Length,Plate,Path,Gird_Ver,Gird_Hor,Slope,Gird_Ver,Gird_Hor,Length From Gird,Plate Column,Move Left,Move Right,Move Up,Move Bottom,Offset_Top_Level,Select Level,Clear Height, Peak Height, Eave Height
 Genneral_Parameter,11,12,14,15,16
+Family,1,5
+FamilySymbol,2,6
+Level,3,4,7,24,25,26
+Grid,11,12,14,15

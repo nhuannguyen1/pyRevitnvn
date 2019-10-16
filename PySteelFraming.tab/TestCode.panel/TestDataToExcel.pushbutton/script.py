@@ -99,10 +99,17 @@ class WPF_PYTHON(WPFWindow):
         DATAS = DataCSV(Path_Config_Setting)
         strIndex = DATAS.ReturnDataAllRowByIndexpath(Path_Config_Setting,0)
         ArrContainSelectedAndText = ReturnArrContainSelectedAndText(Path_Config_Setting,7,8,9,"SelectedValue","Text")
-        for i in range(1,len(ArrContainSelectedAndText)):
+        for i in range(1,len(ArrContainSelectedAndText) - 1 ):
             if P=="P":
-                if  i == 10:
+                if  i in [10]:
                     continue
+                """
+                elif i in [23,24,25,26]:
+                    self.Select_Level.Text   =  CheckSelectedValueForFamily(GetDataFirst[23])
+                    self.Clear_Height   =  CheckSelectedValueForFamily(GetDataFirst[24])
+                    self.Peak_Height   =  CheckSelectedValueForFamily(GetDataFirst[25])
+                    self.Eave_Height   =  CheckSelectedValueForFamily(GetDataFirst[26])
+                """
             else:
                 if str(i) in strIndex:
                     continue
@@ -120,21 +127,25 @@ class WPF_PYTHON(WPFWindow):
         GetFixLevellr =GetFixLevel(5)
         self.LevelSelected = sender.SelectedItem
         if (self.LevelSelected ==GetFixLevellr[0]):
+            print ("self.Clear_Height1",self.Clear_Height)
             self.Clear_Height.DataContext = self.levels
             self.Eave_Height.DataContext = None
             self.Peak_Height.DataContext = None
         elif (self.LevelSelected == GetFixLevellr[1]):
-            self.Clear_Height.DataContext = self.levels
+            print ("self.Clear_Height1",self.Clear_Height)
+            self.Clear_Height.DataContext  = self.levels
             self.Peak_Height.DataContext = self.levels
             self.Eave_Height.DataContext = None
         elif (self.LevelSelected == GetFixLevellr[2]):
+            print ("self.Clear_Height",self.Clear_Height)
+            self.Eave_Height.DataContext  = self.levels
             self.Clear_Height.DataContext = None
             self.Peak_Height.DataContext = None
-            self.Eave_Height.DataContext = self.levels
         elif (self.LevelSelected == GetFixLevellr[3]):
-            self.Clear_Height.DataContext = None
             self.Peak_Height.DataContext = self.levels
             self.Eave_Height.DataContext = self.levels
+            print ("self.Clear_Height",self.Clear_Height)
+            self.Clear_Height.DataContext = None
         else:
             print ("Pls check")
     def source_Family_selection_changed(self, sender, e):
@@ -184,7 +195,7 @@ class WPF_PYTHON(WPFWindow):
                 DataFromCSV_1.Set_Count(Count_Continue)
                 DataFromCSV_1.writefileExcel(Count_Continue,DataToolTemplate)
             elif (Count_Continue == 1 and count_dem == 1):
-                Return_Row1 =DataFromCSV_1.Return_Row_Excel()
+                Return_Row1 =DataFromCSV_1.Return_Row()
                 ArraySelectedItem [0] = Count_Continue 
                 DataFromCSV_1 = DataFromCSV(*ArraySelectedItem)
                 DataFromCSV_1.SetPath(DataToolTemplate)
@@ -193,13 +204,13 @@ class WPF_PYTHON(WPFWindow):
                 DataFromCSV_1.InputDataChangeToCSV_Excel(Return_Row1,DataToolTemplate)
             elif (Count_Continue == count_dem):
                 DataFromCSV_1.Set_Count(Count_Continue)
-                Return_Row1 =DataFromCSV_1.Return_Row_Excel()
+                Return_Row1 =DataFromCSV_1.Return_Row()
                 arr = DataFromCSV_1.GetContentDataFromExcel(DataToolTemplate,0)
                 self.GetValueOfSelectedValue(arr,"")
                 DataFromCSV_1.InputDataChangeToCSV_Excel(Return_Row1,DataToolTemplate)
             else:
                 DataFromCSV_1.Set_Count(Count_Continue)
-                Return_Row1 =DataFromCSV_1.Return_Row_Excel()
+                Return_Row1 =DataFromCSV_1.Return_Row()
                 arr = DataFromCSV_1.GetContentDataFromExcel(DataToolTemplate,1)
                 self.GetValueOfSelectedValue(arr,"")
                 DataFromCSV_1.InputDataChangeToCSV_Excel(Return_Row1,DataToolTemplate)
@@ -218,7 +229,7 @@ class WPF_PYTHON(WPFWindow):
                 ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
                 DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
                 DataFromCSV_2.SetPath(DataToolTemplate)
-                Return_Row1 =DataFromCSV_2.Return_Row_Excel()
+                Return_Row1 =DataFromCSV_2.Return_Row()
                 DataCSV1 = DataCSV(DataToolTemplate)
                 DataCSV1.DataForLastRowIndex(Count_Continue,Return_Row1)
                 self.InputNumberLeft.Text = str (int(Count_Continue) - 1)
@@ -229,7 +240,7 @@ class WPF_PYTHON(WPFWindow):
             else:
                 ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
                 DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
-                Return_Row1 =DataFromCSV_2.Return_Row_Excel()
+                Return_Row1 =DataFromCSV_2.Return_Row()
                 ArraySelectedItem[0] = int(Count_Continue)
                 DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
                 DataFromCSV_DATA.SetPath(DataToolTemplate)
@@ -247,8 +258,7 @@ class WPF_PYTHON(WPFWindow):
             ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
             DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
             DataFromCSV_2.SetPath(DataToolTemplate)
-            Return_Row1 =DataFromCSV_2.Return_Row_Excel()
-            #Fill in form to cv 
+            Return_Row1 = DataFromCSV_2.Return_Row()
             DataCSV1 = DataCSV(DataToolTemplate)
             DataCSV1.DataForLastRowIndex(Count_Continue,Return_Row1)
             DataCSV1.SysWhenStart(Return_Row1,Count_Continue,Path_Config_Setting)
