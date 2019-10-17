@@ -9,7 +9,7 @@ import clr
 import Csv_Connect_Data
 from Csv_Connect_Data import DataCSV,SaveDataToCSV
 import FamilySymbol
-from ConvertAndCaculation import Global,ConvertToInternalUnits,ConvertToInternalUnitsmm,setparameterfromvalue,GetCondinationH_nAndH_V,GetCoordinateContinnue
+from ConvertAndCaculation import Global,ConvertToInternalUnits,ConvertToInternalUnitsmm,setparameterfromvalue,GetCondinationH_nAndH_V,GetCoordinateContinnue,ConvertFromInteralUnitToMM
 import CreateMiddlemenElement
 import CheckAndChoice
 from System.Collections.Generic import List
@@ -143,11 +143,17 @@ class DataFromCSV:
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,\
             self.Base_Level_Col, Structure.StructuralType.NonStructural)
         NameParameter = CheckAndChoice.GetParameterName(self.path)
+        
+        # Modify Slope, E.H
+        OfficeSetEH = CheckAndChoice.GetSelectLevel(self.path, self.Select_Level,self.Clear_Height,self.Peak_Height,self.Eave_Height,self.Slope,self.Offset_Top_Level,self.Top_Level_Col,Base_Leveled_Point,ColumnCreate)
+        OfficeSetEH1 = ConvertFromInteralUnitToMM (OfficeSetEH)
+        print ("OfficeSetEH1",OfficeSetEH1)
+        self.SetOffsetColumn(str(- OfficeSetEH1))
         Global1= Global(self.Slope,NameParameter,ColumnCreate)
         Global1.globalparameterchange()
         a = Global(self.Plate_Column,"Pl_Rafter",ColumnCreate)
         a.SetParameterInstance()
-        SetTopLevel = Global(self.Offset_Top_Level,"Top Offset",ColumnCreate)
+        SetTopLevel = Global(- OfficeSetEH1,"Top Offset",ColumnCreate)
         SetTopLevel.SetParameterInstance()
         paramerTopLevel = ColumnCreate.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM)
         paramerTopLevel.Set(self.Top_Level_Col.Id)
@@ -216,6 +222,8 @@ class DataFromCSV:
         DataFromCsv_New.DeleteRow(self.Count)
     def Set_Count (self,CountNew):
         self.Count = CountNew
+    def SetOffsetColumn (self,Value):
+        self.Offset_Top_Level = Value
     def SetPath (self,path):
         self.path = path
 def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate,path):

@@ -76,3 +76,27 @@ def ConvertFromInteralUnitToMM (Parameter):
     Parameter = UnitUtils.ConvertFromInternalUnits(float(Parameter), DisplayUnitType.DUT_MILLIMETERS)
     return Parameter
 
+def FindV34 (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X):
+    Offset_Top_Level  = ConvertToInternalUnitsmm (Offset_Top_Level)
+    Slope = UnitUtils.ConvertToInternalUnits( float(Slope) , DisplayUnitType.DUT_DECIMAL_DEGREES)
+    #Plate_Column  = ConvertToInternalUnitsmm (Plate_Column)
+    Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
+    ElementType =  doc.GetElement(ElementInstance.GetTypeId())
+    Tw2_Rafter = ElementType.LookupParameter('Tw2_WF_R').AsDouble()
+    Tf = ElementType.LookupParameter('Tf').AsDouble()
+    Tw1 = ElementType.LookupParameter('Tw1').AsDouble() 
+    Tw2 = ElementType.LookupParameter('Tw2').AsDouble() 
+    A = ElementType.LookupParameter('A').AsDouble() 
+    Pl_Total =math.cos(Slope) * Pl_Right * 2
+    v34u = math.cos(Slope) * Tw2_Rafter
+    V24u = v34u + A
+    H13r = Tw2 - (math.tan(Slope) * V24u)
+    V4u = math.tan(Slope) * H13r
+    H13r_L = H13r - math.tan(Slope) * Tf
+    #h_n = H13r_L - Tw1 / 2 + (Plate_Column * 2)*math.cos(Slope)
+    G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
+    V34 = v34u - V4u 
+    MoveDistance = X_Left_X + X_Right_X
+    V_ct = V34 + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope))
+    return V_ct
+

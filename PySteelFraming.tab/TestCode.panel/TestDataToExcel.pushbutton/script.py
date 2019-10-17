@@ -20,11 +20,8 @@ doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow
 from DirectoryPath import Path_Config_Setting
 from Csv_Connect_Data import DataCSV,ReturnArrContainSelectedAndText,GetDataToPrimaryFile
+from CheckAndChoice import GetFixLevel
 Path_Genneral_Parameter = GetPath_Genneral_Parameter()
-def GetFixLevel (count):
-    GetFixLevel = DataCSV(Path_Config_Setting)
-    GetFixLevelrt = GetFixLevel.ReturnDataAllRowByIndex(count)
-    return GetFixLevelrt
 def GetArrDataExcell(DataToolTemplate):
     if os.stat(DataToolTemplate).st_size == 0:
         writeRowTitle(DataToolTemplate)
@@ -46,11 +43,6 @@ class WPF_PYTHON(WPFWindow):
         self.Select_Level.DataContext = GetFixLevel(5)
         self.Choose_Purlin.DataContext = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
         # Create Level
-        """
-        self.Clear_Height.DataContext = self.levels
-        self.Eave_Height.DataContext = self.levels
-        self.Peak_Height.DataContext = self.levels
-        """
     def Ok_Member_Select(self, sender, e):
         try:
             self.InputNumberLeft.Text = str (1)
