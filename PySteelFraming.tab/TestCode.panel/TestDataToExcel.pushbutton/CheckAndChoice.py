@@ -19,12 +19,12 @@ def GetParameterName (path):
                 SlopeName = ArrSlope[1]
                 break
     return SlopeName
-def GetSelectLevel(path, Select_Level,Clear_Height,Peak_Height,Eave_Height,Slope,Offset_Top_Level,Top_Level_Col,Base_Leveled_Point,ColumnCreate):
+def GetSelectLevel(path, Select_Level,Clear_Height,Peak_Height,Eave_Height,Slope,Offset_Top_Level,Top_Level_Col,Base_Leveled_Point,ColumnCreate,X_Left,X_Right):
     GetFixLevellr =GetFixLevel(5)
     if (Select_Level == GetFixLevellr[0]):
         Clear_Height = Clear_Height
     elif (Select_Level == GetFixLevellr[2]):
-        Clear_Height = FindV34(ColumnCreate,Slope,Offset_Top_Level)
+        Clear_Height = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right)
     else:
         print ("Print ")
     return Clear_Height

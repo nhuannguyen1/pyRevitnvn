@@ -96,7 +96,7 @@ def FindV34 (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X):
     #h_n = H13r_L - Tw1 / 2 + (Plate_Column * 2)*math.cos(Slope)
     G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
     V34 = v34u - V4u 
-    MoveDistance = X_Left_X + X_Right_X
-    V_ct = V34 + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope))
+    MoveDistance = X_Left_X + X_Right_X 
+    V_ct = V34 + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope)
     return V_ct
 

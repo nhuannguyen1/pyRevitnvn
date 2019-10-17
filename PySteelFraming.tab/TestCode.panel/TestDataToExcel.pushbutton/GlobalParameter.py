@@ -145,7 +145,7 @@ class DataFromCSV:
         NameParameter = CheckAndChoice.GetParameterName(self.path)
         
         # Modify Slope, E.H
-        OfficeSetEH = CheckAndChoice.GetSelectLevel(self.path, self.Select_Level,self.Clear_Height,self.Peak_Height,self.Eave_Height,self.Slope,self.Offset_Top_Level,self.Top_Level_Col,Base_Leveled_Point,ColumnCreate)
+        OfficeSetEH = CheckAndChoice.GetSelectLevel(self.path, self.Select_Level,self.Clear_Height,self.Peak_Height,self.Eave_Height,self.Slope,self.Offset_Top_Level,self.Top_Level_Col,Base_Leveled_Point,ColumnCreate,self.Move_Left,self.Move_Right)
         OfficeSetEH1 = ConvertFromInteralUnitToMM (OfficeSetEH)
         print ("OfficeSetEH1",OfficeSetEH1)
         self.SetOffsetColumn(str(- OfficeSetEH1))
