@@ -45,6 +45,12 @@ class WPF_PYTHON(WPFWindow):
         self.Select_Member.DataContext = GetFixLevel(4)
         self.Select_Level.DataContext = GetFixLevel(5)
         self.Choose_Purlin.DataContext = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
+        # Create Level
+        """
+        self.Clear_Height.DataContext = self.levels
+        self.Eave_Height.DataContext = self.levels
+        self.Peak_Height.DataContext = self.levels
+        """
     def Ok_Member_Select(self, sender, e):
         try:
             self.InputNumberLeft.Text = str (1)
@@ -103,13 +109,6 @@ class WPF_PYTHON(WPFWindow):
             if P=="P":
                 if  i in [10]:
                     continue
-                """
-                elif i in [23,24,25,26]:
-                    self.Select_Level.Text   =  CheckSelectedValueForFamily(GetDataFirst[23])
-                    self.Clear_Height   =  CheckSelectedValueForFamily(GetDataFirst[24])
-                    self.Peak_Height   =  CheckSelectedValueForFamily(GetDataFirst[25])
-                    self.Eave_Height   =  CheckSelectedValueForFamily(GetDataFirst[26])
-                """
             else:
                 if str(i) in strIndex:
                     continue
@@ -127,24 +126,20 @@ class WPF_PYTHON(WPFWindow):
         GetFixLevellr =GetFixLevel(5)
         self.LevelSelected = sender.SelectedItem
         if (self.LevelSelected ==GetFixLevellr[0]):
-            print ("self.Clear_Height1",self.Clear_Height)
             self.Clear_Height.DataContext = self.levels
             self.Eave_Height.DataContext = None
             self.Peak_Height.DataContext = None
         elif (self.LevelSelected == GetFixLevellr[1]):
-            print ("self.Clear_Height1",self.Clear_Height)
             self.Clear_Height.DataContext  = self.levels
             self.Peak_Height.DataContext = self.levels
             self.Eave_Height.DataContext = None
         elif (self.LevelSelected == GetFixLevellr[2]):
-            print ("self.Clear_Height",self.Clear_Height)
             self.Eave_Height.DataContext  = self.levels
             self.Clear_Height.DataContext = None
             self.Peak_Height.DataContext = None
         elif (self.LevelSelected == GetFixLevellr[3]):
             self.Peak_Height.DataContext = self.levels
             self.Eave_Height.DataContext = self.levels
-            print ("self.Clear_Height",self.Clear_Height)
             self.Clear_Height.DataContext = None
         else:
             print ("Pls check")

@@ -221,11 +221,9 @@ class DataFromCSV:
 def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate,path):
     FamilySymbol.FamilySymbolAtive(Rater_Type_Lefted)
     Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)
-    #RowValue = PathTemplate.ReturnDataAllRowByIndex(3)
     NameParameter = CheckAndChoice.GetParameterName(path)
     a= Global(Slope_Type,NameParameter,Elementinstance)
     a.globalparameterchange()
-    #print ("Elementinstance is",Elementinstance.Name )
     a= Global(Thinkess_Plate,"Pl_Right",Elementinstance)
     a.SetParameterInstance()
     setparameterfromvalue(Elementinstance,'Length',Length_Rater_Lefted)
