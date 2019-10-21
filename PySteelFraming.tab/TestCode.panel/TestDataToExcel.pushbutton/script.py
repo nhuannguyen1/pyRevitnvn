@@ -44,14 +44,14 @@ class WPF_PYTHON(WPFWindow):
         self.Choose_Purlin.DataContext = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
         # Create Level
     def Ok_Member_Select(self, sender, e):
-        try:
+        #try:
             self.InputNumberLeft.Text = str (1)
             DataToolTemplate = self.ReturnPath()
             ArrDataExcell = GetArrDataExcell(DataToolTemplate)
             count_dem = CountNumberOfRow(DataToolTemplate) - 1
             self.SetValueFromContentData(ArrDataExcell,count_dem)
-        except AttributeError:
-            print ("Check Object Selectd")
+        #except:
+            #print ("Check Object Selectd")
     def SetValueFromContentData (self,ArrDataExcell,count_dem):
         DataToolTemplate = self.ReturnPath()
         if count_dem != 0:

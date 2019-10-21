@@ -145,9 +145,10 @@ class DataFromCSV:
         NameParameter = CheckAndChoice.GetParameterName(self.path)
         
         # Modify Slope, E.H
-        OfficeSetEH = CheckAndChoice.GetSelectLevel(self.path, self.Select_Level,self.Clear_Height,self.Peak_Height,self.Eave_Height,self.Slope,self.Offset_Top_Level,self.Top_Level_Col,Base_Leveled_Point,ColumnCreate,self.Move_Left,self.Move_Right)
-        OfficeSetEH1 = ConvertFromInteralUnitToMM (OfficeSetEH)
-        print ("OfficeSetEH1",OfficeSetEH1)
+        OfficeSetEH = CheckAndChoice.GetSelectLevel(self.path, self.Select_Level,self.Clear_Height,self.Peak_Height,self.Eave_Height,self.Slope,self.Offset_Top_Level,self.Top_Level_Col,Base_Leveled_Point,ColumnCreate,self.Move_Left,self.Move_Right,self.Length_From_Gird)
+        
+        OfficeSetEH1 = ConvertFromInteralUnitToMM (OfficeSetEH[1])
+        self.SetSlope(OfficeSetEH[0])
         self.SetOffsetColumn(str(- OfficeSetEH1))
         Global1= Global(self.Slope,NameParameter,ColumnCreate)
         Global1.globalparameterchange()
@@ -226,6 +227,8 @@ class DataFromCSV:
         self.Offset_Top_Level = Value
     def SetPath (self,path):
         self.path = path
+    def SetSlope (self,Slope):
+        self.Slope = Slope
 def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate,path):
     FamilySymbol.FamilySymbolAtive(Rater_Type_Lefted)
     Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)

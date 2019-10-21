@@ -11,6 +11,7 @@ class Global:
         self.ParameterName = ParameterName
         self.Element = Element
     def globalparameterchange(self):
+        print (self.ParameterValue,self.ParameterName,self.Element )
         paramId = GlobalParametersManager.FindByName(doc,self.ParameterName)
         param = doc.GetElement(paramId) 
         kkkk = ConvertToInternalUnits(float(self.ParameterValue))
@@ -75,7 +76,6 @@ def GetCoordinateContinnue (ElementType, Length_Rafter,Thinkess_Plate1,Slope,H_n
 def ConvertFromInteralUnitToMM (Parameter):
     Parameter = UnitUtils.ConvertFromInternalUnits(float(Parameter), DisplayUnitType.DUT_MILLIMETERS)
     return Parameter
-
 def FindV34 (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X):
     Offset_Top_Level  = ConvertToInternalUnitsmm (Offset_Top_Level)
     Slope = UnitUtils.ConvertToInternalUnits( float(Slope) , DisplayUnitType.DUT_DECIMAL_DEGREES)
@@ -99,4 +99,65 @@ def FindV34 (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X):
     MoveDistance = X_Left_X + X_Right_X 
     V_ct = V34 + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope)
     return V_ct
+def GetSlope(EH,PH,Length):
+    CvLength = ConvertToInternalUnits(Length)
+    Length = UnitUtils.ConvertToInternalUnits(float(Length), DisplayUnitType.DUT_MILLIMETERS)
+    ElevationEH = EH.Elevation
+    ElevationPH = PH.Elevation
+    HeighE = float (ElevationPH)  - float(ElevationEH)
+    Slope = math.atan(HeighE / Length)
+    Slope = UnitUtils.ConvertFromInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
+    return Slope
+def FindV34_1 (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X,CH,PH,Length):
+    
+    Offset_Top_Level  = ConvertToInternalUnitsmm (Offset_Top_Level)
+    Slope = UnitUtils.ConvertToInternalUnits( float(Slope) , DisplayUnitType.DUT_DECIMAL_DEGREES)
+    #Plate_Column  = ConvertToInternalUnitsmm (Plate_Column)
+    Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
+    ElementType =  doc.GetElement(ElementInstance.GetTypeId())
+    Tw2_Rafter = ElementType.LookupParameter('Tw2_WF_R').AsDouble()
+    Tf = ElementType.LookupParameter('Tf').AsDouble()
+    Tw1 = ElementType.LookupParameter('Tw1').AsDouble() 
+    Tw2 = ElementType.LookupParameter('Tw2').AsDouble() 
+    A = ElementType.LookupParameter('A').AsDouble() 
+    Pl_Total =math.cos(Slope) * Pl_Right * 2
+    v34u = math.cos(Slope) * Tw2_Rafter
+    V24u = v34u + A
+    H13r = Tw2 - (math.tan(Slope) * V24u)
+    V4u = math.tan(Slope) * H13r
+    H13r_L = H13r - math.tan(Slope) * Tf
+    #h_n = H13r_L - Tw1 / 2 + (Plate_Column * 2)*math.cos(Slope)
+    G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
+    V34 = v34u - V4u 
+    MoveDistance = X_Left_X + X_Right_X 
+    V_ct =  math.cos(Slope) * Tw2_Rafter + Tf/(math.cos(Slope)) -  math.tan(Slope) * H13r  + Tw1 / 2 * math.tan(Slope) + (X_Left_X + X_Right_X)  * math.tan(Slope)
 
+    #Tinh slope follow Ngoc Son
+    print ("Length",Length)
+    Length = UnitUtils.ConvertToInternalUnits(float(Length), DisplayUnitType.DUT_MILLIMETERS)
+    ElevationCH = CH.Elevation
+    ElevationPH = PH.Elevation
+    print ("Length",Length)
+    print ("ElevationCH,ElevationPH",ElevationCH,ElevationPH)
+
+    A = Tw2_Rafter
+
+    B = Length + H13r + Tw1 / 2  + X_Left_X + X_Right_X 
+
+    C = float(ElevationPH) - float (ElevationCH) - Tf - Tw2_Rafter
+
+
+    detal = B*B + - 4 * A * C 
+
+    Cal = (- B - math.sqrt(detal))/(2 * A)
+
+    print ("CAL",Cal)
+
+
+    Slope_N = math.asin(Cal)
+
+    Slope_K = UnitUtils.ConvertFromInternalUnits(float(Slope_N), DisplayUnitType.DUT_DECIMAL_DEGREES)
+
+    print ("Slope_K",Slope_K)
+
+    return Slope_K
