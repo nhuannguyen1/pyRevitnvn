@@ -189,7 +189,13 @@ class DataFromCSV:
         Slope = UnitUtils.ConvertToInternalUnits(float(self.Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
         H_t = LIST[1]
         H_n = LIST[0]
+        # check path and get distance from gird 
+        Distance = GetDistanceRight (self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,self.Length_From_Gird)
+        #Distance = ConvertFromInteralUnitToMM(Distance)
+        print ("Distance",Distance)
+        self.SetLength_From_Gird (Distance)
         Length_From_Gird_T = ConvertToInternalUnitsmm(float (self.Length_From_Gird)) - H_n
+
         #Length_From_Gird_Dis = ConvertFromInternalUnits(float(Length_From_Gird_T),DisplayUnitType.DUT_MILLIMETERS)
         Length_From_Gird = self.LengthToTotalInlineFromGird(Length_From_Gird_T)
         for i in range(1,int(lr_Row)):
@@ -229,6 +235,8 @@ class DataFromCSV:
         self.path = path
     def SetSlope (self,Slope):
         self.Slope = Slope
+    def SetLength_From_Gird (self,Length_From_Gird):
+        self.Length_From_Gird = Length_From_Gird
 def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate,path):
     FamilySymbol.FamilySymbolAtive(Rater_Type_Lefted)
     Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)
@@ -246,9 +254,26 @@ def Getintersection (line1, line2,line3,line4,path ):
     results = clr.Reference[IntersectionResultArray]()
     result = line1.Intersect(line2, results)
     if result != SetComparisonResult.Overlap:
-	    print('No Intesection, Review Gird was choise')
+	    print('No Intesection, Review gird was choise')
     res = results.Item[0]
     return res.XYZPoint
+def GetDistanceRight (line1, line2,line3,line4,path,length):
+    if path == Right_Member_All:
+        Point1 = GetInterSectionTwoLine(line1,line2)
+        Point2 = GetInterSectionTwoLine(line3,line4)
+        Distance1 = Point2.X - Point1.X
+        Distance1 = ConvertFromInteralUnitToMM(Distance1) - float(length)
+    else:
+        Distance1 = length
+    return Distance1
+def GetInterSectionTwoLine (line1,line2 ):
+    results = clr.Reference[IntersectionResultArray]()
+    result = line1.Intersect(line2, results)
+    if result != SetComparisonResult.Overlap:
+	    print('No Intesection, Review gird was choise')
+    res = results.Item[0]
+    return res.XYZPoint
+
 def CheckTypeLengthBal(Length_Rater):
     if  Length_Rater == "BAL":
         Length = "BAL"
