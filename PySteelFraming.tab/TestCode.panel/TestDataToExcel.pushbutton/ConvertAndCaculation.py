@@ -109,7 +109,6 @@ def GetSlope(EH,PH,Length):
     Slope = UnitUtils.ConvertFromInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
     return Slope
 def FindV34_1 (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X,CH,PH,Length):
-    
     Offset_Top_Level  = ConvertToInternalUnitsmm (Offset_Top_Level)
     Slope = UnitUtils.ConvertToInternalUnits( float(Slope) , DisplayUnitType.DUT_DECIMAL_DEGREES)
     #Plate_Column  = ConvertToInternalUnitsmm (Plate_Column)
@@ -130,34 +129,17 @@ def FindV34_1 (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X,CH,PH,L
     G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
     V34 = v34u - V4u 
     MoveDistance = X_Left_X + X_Right_X 
-    V_ct =  math.cos(Slope) * Tw2_Rafter + Tf/(math.cos(Slope)) -  math.tan(Slope) * H13r  + Tw1 / 2 * math.tan(Slope) + (X_Left_X + X_Right_X)  * math.tan(Slope)
+    V_ct = math.cos(Slope) * Tw2_Rafter -  math.tan(Slope) * (Tw2 - (math.tan(Slope) * ( (math.cos(Slope) * Tw2_Rafter) + A))) + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope)
+    V_ct = -math.tan(Slope)*L-CH+PH
 
-    #Tinh slope follow Ngoc Son
-    print ("Length",Length)
-    Length = UnitUtils.ConvertToInternalUnits(float(Length), DisplayUnitType.DUT_MILLIMETERS)
-    ElevationCH = CH.Elevation
-    ElevationPH = PH.Elevation
-    print ("Length",Length)
-    print ("ElevationCH,ElevationPH",ElevationCH,ElevationPH)
+    k = math.sqrt(1- ((math.cos(Slope))^2/(math.cos(Slope))^2))  # equivation tan
 
-    A = Tw2_Rafter
+    math.sqrt(1/(k+1))
 
-    B = Length + H13r + Tw1 / 2  + X_Left_X + X_Right_X 
+    - k*L-CH + PH = sqrt(1/(k+1)* Tw2_Rafter -  k * (Tw2 - (k* ( (sqrt(1/(k+1) * Tw2_Rafter) + A))) + Tw1 / 2 * k + Tf/sqrt(1/(k+1) + MoveDistance * k
 
-    C = float(ElevationPH) - float (ElevationCH) - Tf - Tw2_Rafter
+    sqrt(1/(k+1)* Tw2_Rafter -  k * (Tw2 - (k* ( (sqrt(1/(k+1) * Tw2_Rafter) + A))) + Tw1 / 2 * k + Tf/sqrt(1/(k+1) + MoveDistance * k - ( - k*L-CH + PH )
 
 
-    detal = B*B + - 4 * A * C 
 
-    Cal = (- B - math.sqrt(detal))/(2 * A)
-
-    print ("CAL",Cal)
-
-
-    Slope_N = math.asin(Cal)
-
-    Slope_K = UnitUtils.ConvertFromInternalUnits(float(Slope_N), DisplayUnitType.DUT_DECIMAL_DEGREES)
-
-    print ("Slope_K",Slope_K)
-
-    return Slope_K
+    return V_ct
