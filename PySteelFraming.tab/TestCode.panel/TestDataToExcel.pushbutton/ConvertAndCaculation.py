@@ -151,3 +151,48 @@ def frange(start, stop=None, step=None):
             break
         yield ("%g" % start) # return float number
         start = start + step
+def FindX_RightAndX_Left (Slope,X_Left_X,X_Right_X,Length,ElevationEH,ElevationPH):
+    Slope = UnitUtils.ConvertToInternalUnits( float(Slope) , DisplayUnitType.DUT_DECIMAL_DEGREES)
+    Length = UnitUtils.ConvertToInternalUnits(float(Length), DisplayUnitType.DUT_MILLIMETERS)
+    HeighE = ElevationPH - ElevationEH 
+    lengthFl = HeighE / math.tan(Slope)
+    X_MD = lengthFl - Length
+    lengthFlt1 = UnitUtils.ConvertFromInternalUnits(float(Length), DisplayUnitType.DUT_MILLIMETERS)
+    x_MD = UnitUtils.ConvertFromInternalUnits(float(X_MD), DisplayUnitType.DUT_MILLIMETERS)
+    if X_MD > 0:
+        """
+        X_Right_X = X_MD
+        X_Left_X = 0 
+        """
+        X_Right_X = 0
+        X_Left_X = X_MD 
+    else:
+        X_Right_X = - float(X_MD) 
+        X_Left_X = 0
+    print ("X_Left_X,X_Right_X",X_Left_X,X_Right_X)
+    return [X_Left_X,X_Right_X]
+def FindOffsetLevel (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X,ElevationPH,ElevationEH,Length):
+    Length = UnitUtils.ConvertToInternalUnits(float(Length), DisplayUnitType.DUT_MILLIMETERS)
+    Offset_Top_Level  = ConvertToInternalUnitsmm (Offset_Top_Level)
+    Slope = UnitUtils.ConvertToInternalUnits( float(Slope) , DisplayUnitType.DUT_DECIMAL_DEGREES)
+    #Plate_Column  = ConvertToInternalUnitsmm (Plate_Column)
+    Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
+    ElementType =  doc.GetElement(ElementInstance.GetTypeId())
+    Tw2_Rafter = ElementType.LookupParameter('Tw2_WF_R').AsDouble()
+    Tf = ElementType.LookupParameter('Tf').AsDouble()
+    Tw1 = ElementType.LookupParameter('Tw1').AsDouble() 
+    Tw2 = ElementType.LookupParameter('Tw2').AsDouble() 
+    A = ElementType.LookupParameter('A').AsDouble() 
+    Pl_Total =math.cos(Slope) * Pl_Right * 2
+    v34u = math.cos(Slope) * Tw2_Rafter
+    V24u = v34u + A
+    H13r = Tw2 - (math.tan(Slope) * V24u)
+    V4u = math.tan(Slope) * H13r
+    H13r_L = H13r - math.tan(Slope) * Tf
+    #h_n = H13r_L - Tw1 / 2 + (Plate_Column * 2)*math.cos(Slope)
+    G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
+    V34 = v34u - V4u 
+    MoveDistance = X_Left_X + X_Right_X 
+    V_ct = V34 + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope)
+    Length_Dis = (ElevationEH + V_ct + math.tan(Slope) * Length) - ElevationPH
+    return  Length_Dis

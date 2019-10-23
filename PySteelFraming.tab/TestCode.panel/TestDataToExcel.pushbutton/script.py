@@ -107,7 +107,6 @@ class WPF_PYTHON(WPFWindow):
                     continue
             arrTotal = ArrContainSelectedAndText[i] + " = "+ "CheckSelectedValueForFamily(GetDataFirst[{}])".format(i)
             exec(arrTotal)
-            print ("len(ArrContainSelectedAndText) - 1",i,CheckSelectedValueForFamily(GetDataFirst[i]))
     def Reset_Data(self, sender, e):
         DataToolTemplate = self.ReturnPath()
         ArrDataExcell = GetArrDataExcell(DataToolTemplate)

@@ -133,6 +133,14 @@ class DataFromCSV:
         self.Move_Bottom  = ConvertToInternalUnitsmm (self.Move_Bottom)
         self.Move_Left  = ConvertToInternalUnitsmm (self.Move_Left)
         self.Move_Right  = ConvertToInternalUnitsmm (self.Move_Right)
+        """
+        Distance = GetDistanceRight (self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,self.Length_From_Gird)
+        self.SetLength_From_Gird (Distance)
+
+        CheckX_RightAndX_Left = CheckAndChoice.CheckAndReturnX_RightAndX_Left(self.path,self.Select_Level,self.Slope,self.Move_Left,self.Move_Right,self.Length_From_Gird,self.Eave_Height)
+        self.SetX_Left(CheckX_RightAndX_Left[0])
+        self.SetX_Right(CheckX_RightAndX_Left[1])
+        """
         LEVEL_ELEV_Base_Level= self.Top_Level_Col.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
         Getcondination =  Getintersection(self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path)
         Base_Leveled_Point =XYZ (Getcondination.X - self.Move_Left + self.Move_Right ,\
@@ -147,10 +155,17 @@ class DataFromCSV:
         Distance = GetDistanceRight (self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,self.Length_From_Gird)
         self.SetLength_From_Gird (Distance)
         # Modify Slope, E.H
-        OfficeSetEH = CheckAndChoice.GetSelectLevel(self.path, self.Select_Level,self.Clear_Height,self.Peak_Height,self.Eave_Height,self.Slope,self.Offset_Top_Level,self.Top_Level_Col,Base_Leveled_Point,ColumnCreate,self.Move_Left,self.Move_Right,self.Length_From_Gird)
+        
+        OfficeSetEH = CheckAndChoice.GetSelectLevel(self.path, self.Select_Level,self.Clear_Height,self.Peak_Height,self.Eave_Height,self.Slope,self.Offset_Top_Level,self.Top_Level_Col,ColumnCreate,self.Move_Left,self.Move_Right,self.Length_From_Gird)
         OfficeSetEH1 = ConvertFromInteralUnitToMM (OfficeSetEH[1])
+
         self.SetSlope(OfficeSetEH[0])
         self.SetOffsetColumn(str(- OfficeSetEH1))
+        """
+        self.SetX_Left(OfficeSetEH[2])
+        self.SetX_Right(OfficeSetEH[3])
+        """
+
         Global1= Global(self.Slope,NameParameter,ColumnCreate)
         Global1.globalparameterchange()
         a = Global(self.Plate_Column,"Pl_Rafter",ColumnCreate)
@@ -237,6 +252,10 @@ class DataFromCSV:
         self.Slope = Slope
     def SetLength_From_Gird (self,Length_From_Gird):
         self.Length_From_Gird = Length_From_Gird
+    def SetX_Left (self,Move_Left):
+        self.Move_Left = Move_Left
+    def SetX_Right (self,Move_Right):
+        self.Move_Right = Move_Right
 def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate,path):
     FamilySymbol.FamilySymbolAtive(Rater_Type_Lefted)
     Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)
