@@ -11,7 +11,6 @@ class Global:
         self.ParameterName = ParameterName
         self.Element = Element
     def globalparameterchange(self):
-        print (self.ParameterValue,self.ParameterName,self.Element )
         paramId = GlobalParametersManager.FindByName(doc,self.ParameterName)
         param = doc.GetElement(paramId) 
         kkkk = ConvertToInternalUnits(float(self.ParameterValue))
@@ -108,38 +107,47 @@ def GetSlope(EH,PH,Length):
     Slope = math.atan(HeighE / Length)
     Slope = UnitUtils.ConvertFromInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
     return Slope
-def FindV34_1 (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X,CH,PH,Length):
-    Offset_Top_Level  = ConvertToInternalUnitsmm (Offset_Top_Level)
-    Slope = UnitUtils.ConvertToInternalUnits( float(Slope) , DisplayUnitType.DUT_DECIMAL_DEGREES)
+def FindSlopeFromPHandEV (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X,CH,PH,Length):
     #Plate_Column  = ConvertToInternalUnitsmm (Plate_Column)
-    Pl_Right = ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
     ElementType =  doc.GetElement(ElementInstance.GetTypeId())
     Tw2_Rafter = ElementType.LookupParameter('Tw2_WF_R').AsDouble()
     Tf = ElementType.LookupParameter('Tf').AsDouble()
     Tw1 = ElementType.LookupParameter('Tw1').AsDouble() 
     Tw2 = ElementType.LookupParameter('Tw2').AsDouble() 
     A = ElementType.LookupParameter('A').AsDouble() 
-    Pl_Total =math.cos(Slope) * Pl_Right * 2
-    v34u = math.cos(Slope) * Tw2_Rafter
-    V24u = v34u + A
-    H13r = Tw2 - (math.tan(Slope) * V24u)
-    V4u = math.tan(Slope) * H13r
-    H13r_L = H13r - math.tan(Slope) * Tf
-    #h_n = H13r_L - Tw1 / 2 + (Plate_Column * 2)*math.cos(Slope)
-    G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
-    V34 = v34u - V4u 
+    Length = UnitUtils.ConvertToInternalUnits(float(Length), DisplayUnitType.DUT_MILLIMETERS)
+    """
+    CH = CH.Elevation
+    PH = PH.Elevation
+    """
     MoveDistance = X_Left_X + X_Right_X 
-    V_ct = math.cos(Slope) * Tw2_Rafter -  math.tan(Slope) * (Tw2 - (math.tan(Slope) * ( (math.cos(Slope) * Tw2_Rafter) + A))) + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope)
-    V_ct = -math.tan(Slope)*L-CH+PH
-
-    k = math.sqrt(1- ((math.cos(Slope))^2/(math.cos(Slope))^2))  # equivation tan
-
-    math.sqrt(1/(k+1))
-
-    - k*L-CH + PH = sqrt(1/(k+1)* Tw2_Rafter -  k * (Tw2 - (k* ( (sqrt(1/(k+1) * Tw2_Rafter) + A))) + Tw1 / 2 * k + Tf/sqrt(1/(k+1) + MoveDistance * k
-
-    sqrt(1/(k+1)* Tw2_Rafter -  k * (Tw2 - (k* ( (sqrt(1/(k+1) * Tw2_Rafter) + A))) + Tw1 / 2 * k + Tf/sqrt(1/(k+1) + MoveDistance * k - ( - k*L-CH + PH )
-
-
-
-    return V_ct
+    for i in frange (3,30,0.01):
+        Slope = UnitUtils.ConvertToInternalUnits( float(i) , DisplayUnitType.DUT_DECIMAL_DEGREES)
+        V1 = - math.tan(Slope)* Length - CH + PH
+        V2 = math.cos(Slope) * Tw2_Rafter - math.tan(Slope) * ( Tw2 - (math.tan(Slope) * (( math.cos(Slope) * Tw2_Rafter) + A))) + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope)
+        if round(V1,1) == round(V2,1):
+            break
+    return [i,V1]
+def GetSlopetEhAndPh(EH,PH,Length):
+    CvLength = ConvertToInternalUnits(Length)
+    Length = UnitUtils.ConvertToInternalUnits(float(Length), DisplayUnitType.DUT_MILLIMETERS)
+    HeighE = float (PH)  - float(EH)
+    Slope = math.atan(HeighE / Length)
+    Slope = UnitUtils.ConvertFromInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
+    PH1 = UnitUtils.ConvertFromInternalUnits(float(PH), DisplayUnitType.DUT_MILLIMETERS)
+    return Slope
+def frange(start, stop=None, step=None):
+    #Use float number in range() function
+    # if stop and step argument is null set start=0.0 and step = 1.0
+    if stop == None:
+        stop = start + 0.0
+        start = 0.0
+    if step == None:
+        step = 1.0
+    while True:
+        if step > 0 and start >= stop:
+            break
+        elif step < 0 and start <= stop:
+            break
+        yield ("%g" % start) # return float number
+        start = start + step

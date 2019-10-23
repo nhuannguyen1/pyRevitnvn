@@ -97,7 +97,8 @@ class WPF_PYTHON(WPFWindow):
         DATAS = DataCSV(Path_Config_Setting)
         strIndex = DATAS.ReturnDataAllRowByIndexpath(Path_Config_Setting,0)
         ArrContainSelectedAndText = ReturnArrContainSelectedAndText(Path_Config_Setting,7,8,9,"SelectedValue","Text")
-        for i in range(1,len(ArrContainSelectedAndText) - 1 ):
+        
+        for i in range(1,len(ArrContainSelectedAndText)):
             if P=="P":
                 if  i in [10]:
                     continue
@@ -106,6 +107,7 @@ class WPF_PYTHON(WPFWindow):
                     continue
             arrTotal = ArrContainSelectedAndText[i] + " = "+ "CheckSelectedValueForFamily(GetDataFirst[{}])".format(i)
             exec(arrTotal)
+            print ("len(ArrContainSelectedAndText) - 1",i,CheckSelectedValueForFamily(GetDataFirst[i]))
     def Reset_Data(self, sender, e):
         DataToolTemplate = self.ReturnPath()
         ArrDataExcell = GetArrDataExcell(DataToolTemplate)

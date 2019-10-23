@@ -143,10 +143,11 @@ class DataFromCSV:
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,\
             self.Base_Level_Col, Structure.StructuralType.NonStructural)
         NameParameter = CheckAndChoice.GetParameterName(self.path)
-        
+        # check path and get distance from gird 
+        Distance = GetDistanceRight (self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,self.Length_From_Gird)
+        self.SetLength_From_Gird (Distance)
         # Modify Slope, E.H
         OfficeSetEH = CheckAndChoice.GetSelectLevel(self.path, self.Select_Level,self.Clear_Height,self.Peak_Height,self.Eave_Height,self.Slope,self.Offset_Top_Level,self.Top_Level_Col,Base_Leveled_Point,ColumnCreate,self.Move_Left,self.Move_Right,self.Length_From_Gird)
-        
         OfficeSetEH1 = ConvertFromInteralUnitToMM (OfficeSetEH[1])
         self.SetSlope(OfficeSetEH[0])
         self.SetOffsetColumn(str(- OfficeSetEH1))
@@ -190,10 +191,9 @@ class DataFromCSV:
         H_t = LIST[1]
         H_n = LIST[0]
         # check path and get distance from gird 
-        Distance = GetDistanceRight (self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,self.Length_From_Gird)
+        #Distance = GetDistanceRight (self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,self.Length_From_Gird)
         #Distance = ConvertFromInteralUnitToMM(Distance)
-        print ("Distance",Distance)
-        self.SetLength_From_Gird (Distance)
+        #self.SetLength_From_Gird (Distance)
         Length_From_Gird_T = ConvertToInternalUnitsmm(float (self.Length_From_Gird)) - H_n
 
         #Length_From_Gird_Dis = ConvertFromInternalUnits(float(Length_From_Gird_T),DisplayUnitType.DUT_MILLIMETERS)
@@ -220,9 +220,9 @@ class DataFromCSV:
             GetHt_Hn = GetCoordinateContinnue(arr[6], Length_Rafter,Thinkess_Plate1,Slope,H_n,H_t)
             H_n = GetHt_Hn[0]
             H_t = GetHt_Hn[1]
-            ArrTotal.append(Arr_Point_Type_Length)
-        #print ("(H_n,H_t)",H_n,H_t)
-        SaveDataToCSV.SaveDataH_tAndH_N(H_n,H_t)
+            ArrTotal.append(Arr_Point_Type_Length)    
+            ElevationCH = self.Top_Level_Col.Elevation
+        SaveDataToCSV.SaveDataH_tAndH_N(H_n, float(H_t) + float (ElevationCH) )
         return ArrTotal
     def DeleteRowToReset(self,path):
         DataFromCsv_New  = DataCSV(path)
