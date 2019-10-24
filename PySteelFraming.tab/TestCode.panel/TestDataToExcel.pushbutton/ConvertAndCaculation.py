@@ -116,10 +116,7 @@ def FindSlopeFromPHandEV (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Righ
     Tw2 = ElementType.LookupParameter('Tw2').AsDouble() 
     A = ElementType.LookupParameter('A').AsDouble() 
     Length = UnitUtils.ConvertToInternalUnits(float(Length), DisplayUnitType.DUT_MILLIMETERS)
-    """
-    CH = CH.Elevation
-    PH = PH.Elevation
-    """
+
     MoveDistance = X_Left_X + X_Right_X 
     for i in frange (3,30,0.01):
         Slope = UnitUtils.ConvertToInternalUnits( float(i) , DisplayUnitType.DUT_DECIMAL_DEGREES)
@@ -160,16 +157,11 @@ def FindX_RightAndX_Left (Slope,X_Left_X,X_Right_X,Length,ElevationEH,ElevationP
     lengthFlt1 = UnitUtils.ConvertFromInternalUnits(float(Length), DisplayUnitType.DUT_MILLIMETERS)
     x_MD = UnitUtils.ConvertFromInternalUnits(float(X_MD), DisplayUnitType.DUT_MILLIMETERS)
     if X_MD > 0:
-        """
-        X_Right_X = X_MD
-        X_Left_X = 0 
-        """
         X_Right_X = 0
         X_Left_X = X_MD 
     else:
         X_Right_X = - float(X_MD) 
         X_Left_X = 0
-    print ("X_Left_X,X_Right_X",X_Left_X,X_Right_X)
     return [X_Left_X,X_Right_X]
 def FindOffsetLevel (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X,ElevationPH,ElevationEH,Length):
     Length = UnitUtils.ConvertToInternalUnits(float(Length), DisplayUnitType.DUT_MILLIMETERS)
@@ -199,5 +191,4 @@ def FindOffsetLevel (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X,E
     else:
         V_ct = V34 + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope))
         Length_Dis = - (ElevationPH -  (ElevationEH + V_ct + math.tan(Slope) * (Length - MoveDistance)))
-    print ("Length_Dis",Length_Dis)
     return  Length_Dis

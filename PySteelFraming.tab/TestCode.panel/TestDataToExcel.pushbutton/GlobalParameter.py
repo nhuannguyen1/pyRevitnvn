@@ -133,14 +133,7 @@ class DataFromCSV:
         self.Move_Bottom  = ConvertToInternalUnitsmm (self.Move_Bottom)
         self.Move_Left  = ConvertToInternalUnitsmm (self.Move_Left)
         self.Move_Right  = ConvertToInternalUnitsmm (self.Move_Right)
-        """
-        Distance = GetDistanceRight (self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,self.Length_From_Gird)
-        self.SetLength_From_Gird (Distance)
 
-        CheckX_RightAndX_Left = CheckAndChoice.CheckAndReturnX_RightAndX_Left(self.path,self.Select_Level,self.Slope,self.Move_Left,self.Move_Right,self.Length_From_Gird,self.Eave_Height)
-        self.SetX_Left(CheckX_RightAndX_Left[0])
-        self.SetX_Right(CheckX_RightAndX_Left[1])
-        """
         LEVEL_ELEV_Base_Level= self.Top_Level_Col.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
         Getcondination =  Getintersection(self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path)
         Base_Leveled_Point =XYZ (Getcondination.X - self.Move_Left + self.Move_Right ,\
@@ -161,10 +154,6 @@ class DataFromCSV:
 
         self.SetSlope(OfficeSetEH[0])
         self.SetOffsetColumn(str(- OfficeSetEH1))
-        """
-        self.SetX_Left(OfficeSetEH[2])
-        self.SetX_Right(OfficeSetEH[3])
-        """
 
         Global1= Global(self.Slope,NameParameter,ColumnCreate)
         Global1.globalparameterchange()
