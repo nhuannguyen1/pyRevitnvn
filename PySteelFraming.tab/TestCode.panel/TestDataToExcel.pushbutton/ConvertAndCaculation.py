@@ -193,6 +193,11 @@ def FindOffsetLevel (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X,E
     G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
     V34 = v34u - V4u 
     MoveDistance = X_Left_X + X_Right_X 
-    V_ct = V34 + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope)
-    Length_Dis = (ElevationEH + V_ct + math.tan(Slope) * Length) - ElevationPH
+    if X_Left_X > X_Right_X:
+        V_ct = V34 + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope)
+        Length_Dis = (ElevationEH + V_ct + math.tan(Slope) * Length) - ElevationPH
+    else:
+        V_ct = V34 + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope))
+        Length_Dis = - (ElevationPH -  (ElevationEH + V_ct + math.tan(Slope) * (Length - MoveDistance)))
+    print ("Length_Dis",Length_Dis)
     return  Length_Dis

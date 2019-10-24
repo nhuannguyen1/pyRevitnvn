@@ -33,7 +33,7 @@ def GetSelectLevel(path, Select_Level,Clear_Height,Peak_Height,Eave_Height,Slope
             Slope = ArrSL[0]
             Offset_Top_Level1 = float (0)
         elif (Select_Level == GetFixLevellr[2]):
-            Offset_Top_Level1 = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right)
+            Offset_Top_Level1 = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right) 
             Slope = Slope
         elif (Select_Level == GetFixLevellr[3]):
             Slope = GetSlope(Eave_Height,Peak_Height,Length_From_Gird)
@@ -58,21 +58,14 @@ def GetSelectLevel(path, Select_Level,Clear_Height,Peak_Height,Eave_Height,Slope
         elif (Select_Level == GetFixLevellr[2]):
             ElevationPH = float(Strarr[1]) 
             ElevationEH = Eave_Height.Elevation
-            #Peak_Height = float(Strarr[1]) + float(ElevationEH)
-            #X_RightAndX_Left = FindX_RightAndX_Left(Slope,X_Left,X_Right,Length_From_Gird,ElevationEH,ElevationPH)
-            #Peak_Height = float(Strarr[1])
-            Offset_Top_Level1 = FindOffsetLevel(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,ElevationPH,ElevationEH,Length_From_Gird)
+            Offset_Top_Level1 = FindOffsetLevel(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,ElevationPH,ElevationEH,Length_From_Gird) 
             Slope = Slope
-            print ("Offset_Top_Level1",Offset_Top_Level1)
-            #X_Left = X_RightAndX_Left[0]
-            #X_Right = X_RightAndX_Left[1]
-            #Offset_Top_Level1 = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right)
         elif (Select_Level == GetFixLevellr[3]):
             #Peak_Height = float(Strarr[1]) + float(ElevationEH)
             Peak_Height = float(Strarr[1])
             ElevationEH = Eave_Height.Elevation
             Slope = GetSlopetEhAndPh(ElevationEH,Peak_Height,Length_From_Gird)
-            Offset_Top_Level1 = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right)
+            Offset_Top_Level1 = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right) 
         else:
             print (" ReCheck select member level")
         return [Slope,Offset_Top_Level1]

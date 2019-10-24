@@ -44,14 +44,14 @@ class WPF_PYTHON(WPFWindow):
         self.Choose_Purlin.DataContext = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
         # Create Level
     def Ok_Member_Select(self, sender, e):
-        #try:
+        try:
             self.InputNumberLeft.Text = str (1)
             DataToolTemplate = self.ReturnPath()
             ArrDataExcell = GetArrDataExcell(DataToolTemplate)
             count_dem = CountNumberOfRow(DataToolTemplate) - 1
             self.SetValueFromContentData(ArrDataExcell,count_dem)
-        #except:
-            #print ("Check Object Selectd")
+        except:
+            print ("no Object selected")
     def SetValueFromContentData (self,ArrDataExcell,count_dem):
         DataToolTemplate = self.ReturnPath()
         if count_dem != 0:
@@ -77,7 +77,7 @@ class WPF_PYTHON(WPFWindow):
                 DataToolTemplate = ""
             return DataToolTemplate
         except:
-            print ("Check again")
+            print ("Check again ReturnPath")
     def ReturnPath_Rev(self):
             GetFixLevellr4 =GetFixLevel(4)
             Select_Membered = self.Select_Member.SelectedItem
@@ -92,7 +92,7 @@ class WPF_PYTHON(WPFWindow):
                     DataToolTemplate = ""
                 return DataToolTemplateOther
             except:
-                print ("Check again")
+                print ("Check again ReturnPath_Rev")
     def GetValueOfSelectedValue(self,GetDataFirst,P):
         DATAS = DataCSV(Path_Config_Setting)
         strIndex = DATAS.ReturnDataAllRowByIndexpath(Path_Config_Setting,0)
@@ -108,13 +108,16 @@ class WPF_PYTHON(WPFWindow):
             arrTotal = ArrContainSelectedAndText[i] + " = "+ "CheckSelectedValueForFamily(GetDataFirst[{}])".format(i)
             exec(arrTotal)
     def Reset_Data(self, sender, e):
-        DataToolTemplate = self.ReturnPath()
-        ArrDataExcell = GetArrDataExcell(DataToolTemplate)
-        DataFromdem = DataFromCSV(*ArrDataExcell)
-        DataFromdem.Set_Count(1)
-        DataFromdem.SetPath(DataToolTemplate)
-        DataFromdem.DeleteRowToReset(DataToolTemplate)
-        self.InputNumberLeft.Text = str (1)
+        try:
+            DataToolTemplate = self.ReturnPath()
+            ArrDataExcell = GetArrDataExcell(DataToolTemplate)
+            DataFromdem = DataFromCSV(*ArrDataExcell)
+            DataFromdem.Set_Count(1)
+            DataFromdem.SetPath(DataToolTemplate)
+            DataFromdem.DeleteRowToReset(DataToolTemplate)
+            self.InputNumberLeft.Text = str (1)
+        except:
+            print ("Recheck Reset_Data function")
     def ChangeSelectType (self,sender,e):
         GetFixLevellr =GetFixLevel(5)
         self.LevelSelected = sender.SelectedItem
@@ -135,7 +138,7 @@ class WPF_PYTHON(WPFWindow):
             self.Eave_Height.DataContext = self.levels
             self.Clear_Height.DataContext = None
         else:
-            print ("Pls check")
+            print ("check ChangeSelectType")
     def source_Family_selection_changed(self, sender, e):
         try:
             self.Column_Left_SD = sender.SelectedItem
@@ -241,6 +244,7 @@ class WPF_PYTHON(WPFWindow):
         except AttributeError :
                 print ("Check OK_Prevous")
     def Click_To_Start(self, sender, e):
+        try:
             Count_Continue = int(self.InputNumberLeft.Text)
             DataToolTemplate = self.ReturnPath()
             ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
@@ -253,4 +257,6 @@ class WPF_PYTHON(WPFWindow):
             GetDataToPrimaryFile(DataToolTemplate,self.ReturnPath_Rev(),Path_Config_Setting,1)
             self.Close()
             CreatePrimaryFraming.PrimaryFraming()
+        except:
+            print ("Check Selectd Level")
 WPF_PYTHON = WPF_PYTHON('WPF_PYTHON.xaml').ShowDialog()
