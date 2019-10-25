@@ -5,6 +5,9 @@ import rpw
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 import math 
+from DirectoryPath import Path_Config_Setting
+from Csv_Connect_Data import DataCSV
+CheckConfig = DataCSV(Path_Config_Setting)
 class Global:
     def  __init__(self, ParameterValue,ParameterName,Element):
         self.ParameterValue = ParameterValue
@@ -32,6 +35,9 @@ class ConvertToInternalUnits:
         #print (self.ParameterValue)
         ParameterValue = UnitUtils.ConvertToInternalUnits(self.ParameterValue, DisplayUnitType.DUT_DECIMAL_DEGREES)
         return ParameterValue
+def GetParamaterFromElementType(FamilySymbol,ParameterName):
+    ParameterValue = FamilySymbol.LookupParameter(ParameterName).AsDouble()
+    return ParameterValue
 def ConvertToInternalUnitsmm(Parameter):
     Parameter = UnitUtils.ConvertToInternalUnits(float(Parameter), DisplayUnitType.DUT_MILLIMETERS)
     return Parameter
@@ -75,7 +81,7 @@ def GetCoordinateContinnue (ElementType, Length_Rafter,Thinkess_Plate1,Slope,H_n
 def ConvertFromInteralUnitToMM (Parameter):
     Parameter = UnitUtils.ConvertFromInternalUnits(float(Parameter), DisplayUnitType.DUT_MILLIMETERS)
     return Parameter
-def FindV34 (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X):
+def FindV34 (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X,LengthPurlin):
     Offset_Top_Level  = ConvertToInternalUnitsmm (Offset_Top_Level)
     Slope = UnitUtils.ConvertToInternalUnits( float(Slope) , DisplayUnitType.DUT_DECIMAL_DEGREES)
     #Plate_Column  = ConvertToInternalUnitsmm (Plate_Column)
@@ -96,7 +102,7 @@ def FindV34 (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X):
     G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
     V34 = v34u - V4u 
     MoveDistance = X_Left_X + X_Right_X 
-    V_ct = V34 + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope)
+    V_ct = V34 + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope) + LengthPurlin / math.cos(Slope)
     return V_ct
 def GetSlope(EH,PH,Length):
     CvLength = ConvertToInternalUnits(Length)
@@ -107,7 +113,7 @@ def GetSlope(EH,PH,Length):
     Slope = math.atan(HeighE / Length)
     Slope = UnitUtils.ConvertFromInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
     return Slope
-def FindSlopeFromPHandEV (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X,CH,PH,Length):
+def FindSlopeFromPHandEV (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Right_X,CH,PH,Length,LengthPurlin):
     #Plate_Column  = ConvertToInternalUnitsmm (Plate_Column)
     ElementType =  doc.GetElement(ElementInstance.GetTypeId())
     Tw2_Rafter = ElementType.LookupParameter('Tw2_WF_R').AsDouble()
@@ -116,14 +122,24 @@ def FindSlopeFromPHandEV (ElementInstance,Slope,Offset_Top_Level,X_Left_X,X_Righ
     Tw2 = ElementType.LookupParameter('Tw2').AsDouble() 
     A = ElementType.LookupParameter('A').AsDouble() 
     Length = UnitUtils.ConvertToInternalUnits(float(Length), DisplayUnitType.DUT_MILLIMETERS)
-
     MoveDistance = X_Left_X + X_Right_X 
-    for i in frange (3,30,0.01):
-        Slope = UnitUtils.ConvertToInternalUnits( float(i) , DisplayUnitType.DUT_DECIMAL_DEGREES)
-        V1 = - math.tan(Slope)* Length - CH + PH
-        V2 = math.cos(Slope) * Tw2_Rafter - math.tan(Slope) * ( Tw2 - (math.tan(Slope) * (( math.cos(Slope) * Tw2_Rafter) + A))) + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope)
-        if round(V1,1) == round(V2,1):
-            break
+    ArrCheckConfig = CheckConfig.ReturnDataAllRowByIndexpath(Path_Config_Setting,6)
+    print ("ArrCheckConfig",ArrCheckConfig[1])
+    if ArrCheckConfig[1] == "Top_Rafter":
+        for i in frange (3,30,0.01):
+            Slope = UnitUtils.ConvertToInternalUnits( float(i) , DisplayUnitType.DUT_DECIMAL_DEGREES)
+            V1 = - math.tan(Slope)* Length - CH + PH
+            V2 = math.cos(Slope) * Tw2_Rafter - math.tan(Slope) * ( Tw2 - (math.tan(Slope) * (( math.cos(Slope) * Tw2_Rafter) + A))) + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope)
+            if round(V1,1) == round(V2,1):
+                break  
+    else:
+        for i in frange (3,30,0.01):
+            Slope = UnitUtils.ConvertToInternalUnits( float(i) , DisplayUnitType.DUT_DECIMAL_DEGREES)
+            V1 = - math.tan(Slope)* Length - CH + PH - (float(LengthPurlin) / math.cos(Slope))
+            V2 = math.cos(Slope) * Tw2_Rafter - math.tan(Slope) * ( Tw2 - (math.tan(Slope) * (( math.cos(Slope) * Tw2_Rafter) + A))) + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope)
+            if round(V1,1) == round(V2,1):
+                break
+    #LengthHeight = LengthPurlin / math.cos(Slope)
     return [i,V1]
 def GetSlopetEhAndPh(EH,PH,Length):
     CvLength = ConvertToInternalUnits(Length)

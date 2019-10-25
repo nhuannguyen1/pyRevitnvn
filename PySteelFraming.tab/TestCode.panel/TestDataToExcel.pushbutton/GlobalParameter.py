@@ -9,7 +9,7 @@ import clr
 import Csv_Connect_Data
 from Csv_Connect_Data import DataCSV,SaveDataToCSV
 import FamilySymbol
-from ConvertAndCaculation import Global,ConvertToInternalUnits,ConvertToInternalUnitsmm,setparameterfromvalue,GetCondinationH_nAndH_V,GetCoordinateContinnue,ConvertFromInteralUnitToMM
+from ConvertAndCaculation import Global,ConvertToInternalUnits,ConvertToInternalUnitsmm,setparameterfromvalue,GetCondinationH_nAndH_V,GetCoordinateContinnue,ConvertFromInteralUnitToMM,GetParamaterFromElementType
 import CreateMiddlemenElement
 import CheckAndChoice
 from System.Collections.Generic import List
@@ -96,6 +96,8 @@ class DataFromCSV:
         self.Clear_Height = List[24]
         self.Peak_Height = List[25]
         self.Eave_Height = List[26]
+        self.Choose_Purlin = List[27]
+        self.Choose_Type_Purlin = List[28]
     def ArrDataList(self):
         ArrDataList = [self.Count,self.FamilyCol, self.FamilyColType ,self.Base_Level_Col,\
             self.Top_Level_Col,self.FamilyRafter,self.FamilyRafterType,self.LevelRafter,\
@@ -103,7 +105,7 @@ class DataFromCSV:
                     self.Gird_Ver_Ged,self.Gird_Hor_Ged, self.Length_From_Gird,self.Plate_Column,\
                         self.Move_Left,self.Move_Right, self.Move_Up,self.Move_Bottom,\
                             self.Offset_Top_Level,self.Select_Level,self.Clear_Height,\
-                                self.Peak_Height,self.Eave_Height]
+                                self.Peak_Height,self.Eave_Height,self.Choose_Purlin,self.Choose_Type_Purlin]
         return ArrDataList
     def writefileExcel(self,a,CheckPath):
         if CheckPath ==Left_Member_All:
@@ -148,13 +150,13 @@ class DataFromCSV:
         Distance = GetDistanceRight (self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,self.Length_From_Gird)
         self.SetLength_From_Gird (Distance)
         # Modify Slope, E.H
+        GetElementType = GetParamaterFromElementType(self.Choose_Type_Purlin,"D1")
         
-        OfficeSetEH = CheckAndChoice.GetSelectLevel(self.path, self.Select_Level,self.Clear_Height,self.Peak_Height,self.Eave_Height,self.Slope,self.Offset_Top_Level,self.Top_Level_Col,ColumnCreate,self.Move_Left,self.Move_Right,self.Length_From_Gird)
+        OfficeSetEH = CheckAndChoice.GetSelectLevel(self.path, self.Select_Level,self.Clear_Height,self.Peak_Height,self.Eave_Height,self.Slope,self.Offset_Top_Level,self.Top_Level_Col,ColumnCreate,self.Move_Left,self.Move_Right,self.Length_From_Gird,GetElementType)
         OfficeSetEH1 = ConvertFromInteralUnitToMM (OfficeSetEH[1])
 
         self.SetSlope(OfficeSetEH[0])
         self.SetOffsetColumn(str(- OfficeSetEH1))
-
         Global1= Global(self.Slope,NameParameter,ColumnCreate)
         Global1.globalparameterchange()
         a = Global(self.Plate_Column,"Pl_Rafter",ColumnCreate)

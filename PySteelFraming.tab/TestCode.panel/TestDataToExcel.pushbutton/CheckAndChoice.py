@@ -22,22 +22,24 @@ def GetParameterName (path):
                 SlopeName = ArrSlope[1]
                 break
     return SlopeName
-def GetSelectLevel(path, Select_Level,Clear_Height,Peak_Height,Eave_Height,Slope,Offset_Top_Level,Top_Level_Col,ColumnCreate,X_Left,X_Right,Length_From_Gird):
+def GetSelectLevel(path, Select_Level,Clear_Height,Peak_Height,Eave_Height,Slope,Offset_Top_Level,Top_Level_Col,ColumnCreate,X_Left,X_Right,Length_From_Gird,GetElementType):
     GetFixLevellr =GetFixLevel(5)
     if path != Right_Member_All:
         if (Select_Level == GetFixLevellr[0]):
             Offset_Top_Level1 = float(0)
             Slope = Slope
         elif (Select_Level == GetFixLevellr[1]):
-            ArrSL = FindSlopeFromPHandEV(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,Clear_Height,Peak_Height,Length_From_Gird)
+            Clear_Height = Clear_Height.Elevation
+            Peak_Height = Peak_Height.Elevation
+            ArrSL = FindSlopeFromPHandEV(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,Clear_Height,Peak_Height,Length_From_Gird,GetElementType)
             Slope = ArrSL[0]
             Offset_Top_Level1 = float (0)
         elif (Select_Level == GetFixLevellr[2]):
-            Offset_Top_Level1 = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right) 
+            Offset_Top_Level1 = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,GetElementType) 
             Slope = Slope
         elif (Select_Level == GetFixLevellr[3]):
-            Slope = GetSlope(Eave_Height,Peak_Height,Length_From_Gird)
-            Offset_Top_Level1 = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right)
+            Slope = GetSlope(Eave_Height,Peak_Height,Length_From_Gird) 
+            Offset_Top_Level1 = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,GetElementType)
         else:
             print ("Other Case ")
         return [Slope,Offset_Top_Level1]
@@ -54,18 +56,19 @@ def GetSelectLevel(path, Select_Level,Clear_Height,Peak_Height,Eave_Height,Slope
             #Peak_Height = float(Strarr[1]) + float(ElevationCH)
             #Slope = ArrSL[0]
             Slope = GetSlopetEhAndPh(ElevationEH,Peak_Height,Length_From_Gird)
-            Offset_Top_Level1 = float (0)
+            Offset_Top_Level1 = ArrSL[2]
         elif (Select_Level == GetFixLevellr[2]):
             ElevationPH = float(Strarr[1]) 
             ElevationEH = Eave_Height.Elevation
             Offset_Top_Level1 = FindOffsetLevel(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,ElevationPH,ElevationEH,Length_From_Gird) 
             Slope = Slope
         elif (Select_Level == GetFixLevellr[3]):
+            GetElementType = float(0)
             #Peak_Height = float(Strarr[1]) + float(ElevationEH)
-            Peak_Height = float(Strarr[1])
+            Peak_Height = float(Strarr[1]) + GetElementType
             ElevationEH = Eave_Height.Elevation
             Slope = GetSlopetEhAndPh(ElevationEH,Peak_Height,Length_From_Gird)
-            Offset_Top_Level1 = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right) 
+            Offset_Top_Level1 = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,GetElementType) 
         else:
             print (" ReCheck select member level")
         return [Slope,Offset_Top_Level1]

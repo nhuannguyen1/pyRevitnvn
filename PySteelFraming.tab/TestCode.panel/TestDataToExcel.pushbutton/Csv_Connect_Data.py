@@ -3,7 +3,8 @@ import csv
 import GetElementByName
 import os.path
 import math
-import ConvertAndCaculation
+#import ConvertAndCaculation
+from Autodesk.Revit.DB import UnitUtils,DisplayUnitType
 class DataCSV:
     def  __init__(self, path):
         self.path = path
@@ -57,11 +58,11 @@ class DataCSV:
             sum = 0 
             for index,row in enumerate(readcsv):
                 LengthRafter = row[8]
-                if row[8] == "Length":
+                if index == 0:
                     continue
                 RafterName = row[5]
                 Slope = row[13]
-                Slope = ConvertAndCaculation.ConvertToInternalUnitDegree(Slope)
+                Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
                 PlateThinessRaffter = float(row[9])
                 if index==Lr_Row - 1 :
                     PlateThinessRaffter = float(row[9])/2
@@ -94,11 +95,34 @@ class DataCSV:
         inp.close()
         csvfile.close()
     def writeRowTitle(self,Path_Conf):
+        Str_Path_Conf =  self.ReturnDataAllRowByIndexpath(Path_Conf,9)
+
+        Str_Path_Conf_Handling  =[]
+        for ele in Str_Path_Conf:
+            if "self." in ele:
+                Str_Path_Conf_Handling.append(ele[5:])
+            else:
+                Str_Path_Conf_Handling.append(ele)
+        with open(Path_Conf,'r') as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            lines = list(readcsv)
+            lines[10] = Str_Path_Conf_Handling
+        csvFile.close() 
+        with open(Path_Conf, 'w') as writeFile:
+                 writer = csv.writer(writeFile)
+                 writer.writerows(lines)
+        writeFile.close()
         Str_Path_Conf =  self.ReturnDataAllRowByIndexpath(Path_Conf,10)
-        with open(self.path,'w') as f:
-            writer = csv.writer(f)
-            writer.writerow (Str_Path_Conf)
-        f.close()
+        with open(self.path,'r') as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            lines = list(readcsv)
+            lines[0] = Str_Path_Conf
+        csvFile.close() 
+        with open(self.path, 'w') as writeFile:
+                 writer = csv.writer(writeFile)
+                 writer.writerows(lines)
+        writeFile.close()
+
     def SynChronizeValueToCSV (self,path):
         RowF0 = self.ReturnDataAllRowByIndexpath(path,0)
         del RowF0[0]

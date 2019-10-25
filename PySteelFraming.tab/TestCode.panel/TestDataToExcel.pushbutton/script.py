@@ -23,8 +23,8 @@ from Csv_Connect_Data import DataCSV,ReturnArrContainSelectedAndText,GetDataToPr
 from CheckAndChoice import GetFixLevel
 Path_Genneral_Parameter = GetPath_Genneral_Parameter()
 def GetArrDataExcell(DataToolTemplate):
-    if os.stat(DataToolTemplate).st_size == 0:
-        writeRowTitle(DataToolTemplate)
+    DataCSV1 = DataCSV(DataToolTemplate)
+    DataCSV1.writeRowTitle(Path_Config_Setting)
     ArrDataExcell = ArrFistForDefautValue_FC(DataToolTemplate)
     return ArrDataExcell
 class WPF_PYTHON(WPFWindow):
@@ -43,6 +43,11 @@ class WPF_PYTHON(WPFWindow):
         self.Select_Level.DataContext = GetFixLevel(5)
         self.Choose_Purlin.DataContext = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
         # Create Level
+    def SelectLevelChoose(self,sender,e):
+
+
+
+
     def Ok_Member_Select(self, sender, e):
         try:
             self.InputNumberLeft.Text = str (1)
@@ -78,6 +83,7 @@ class WPF_PYTHON(WPFWindow):
             return DataToolTemplate
         except:
             print ("Check again ReturnPath")
+    
     def ReturnPath_Rev(self):
             GetFixLevellr4 =GetFixLevel(4)
             Select_Membered = self.Select_Member.SelectedItem
@@ -97,7 +103,7 @@ class WPF_PYTHON(WPFWindow):
         DATAS = DataCSV(Path_Config_Setting)
         strIndex = DATAS.ReturnDataAllRowByIndexpath(Path_Config_Setting,0)
         ArrContainSelectedAndText = ReturnArrContainSelectedAndText(Path_Config_Setting,7,8,9,"SelectedValue","Text")
-        
+        #print (GetDataFirst)
         for i in range(1,len(ArrContainSelectedAndText)):
             if P=="P":
                 if  i in [10]:
@@ -244,7 +250,7 @@ class WPF_PYTHON(WPFWindow):
         except AttributeError :
                 print ("Check OK_Prevous")
     def Click_To_Start(self, sender, e):
-        try:
+        #try:
             Count_Continue = int(self.InputNumberLeft.Text)
             DataToolTemplate = self.ReturnPath()
             ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
@@ -257,6 +263,6 @@ class WPF_PYTHON(WPFWindow):
             GetDataToPrimaryFile(DataToolTemplate,self.ReturnPath_Rev(),Path_Config_Setting,1)
             self.Close()
             CreatePrimaryFraming.PrimaryFraming()
-        except:
-            print ("Check Selectd Level")
+        #except:
+            #print ("Check Selectd Level")
 WPF_PYTHON = WPF_PYTHON('WPF_PYTHON.xaml').ShowDialog()

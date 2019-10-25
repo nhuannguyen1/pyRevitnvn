@@ -5,6 +5,8 @@ Path_Config_Setting = r'C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 def GetElementByName(Count, NameElement,row):
+    #StrArrCount = [row[int(vt)] for vt in ReturnDataAllRowByIndexpath(Path_Config_Setting,12)]
+    #print (StrArrCount)
     if str(Count) in ReturnDataAllRowByIndexpath(Path_Config_Setting,12):
         for vt in FilteredElementCollector(doc).OfClass(Family):
             if vt.Name == NameElement:
@@ -13,7 +15,9 @@ def GetElementByName(Count, NameElement,row):
     elif  str(Count) in ReturnDataAllRowByIndexpath(Path_Config_Setting,13):
         for vt in FilteredElementCollector(doc).OfClass(FamilySymbol):
         #for vt in FilteredElementCollector(doc).OfClass(FamilySymbol).WhereElementIsElementType().ToElements():
-            if (Element.Name.__get__(vt)  == NameElement) and vt.FamilyName in [str(row[1]),str(row[5])] :
+        #if (Element.Name.__get__(vt)  == NameElement) and vt.FamilyName in [str(row[1]),str(row[5]),str(row[27])] :
+            StrArrCount = [row[int(vtc)] for vtc in ReturnDataAllRowByIndexpath(Path_Config_Setting,12)]
+            if (Element.Name.__get__(vt)  == NameElement) and vt.FamilyName in StrArrCount:
                 vt_Element = vt
                 return vt_Element  
     elif str(Count) in ReturnDataAllRowByIndexpath(Path_Config_Setting,14):

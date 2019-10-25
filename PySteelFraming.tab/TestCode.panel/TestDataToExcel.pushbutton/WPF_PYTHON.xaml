@@ -246,6 +246,8 @@
                         <ComboBox x:Name="Rater_Type_Left" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name"
                          Grid.Column="0" Grid.Row="3" IsEditable="True" Text="Select Rafter Type" />
 
+                        
+
                         <ComboBox x:Name="Level_Rater_Type_Left" ItemsSource="{Binding}" DisplayMemberPath="Name" IsEditable="True" SelectedValuePath="Name"
                          Grid.Column="1" Grid.Row="1"  Text="Rafter Left"/>
                         <TextBlock Text="Level Of Rafter" Grid.Column="1" Grid.Row="0"/>
