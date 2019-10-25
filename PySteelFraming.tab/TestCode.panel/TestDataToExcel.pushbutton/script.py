@@ -43,11 +43,12 @@ class WPF_PYTHON(WPFWindow):
         self.Select_Level.DataContext = GetFixLevel(5)
         self.Choose_Purlin.DataContext = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
         # Create Level
-    def SelectLevelChoose(self,sender,e):
-
-
-
-
+    
+    def SelectLevelChoose_CH(self,sender,e):
+        self.LevelChoose_CH = sender.SelectedItem
+        if  self.LevelChoose_CH != None:
+            self.Top_Level.SelectedValue = self.LevelChoose_CH.Name  
+            self.Level_Rater_Type_Left.SelectedValue = self.LevelChoose_CH.Name  
     def Ok_Member_Select(self, sender, e):
         try:
             self.InputNumberLeft.Text = str (1)
@@ -106,7 +107,7 @@ class WPF_PYTHON(WPFWindow):
         #print (GetDataFirst)
         for i in range(1,len(ArrContainSelectedAndText)):
             if P=="P":
-                if  i in [10]:
+                if  i in [4,10]:
                     continue
             else:
                 if str(i) in strIndex:

@@ -110,7 +110,7 @@
                             <ComboBox x:Name="Eave_Height" Grid.Column="3" Grid.Row="1" ItemsSource="{Binding}" IsEditable="True"  DisplayMemberPath="Name" SelectedValuePath="Name" />
                             <TextBlock Text="Eave Height" Grid.Column="3" Grid.Row="0"/>
                             <TextBlock Text="Clear Height" Grid.Column="2" Grid.Row="0"/>
-                            <ComboBox x:Name="Clear_Height" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding}" IsEditable="True"   DisplayMemberPath="Name" SelectedValuePath="Name" />
+                            <ComboBox x:Name="Clear_Height" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding}" SelectionChanged="SelectLevelChoose_CH"  IsEditable="True" DisplayMemberPath="Name" SelectedValuePath="Name" />
 
                             <TextBlock Text="Peak Height" Grid.Column="4" Grid.Row="0"/>
                             <ComboBox x:Name="Peak_Height" Background="Red" Grid.Column="4" Grid.Row="1" ItemsSource="{Binding}" IsEditable="True"  DisplayMemberPath="Name" SelectedValuePath="Name" />
@@ -246,7 +246,7 @@
                         <ComboBox x:Name="Rater_Type_Left" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="Name"
                          Grid.Column="0" Grid.Row="3" IsEditable="True" Text="Select Rafter Type" />
 
-                        
+
 
                         <ComboBox x:Name="Level_Rater_Type_Left" ItemsSource="{Binding}" DisplayMemberPath="Name" IsEditable="True" SelectedValuePath="Name"
                          Grid.Column="1" Grid.Row="1"  Text="Rafter Left"/>
