@@ -12,16 +12,19 @@ import CreatePrimaryFraming
 import rpw
 from GlobalParameter import setparameterfromvalue,DataFromCSV,\
     CheckSelectedValueForFamily,ArrFistForDefautValue_FC,CountNumberOfRow,\
-        CountNumberOfColumn,\
-            GetPath_Left_Member_Change_U,GetPath_Right_Member_Change_U,\
-                GetPath_Left_Member_All,GetPath_Right_Member_All,writeRowTitle,GetPath_Genneral_Parameter
+        CountNumberOfColumn,GetPath_Left_Member_All,GetPath_Right_Member_All,writeRowTitle
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow
 from DirectoryPath import Path_Config_Setting
 from Csv_Connect_Data import DataCSV,ReturnArrContainSelectedAndText,GetDataToPrimaryFile
 from CheckAndChoice import GetFixLevel
-Path_Genneral_Parameter = GetPath_Genneral_Parameter()
+
+from DirectoryPath import ReturnDataAllRowByIndex_path
+
+ReturnDataAllRowByIndex_path_Count = ReturnDataAllRowByIndex_path(Path_Config_Setting,2)
+print ("ReturnDataAllRowByIndex_path_Count",ReturnDataAllRowByIndex_path_Count)
+
 def GetArrDataExcell(DataToolTemplate):
     DataCSV1 = DataCSV(DataToolTemplate)
     DataCSV1.writeRowTitle(Path_Config_Setting)
@@ -43,21 +46,20 @@ class WPF_PYTHON(WPFWindow):
         self.Select_Level.DataContext = GetFixLevel(5)
         self.Choose_Purlin.DataContext = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
         # Create Level
-    
     def SelectLevelChoose_CH(self,sender,e):
         self.LevelChoose_CH = sender.SelectedItem
         if  self.LevelChoose_CH != None:
             self.Top_Level.SelectedValue = self.LevelChoose_CH.Name  
             self.Level_Rater_Type_Left.SelectedValue = self.LevelChoose_CH.Name  
     def Ok_Member_Select(self, sender, e):
-        try:
+        #try:
             self.InputNumberLeft.Text = str (1)
             DataToolTemplate = self.ReturnPath()
             ArrDataExcell = GetArrDataExcell(DataToolTemplate)
             count_dem = CountNumberOfRow(DataToolTemplate) - 1
             self.SetValueFromContentData(ArrDataExcell,count_dem)
-        except:
-            print ("no Object selected")
+        #except:
+            #print ("no Object selected")
     def SetValueFromContentData (self,ArrDataExcell,count_dem):
         DataToolTemplate = self.ReturnPath()
         if count_dem != 0:

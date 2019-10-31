@@ -18,15 +18,12 @@ uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 import math 
 import DirectoryPath
+import GetElementByName
 from DirectoryPath import Path_Config_Setting
 ArrPath = DirectoryPath.ReturnPath()
-Genneral_Parameter =ArrPath[0]
+Genneral_Parameter = ArrPath[0]
 Left_DataSaveToCaculation = ArrPath[1]
-Left_Member_Change = ArrPath[2]
-Left_Member_Change_U = ArrPath[3]
 Right_DataSaveToCaculation = ArrPath[4]
-Right_Member_Change = ArrPath[5]
-Right_Member_Change_U = ArrPath[6]
 Left_Member_All = ArrPath[7]
 Right_Member_All = ArrPath[8]
 SaveDataToCSV = SaveDataToCSV(Left_DataSaveToCaculation)
@@ -34,16 +31,6 @@ def GetPath_Genneral_Parameter():
     return Genneral_Parameter
 def GetPath_Left_DataSaveToCaculation ():
     return Left_DataSaveToCaculation
-def GetPath_Left_Member_Change ():
-    return Left_Member_Change
-def GetPath_Left_Member_Change_U ():
-    return Left_Member_Change_U
-def GetPath_Right_DataSaveToCaculation ():
-    return Right_DataSaveToCaculation
-def GetPath_Right_Member_Change ():
-    return Right_Member_Change
-def GetPath_Right_Member_Change_U():
-    return Right_Member_Change_U
 def GetPath_Left_Member_All():
     return Left_Member_All
 def GetPath_Right_Member_All():
@@ -108,21 +95,12 @@ class DataFromCSV:
                                 self.Peak_Height,self.Eave_Height,self.Choose_Purlin,self.Choose_Type_Purlin]
         return ArrDataList
     def writefileExcel(self,a,CheckPath):
-        if CheckPath ==Left_Member_All:
-            Path_Member_Change_U = Left_Member_Change_U
-            Path_Member_Change = Left_Member_Change
-        elif CheckPath ==Right_Member_All:
-            Path_Member_Change_U = Right_Member_Change_U
-            Path_Member_Change = Right_Member_Change
-        else:
-            pass
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]    
         DataFromCsv  = DataCSV (CheckPath)
         DataFromCsv.writefilecsvFromRowArr(row_Str)
     def GetContentDataFromExcel(self,path,index):
         a = self.Count + index
-        DataFromCsv_New  = DataCSV(path)
-        ArrGetContentData = DataFromCsv_New.GetContentDataByName(a)
+        ArrGetContentData = GetContentDataByName(path,a)
         return ArrGetContentData
     def Return_Row (self):
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]
@@ -151,7 +129,6 @@ class DataFromCSV:
         self.SetLength_From_Gird (Distance)
         # Modify Slope, E.H
         GetElementType = GetParamaterFromElementType(self.Choose_Type_Purlin,"D1")
-        
         OfficeSetEH = CheckAndChoice.GetSelectLevel(self.path, self.Select_Level,self.Clear_Height,self.Peak_Height,self.Eave_Height,self.Slope,self.Offset_Top_Level,self.Top_Level_Col,ColumnCreate,self.Move_Left,self.Move_Right,self.Length_From_Gird,GetElementType)
         OfficeSetEH1 = ConvertFromInteralUnitToMM (OfficeSetEH[1])
 
@@ -211,8 +188,7 @@ class DataFromCSV:
             DataFromCSV_DATA = DataFromCSV(*ArrFistForDefautValue)
             arr = DataFromCSV_DATA.GetContentDataFromExcel(self.path,0)
             Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
-            DataFromCsv_New  = DataCSV(self.path)
-            SumLength = DataFromCsv_New.checkLengthAngGetSumOfItemRafterFromCsv(lr_Row)
+            SumLength = checkLengthAngGetSumOfItemRafterFromCsv(self.path,lr_Row)
             Length_Rafter = arr[8]
             if Length_Rafter =="BAL":
                 Length_Rafter = (Length_From_Gird - ConvertToInternalUnitsmm(float(SumLength)))
@@ -317,3 +293,41 @@ def ArrDataExcell1(Col):
 def SetValueForARR(Arr1,Arr2):
     for i in range (0,len(Arr1)-1):
         Arr1[i] = Arr2[1]
+
+def GetContentDataByName(path,Count):
+    GetContentDataFromCsv = []
+    with open(path) as csvFile:
+        readcsv =csv.reader(csvFile, delimiter=',')
+        for row in readcsv:
+            if (row[0]) == str(Count):
+                for Index,element in enumerate(row,0):
+                    elementChecked = GetElementByName.GetElementByName(str(Index),element,row)
+                    GetContentDataFromCsv.append(elementChecked) 
+    csvFile.close()
+    return GetContentDataFromCsv
+def checkLengthAngGetSumOfItemRafterFromCsv (path,Lr_Row):
+        with open(path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            sum = 0 
+            for index,row in enumerate(readcsv):
+                LengthRafter = row[8]
+                if index == 0:
+                    continue
+                RafterName = row[5]
+                Slope = row[13]
+                Slope = UnitUtils.ConvertToInternalUnits(float(Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
+                PlateThinessRaffter = float(row[9])
+                if index==Lr_Row - 1 :
+                    PlateThinessRaffter = float(row[9])/2
+                if row[8] == "BAL":
+                    if "4111" in RafterName: 
+                        PlateThinessRaffter = PlateThinessRaffter/(math.cos(Slope))
+                    sum = sum   + float (PlateThinessRaffter) * 2
+                else:
+                    if ("4111" in RafterName) or (index==Lr_Row - 1) : 
+                        PlateThinessRaffter = (PlateThinessRaffter * 2)/math.cos(Slope)
+                        sum = sum + float(LengthRafter) + float(PlateThinessRaffter)
+                    else:
+                        sum = sum + float(LengthRafter) + float(PlateThinessRaffter) * 2
+        csvFile.close()
+        return sum

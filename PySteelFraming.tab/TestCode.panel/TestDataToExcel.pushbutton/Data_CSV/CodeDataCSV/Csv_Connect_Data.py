@@ -168,6 +168,8 @@ class DataCSV:
             RowNumber = readcsv[NumberRow]
         csvFile.close()
         return RowNumber
+
+
     def ReturnFirstRow(self):
         with open(self.path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
@@ -240,3 +242,26 @@ def GetDataToPrimaryFile (path1,path2,path_Conf,Count):
     writeFile.close()
     readFile.close()
     writeFile1.close()
+def ReturnDataAllRowByIndexpath (path,NumberRow):
+        with open(path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            readcsv = list(readcsv)
+            RowNumber = readcsv[NumberRow]
+        csvFile.close()
+        return RowNumber
+def ReturnArrGenneralData (path):
+        RowF0 = ReturnDataAllRowByIndexpath(path,0)
+        del RowF0[0]
+        countRow = CountNumberOfRow()
+        with open(self.path) as csvFile:
+            readcsv =csv.reader(csvFile, delimiter=',')
+            lines = list(readcsv)
+            ReturnFirstRow = self.ReturnDataAllRowByIndex(1)
+            for indexCol in RowF0:
+                for IndexRow in range(2,int(countRow)): 
+                    lines[int(IndexRow)][int(indexCol)] = ReturnFirstRow[int(indexCol)]
+        csvFile.close() 
+        with open(self.path, 'w') as writeFile:
+                 writer = csv.writer(writeFile)
+                 writer.writerows(lines)
+        writeFile.close()
