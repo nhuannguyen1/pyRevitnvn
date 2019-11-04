@@ -14,4 +14,4 @@ Family,1,5,27
 FamilySymbol,2,6,28
 Level,3,4,7,24,25,26
 Grid,11,12,14,15MoveColumn,18,19,20,21
-ExcelCellForMoveColumn, (10:17),(10:19),(9:18),(11:18)
+ExcelCellForMoveColumn, (2:27),(2:29),(1:28),(3:28)PathToConfg_Setting,C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\Data_CSV
