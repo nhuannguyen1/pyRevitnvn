@@ -1,4 +1,20 @@
 from openpyxl.styles import Alignment
+from ReturnDataAllRowByIndexpath import ReturnDataAllRowByIndexpath
+from Path_Connect_Excel import Right_Genneral_All_path,Left_Genneral_All_path,DataExcel,Config_Setting_Path
+
+ValueGeneral = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,22)]
+#remove Column move 
+#Columnmove = ReturnDataAllRowByIndexpath(Config_Setting_Path,32)
+Columnmove = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,32)]
+
+LocationCellForMoveColumn = ReturnDataAllRowByIndexpath(Config_Setting_Path,34)
+
+ArrRangMax = [* range(max([int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,22)] + Columnmove + [int(i) for i in  ReturnDataAllRowByIndexpath(Config_Setting_Path,0)]) + 1)]
+
+ValueChangeLeft_Right  = set(ArrRangMax).difference(set(ValueGeneral + Columnmove))
+
+IndexChangeRemoveColumn = set([int(i) for i in  ReturnDataAllRowByIndexpath(Config_Setting_Path,0)]).difference(set(Columnmove))
+
 def HandlingDataSTr (Element):
     Element1 = Element.replace(":",",")
     Element2= Element1.replace("(","")

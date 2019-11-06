@@ -14,4 +14,4 @@ Family,1,5,27
 FamilySymbol,2,6,28
 Level,3,4,7,24,25,26
 Grid,11,12,14,15MoveColumn,18,19,20,21
-ExcelCellForMoveColumn, (2:27),(2:29),(1:28),(3:28)PathToConfg_Setting,C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\Data_CSV
+ExcelCellForMoveColumn, (2:27),(2:29),(1:28),(3:28)PathToConfg_Setting,C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\Data_CSVGeneralConcernColumn,1,2,3,4,9,17,22GeneralConcernRaffter,5,6,7,8,17,Genneral_Select,23,24,25,26Choose Type Purlin,27,28
