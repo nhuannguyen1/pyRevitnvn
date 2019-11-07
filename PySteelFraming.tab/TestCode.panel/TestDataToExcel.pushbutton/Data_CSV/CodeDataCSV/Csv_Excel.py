@@ -15,6 +15,18 @@ ValueChangeLeft_Right  = set(ArrRangMax).difference(set(ValueGeneral + Columnmov
 
 IndexChangeRemoveColumn = set([int(i) for i in  ReturnDataAllRowByIndexpath(Config_Setting_Path,0)]).difference(set(Columnmove))
 
+GenneralColumnNotChange =  [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,38)]
+
+GeneralConcernRaffter = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,40)]
+
+Genneral_Select = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,42)]
+
+LocationOfRowLeft = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,46)]
+
+LocationOfRowRight = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,48)]
+
+ExcelCellForMoveColumnRight = ReturnDataAllRowByIndexpath(Config_Setting_Path,50)
+
 def HandlingDataSTr (Element):
     Element1 = Element.replace(":",",")
     Element2= Element1.replace("(","")
@@ -24,7 +36,7 @@ def GetIndexOfNotChange(IndexChange,IndexChangeTotal):
     IndexArr =  [IndexChangeTotal.index(indexc) for indexc in IndexChange]
     return  IndexArr
 def AligntText(sheet):
-    rows = range(1, 44)
+    rows = range(1, 500)
     columns = range(1, 44)
     for row in rows:
         for col in columns:
