@@ -27,6 +27,15 @@ LocationOfRowRight = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting
 
 ExcelCellForMoveColumnRight = ReturnDataAllRowByIndexpath(Config_Setting_Path,50)
 
+LocationOfPurlin =  [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,52)]
+
+TitleLocationMoveColumn = ReturnDataAllRowByIndexpath(Config_Setting_Path,54)
+
+Index_Path_From_CSV  = ReturnDataAllRowByIndexpath(Config_Setting_Path,56)
+
+startrow = ReturnDataAllRowByIndexpath(Config_Setting_Path,60)
+
+
 def HandlingDataSTr (Element):
     Element1 = Element.replace(":",",")
     Element2= Element1.replace("(","")
@@ -41,3 +50,37 @@ def AligntText(sheet):
     for row in rows:
         for col in columns:
             sheet.cell(row, col).alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
+def Duplicate_Row_Dataframe(df):
+    for cols in df.columns:
+        try:
+            value = df.loc[1, cols]
+            if value == None:
+                value = ""       
+        except:
+            pass
+        df[cols].fillna(value, inplace = True) 
+    return df
+def WriteMoveColumn (pd,worksheet,path,LocationMoveColumn,Columnmove):
+    for cell,index in zip(LocationMoveColumn,Columnmove):
+        cellstr = HandlingDataSTr(cell)
+        df = pd.read_csv(path, delimiter=',',index_col = None ,usecols = [index],nrows= 1)
+        worksheet.cell(row = cellstr[0], column = cellstr[1]).value = df.iat[0,0]
+
+def Write_Path_ToExcel (worksheet,path):
+    Location_Of_Cell_Path = ReturnDataAllRowByIndexpath(Config_Setting_Path,58)
+    LocCell = [HandlingDataSTr(loc) for loc in Location_Of_Cell_Path]
+    if path == Left_Genneral_All_path:
+        LocCell_C =  LocCell[0]
+    else:
+       LocCell_C =  LocCell[1]
+    worksheet.cell(row = LocCell_C[0], column = LocCell_C[1]).value = "Path CSV"
+    worksheet.cell(row = LocCell_C[0], column = (int(LocCell_C[1]) + 1)).value = path
+def Write_Path_ToCSV (worksheet,path):
+    Location_Of_Cell_Path = ReturnDataAllRowByIndexpath(Config_Setting_Path,58)
+    LocCell = [HandlingDataSTr(loc) for loc in Location_Of_Cell_Path]
+    if path == Left_Genneral_All_path:
+        LocCell_C =  LocCell[0]
+    else:
+       LocCell_C =  LocCell[1]
+    return LocCell_C
+

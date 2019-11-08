@@ -7,9 +7,10 @@ def DicAndCsvExell(NameExelFile,SheetName,Count):
     AR =  [df.columns.values.tolist()] + df.values.tolist()
     AR1 = list(zip(*AR[::1]))
     return AR1
-"""
-def checkavalueexists(yourValue,df):
-    for cols in df.columns:
-    	if (yourValue in df[cols]:
-		    print('Found in '+cols)
-"""
+def Update_Dict_Joint(*List):
+    Genenral_Dict = {} 
+    for subDict in List:
+        Genenral_Dict.update(subDict)
+        Genenral_Dict_Sorted = (sorted (Genenral_Dict.items()))
+        Genenral_Dict_Sorted = dict(Genenral_Dict_Sorted)
+    return Genenral_Dict_Sorted
