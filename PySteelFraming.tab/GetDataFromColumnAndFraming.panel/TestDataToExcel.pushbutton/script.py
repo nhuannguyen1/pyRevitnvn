@@ -23,7 +23,6 @@ from CheckAndChoice import GetFixLevel
 from DirectoryPath import ReturnDataAllRowByIndex_path
 
 ReturnDataAllRowByIndex_path_Count = ReturnDataAllRowByIndex_path(Path_Config_Setting,2)
-print ("ReturnDataAllRowByIndex_path_Count",ReturnDataAllRowByIndex_path_Count)
 
 def GetArrDataExcell(DataToolTemplate):
     DataCSV1 = DataCSV(DataToolTemplate)
