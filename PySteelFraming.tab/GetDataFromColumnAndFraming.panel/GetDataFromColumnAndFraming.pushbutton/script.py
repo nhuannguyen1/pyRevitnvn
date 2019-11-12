@@ -8,7 +8,6 @@ import PySteelFraming
 from PySteelFraming.GetSetParameter import SetParameterInstance,SetParameterFamilySymbol,GetValueName
 from PySteelFraming.SteelFramingCSV import ReturnDataAllRowByIndexpath,CreateDict,keys
 from PySteelFraming.DirectoryPath import dir_path
-print ("dir_path",dir_path)
 def CreateElement():
     ElementDicts = CreateDict()
     for Element_Arr_Dict in ElementDicts:
