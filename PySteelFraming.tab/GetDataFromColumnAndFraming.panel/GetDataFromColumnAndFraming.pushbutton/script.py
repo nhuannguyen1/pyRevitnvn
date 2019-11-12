@@ -16,7 +16,6 @@ def CreateElement():
             for symbolID in collector.GetFamilySymbolIds():
                 symbol = doc.GetElement(symbolID) 
                 Name_Value = GetValueName(symbol,Element_Arr_Dict,index)
-                print ("Name_Value",Name_Value)
                 #Name_Value = GetValueName(symbol,Element_Arr_Dict.get(keys[2]),Element_Arr_Dict.get(keys[3]))
                 SetParameterFamilySymbol(symbol,Element_Arr_Dict.get(keys[1]),Name_Value)
 CreateElement()
