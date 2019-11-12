@@ -10,11 +10,13 @@ from PySteelFraming.SteelFramingCSV import ReturnDataAllRowByIndexpath,CreateDic
 from PySteelFraming.DirectoryPath import dir_path
 def CreateElement():
     ElementDicts = CreateDict()
-    for Element_Arr_Dict in ElementDicts:
+    for index, Element_Arr_Dict in enumerate(ElementDicts):
         collectors = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.Name ==Element_Arr_Dict.get(keys[0])]
         for collector in collectors:
             for symbolID in collector.GetFamilySymbolIds():
                 symbol = doc.GetElement(symbolID) 
-                Name_Value = GetValueName(symbol,Element_Arr_Dict.get(keys[2]),Element_Arr_Dict.get(keys[3]))
+                Name_Value = GetValueName(symbol,Element_Arr_Dict,index)
+                print ("Name_Value",Name_Value)
+                #Name_Value = GetValueName(symbol,Element_Arr_Dict.get(keys[2]),Element_Arr_Dict.get(keys[3]))
                 SetParameterFamilySymbol(symbol,Element_Arr_Dict.get(keys[1]),Name_Value)
 CreateElement()
