@@ -1,37 +1,28 @@
 from Autodesk.Revit.DB import Transaction, FilteredElementCollector,\
 BuiltInCategory,FamilySymbol,FamilyInstance,UnitUtils,DisplayUnitType,BuiltInParameter,UnitType
 import rpw
-from PySteelFraming.SteelFramingCSV import ReturnDataAllRowByIndexpath,CreateDict,keys,Handling_DataS_Tr_For_Case_Expect
+#from PySteelFraming.SteelFramingCSV import keys,Handling_DataS_Tr_For_Case_Expect
+from SteelFramingCSV import StringProcessing
+from ConvertUnitRevit import Convert_length
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
-unit_format_options = doc.GetUnits().GetFormatOptions(UnitType.UT_Length)
-display_unit = unit_format_options.DisplayUnits
-symbol_type = unit_format_options.UnitSymbol
-
 def SetParameterInstance (ElementInstance,ParameterName,ParameterValue):
     ElementInstance = ElementInstance.Symbol
-    #Parameter = ElementInstance.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_MARK )
     Parameter = ElementInstance.LookupParameter(ParameterName)
-    #element.get_Parameter( BuiltInParameter.ALL_MODEL_TYPE_MARK ).AsString()
     t = Transaction (doc,"Set parameter")
     t.Start()
-    #Set Parameter value 
     Parameter.Set(ParameterValue)
     t.Commit()
-def Convert_length(length):
-    Int_Length = (UnitUtils.ConvertFromInternalUnits(float(length), display_unit))
-    return int(round(Int_Length))
 def SetParameterFamilySymbol (FamilySymbol,ParameterName,ParameterValue):
-    #Parameter = ElementInstance.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_MARK )
     Parameter = FamilySymbol.LookupParameter(ParameterName)
-    #element.get_Parameter( BuiltInParameter.ALL_MODEL_TYPE_MARK ).AsString()
     t = Transaction (doc,"Set parameter")
     t.Start()
-    #Set Parameter value 
     Parameter.Set(ParameterValue)
     t.Commit()
-def GetValueName (symbol,Dict_Arr,Index_Row):
-    Value_Check_For_For_Case_Expect = Handling_DataS_Tr_For_Case_Expect()
+def GetValueName (symbol,Dict_Arr,Index_Row,path_Conf):
+    StringProcessing_HD = StringProcessing(path_Conf)
+    keys = StringProcessing_HD.keys
+    Value_Check_For_For_Case_Expect = StringProcessing_HD.Handling_DataS_Tr_For_Case_Expect()
     for Value_Arr in Value_Check_For_For_Case_Expect:
         if (int(Value_Arr[0]) - 4) == Index_Row:
             Parameter1 = symbol.LookupParameter(Value_Arr[2]).AsDouble()

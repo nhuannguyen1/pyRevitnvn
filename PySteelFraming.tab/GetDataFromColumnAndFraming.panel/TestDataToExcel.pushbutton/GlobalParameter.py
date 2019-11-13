@@ -173,13 +173,7 @@ class DataFromCSV:
         Slope = UnitUtils.ConvertToInternalUnits(float(self.Slope), DisplayUnitType.DUT_DECIMAL_DEGREES)
         H_t = LIST[1]
         H_n = LIST[0]
-        # check path and get distance from gird 
-        #Distance = GetDistanceRight (self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,self.Length_From_Gird)
-        #Distance = ConvertFromInteralUnitToMM(Distance)
-        #self.SetLength_From_Gird (Distance)
         Length_From_Gird_T = ConvertToInternalUnitsmm(float (self.Length_From_Gird)) - H_n
-
-        #Length_From_Gird_Dis = ConvertFromInternalUnits(float(Length_From_Gird_T),DisplayUnitType.DUT_MILLIMETERS)
         Length_From_Gird = self.LengthToTotalInlineFromGird(Length_From_Gird_T)
         for i in range(1,int(lr_Row)):
             ArrFistForDefautValue = ArrFistForDefautValue_FC(self.path )
