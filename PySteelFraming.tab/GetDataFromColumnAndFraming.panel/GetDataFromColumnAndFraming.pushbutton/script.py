@@ -18,4 +18,4 @@ def CreateElement():
                 Name_Value = GetValueName(symbol,Element_Arr_Dict,index)
                 #Name_Value = GetValueName(symbol,Element_Arr_Dict.get(keys[2]),Element_Arr_Dict.get(keys[3]))
                 SetParameterFamilySymbol(symbol,Element_Arr_Dict.get(keys[1]),Name_Value)
-CreateElement()
+CreateElement() 

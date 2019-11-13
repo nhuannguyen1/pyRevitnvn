@@ -1,6 +1,6 @@
 __doc__ = 'Training Revit At Itivs '
 __author__ = 'Nguyen Nhuan'
-__title__ = 'Test Code'
+__title__ = 'Create Framing Steel'
 from Autodesk.Revit.DB import Transaction, FilteredElementCollector,\
 BuiltInCategory,FamilySymbol,Element,Family,Level,Grid
 from Autodesk.Revit.UI.Selection import ObjectType
