@@ -56,7 +56,6 @@ class DataCSV:
         csvfile.close()
     def writeRowTitle(self,Path_Conf):
         Str_Path_Conf =  self.ReturnDataAllRowByIndexpath(Path_Conf,9)
-
         Str_Path_Conf_Handling  =[]
         for ele in Str_Path_Conf:
             if "self." in ele:
@@ -73,6 +72,7 @@ class DataCSV:
                  writer.writerows(lines)
         writeFile.close()
         Str_Path_Conf =  self.ReturnDataAllRowByIndexpath(Path_Conf,10)
+        print ("self.path",self.path)
         with open(self.path,'r') as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
             lines = list(readcsv)

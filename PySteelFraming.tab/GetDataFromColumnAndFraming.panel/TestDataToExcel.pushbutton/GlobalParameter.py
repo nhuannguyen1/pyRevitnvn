@@ -9,7 +9,9 @@ import clr
 import Csv_Connect_Data
 from Csv_Connect_Data import DataCSV,SaveDataToCSV
 import FamilySymbol
-from ConvertAndCaculation import Global,ConvertToInternalUnits,ConvertToInternalUnitsmm,setparameterfromvalue,GetCondinationH_nAndH_V,GetCoordinateContinnue,ConvertFromInteralUnitToMM,GetParamaterFromElementType
+from ConvertAndCaculation import Global,ConvertToInternalUnits,ConvertToInternalUnitsmm,\
+    setparameterfromvalue,GetCondinationH_nAndH_V,GetCoordinateContinnue,\
+        ConvertFromInteralUnitToMM,GetParamaterFromElementType
 import CreateMiddlemenElement
 import CheckAndChoice
 from System.Collections.Generic import List
@@ -18,23 +20,13 @@ uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 import math 
 import DirectoryPath
-import GetElementByName
+from  GetElementByName import ElementName
 from DirectoryPath import Path_Config_Setting
 ArrPath = DirectoryPath.ReturnPath()
-Genneral_Parameter = ArrPath[0]
 Left_DataSaveToCaculation = ArrPath[1]
-Right_DataSaveToCaculation = ArrPath[4]
 Left_Member_All = ArrPath[7]
 Right_Member_All = ArrPath[8]
 SaveDataToCSV = SaveDataToCSV(Left_DataSaveToCaculation)
-def GetPath_Genneral_Parameter():
-    return Genneral_Parameter
-def GetPath_Left_DataSaveToCaculation ():
-    return Left_DataSaveToCaculation
-def GetPath_Left_Member_All():
-    return Left_Member_All
-def GetPath_Right_Member_All():
-    return Right_Member_All
 def ArrFistForDefautValue_FC(path):
     DataFromCsv_New  = DataCSV (path)
     Arr = DataFromCsv_New.ArrFistForDefautValue()
@@ -53,7 +45,6 @@ def writeRowTitle(path):
 def SynChronizeValueToCSV_T(path):
     DataFromCsv_New  = DataCSV (path)
     DataFromCsv_New.SynChronizeValueToCSV(Path_Config_Setting)
-
 class DataFromCSV:
     def  __init__(self, *List):
         self.Count = List[0]
@@ -295,7 +286,8 @@ def GetContentDataByName(path,Count):
         for row in readcsv:
             if (row[0]) == str(Count):
                 for Index,element in enumerate(row,0):
-                    elementChecked = GetElementByName.GetElementByName(str(Index),element,row)
+                    ElementName_HD = ElementName(Path_Config_Setting)
+                    elementChecked = ElementName_HD.GetElementByName(str(Index),element,row)
                     GetContentDataFromCsv.append(elementChecked) 
     csvFile.close()
     return GetContentDataFromCsv
@@ -317,7 +309,7 @@ def checkLengthAngGetSumOfItemRafterFromCsv (path,Lr_Row):
                     if "4111" in RafterName: 
                         PlateThinessRaffter = PlateThinessRaffter/(math.cos(Slope))
                     sum = sum   + float (PlateThinessRaffter) * 2
-                else:
+                else: 
                     if ("4111" in RafterName) or (index==Lr_Row - 1) : 
                         PlateThinessRaffter = (PlateThinessRaffter * 2)/math.cos(Slope)
                         sum = sum + float(LengthRafter) + float(PlateThinessRaffter)

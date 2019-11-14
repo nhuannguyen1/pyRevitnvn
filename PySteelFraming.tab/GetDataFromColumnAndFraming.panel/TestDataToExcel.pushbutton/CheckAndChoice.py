@@ -51,10 +51,7 @@ def GetSelectLevel(path, Select_Level,Clear_Height,Peak_Height,Eave_Height,Slope
             Peak_Height = float(Strarr[1]) 
             ArrSL = FindSlopeFromPHandEV(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,ElevationCH,Peak_Height,Length_From_Gird)
             V_CH = ArrSL[1]
-            #ElevationEH = Eave_Height.Elevation
             ElevationEH  = float(ElevationCH) + float (V_CH)
-            #Peak_Height = float(Strarr[1]) + float(ElevationCH)
-            #Slope = ArrSL[0]
             Slope = GetSlopetEhAndPh(ElevationEH,Peak_Height,Length_From_Gird)
             Offset_Top_Level1 = ArrSL[2]
         elif (Select_Level == GetFixLevellr[2]):

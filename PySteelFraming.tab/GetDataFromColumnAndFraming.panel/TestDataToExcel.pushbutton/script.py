@@ -3,27 +3,26 @@ __author__ = 'Nguyen Nhuan'
 __title__ = 'Create Framing Steel'
 from Autodesk.Revit.DB import Transaction, FilteredElementCollector,\
 BuiltInCategory,FamilySymbol,Element,Family,Level,Grid
-from Autodesk.Revit.UI.Selection import ObjectType
-from Autodesk.Revit.Creation.Document import NewFamilyInstance
 from pyrevit import script, forms
 import os.path 
-import clr
 import CreatePrimaryFraming
 import rpw
-from GlobalParameter import setparameterfromvalue,DataFromCSV,\
-    CheckSelectedValueForFamily,ArrFistForDefautValue_FC,CountNumberOfRow,\
-        CountNumberOfColumn,GetPath_Left_Member_All,GetPath_Right_Member_All,writeRowTitle
+from GlobalParameter import DataFromCSV,CheckSelectedValueForFamily,ArrFistForDefautValue_FC,CountNumberOfRow,writeRowTitle
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow
-from DirectoryPath import Path_Config_Setting
-from Csv_Connect_Data import DataCSV,ReturnArrContainSelectedAndText,GetDataToPrimaryFile
-from CheckAndChoice import GetFixLevel
-
-from DirectoryPath import ReturnDataAllRowByIndex_path
-
-ReturnDataAllRowByIndex_path_Count = ReturnDataAllRowByIndex_path(Path_Config_Setting,2)
-
+from PySteelFraming.SteelPath import PathSteel
+# get config setting file 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+PathSteel_Hd = PathSteel(dir_path = dir_path,FolderName ="Data_CSV")
+Path_Config_Setting = PathSteel_Hd.ReturnPath_Conf("Config_Setting.csv")
+#from DirectoryPath import Path_Config_Setting
+from Csv_Steel.Csv_Connect_Data import DataCSV,ReturnArrContainSelectedAndText,GetDataToPrimaryFile
+PathSteel_Hd.SetPath(Path_Config_Setting)
+# get path left right 
+ReturnPath_ARR = PathSteel_Hd.ReturnPath()
+GetPath_Left_Member_All = ReturnPath_ARR[7]
+GetPath_Right_Member_All = ReturnPath_ARR[8]
 def GetArrDataExcell(DataToolTemplate):
     DataCSV1 = DataCSV(DataToolTemplate)
     DataCSV1.writeRowTitle(Path_Config_Setting)
@@ -41,8 +40,8 @@ class WPF_PYTHON(WPFWindow):
         self.Gird_Ver.DataContext = self.Girds
         self.Gird_Ver_G.DataContext = self.Girds
         self.Level_Rater_Type_Left.DataContext = self.levels
-        self.Select_Member.DataContext = GetFixLevel(4)
-        self.Select_Level.DataContext = GetFixLevel(5)
+        self.Select_Member.DataContext = PathSteel_Hd.ReturnDataAllRowByIndexpathIncludeIndex0(4)
+        self.Select_Level.DataContext = PathSteel_Hd.ReturnDataAllRowByIndexpathIncludeIndex0(5)
         self.Choose_Purlin.DataContext = [vt for vt in FilteredElementCollector(doc).OfClass(Family) if vt.FamilyCategory.Name == "Structural Framing"]
         # Create Level
     def SelectLevelChoose_CH(self,sender,e):
@@ -71,31 +70,30 @@ class WPF_PYTHON(WPFWindow):
             GetDataFirst = ArrDataExcell
             self.GetValueOfSelectedValue(GetDataFirst,"P")
     def ReturnPath(self):
-        GetFixLevellr4 =GetFixLevel(4)
+        GetFixLevellr4 =PathSteel_Hd.ReturnDataAllRowByIndexpathIncludeIndex0(4)
         Select_Membered = self.Select_Member.SelectedItem
         try:
             if Select_Membered == GetFixLevellr4[0]:
-                DataToolTemplate = GetPath_Left_Member_All()
-                DataToolTemplateOther = GetPath_Right_Member_All()
+                DataToolTemplate = GetPath_Left_Member_All
+                DataToolTemplateOther = GetPath_Right_Member_All
             elif Select_Membered == GetFixLevellr4[1]:
-                DataToolTemplate = GetPath_Right_Member_All() 
-                DataToolTemplateOther = GetPath_Left_Member_All()
+                DataToolTemplate = GetPath_Right_Member_All 
+                DataToolTemplateOther = GetPath_Left_Member_All
             else:
                 DataToolTemplate = ""
             return DataToolTemplate
         except:
             print ("Check again ReturnPath")
-    
     def ReturnPath_Rev(self):
-            GetFixLevellr4 =GetFixLevel(4)
+            GetFixLevellr4 =PathSteel_Hd.ReturnDataAllRowByIndexpathIncludeIndex0(4)
             Select_Membered = self.Select_Member.SelectedItem
             try:
                 if Select_Membered == GetFixLevellr4[0]:
-                    DataToolTemplate = GetPath_Left_Member_All()
-                    DataToolTemplateOther = GetPath_Right_Member_All()
+                    DataToolTemplate = GetPath_Left_Member_All
+                    DataToolTemplateOther = GetPath_Right_Member_All
                 elif Select_Membered == GetFixLevellr4[1]:
-                    DataToolTemplate = GetPath_Right_Member_All() 
-                    DataToolTemplateOther = GetPath_Left_Member_All()
+                    DataToolTemplate = GetPath_Right_Member_All
+                    DataToolTemplateOther = GetPath_Left_Member_All
                 else:
                     DataToolTemplate = ""
                 return DataToolTemplateOther
@@ -127,7 +125,7 @@ class WPF_PYTHON(WPFWindow):
         except:
             print ("Recheck Reset_Data function")
     def ChangeSelectType (self,sender,e):
-        GetFixLevellr =GetFixLevel(5)
+        GetFixLevellr =PathSteel_Hd.ReturnDataAllRowByIndexpathIncludeIndex0(5)
         self.LevelSelected = sender.SelectedItem
         if (self.LevelSelected ==GetFixLevellr[0]):
             self.Clear_Height.DataContext = self.levels
