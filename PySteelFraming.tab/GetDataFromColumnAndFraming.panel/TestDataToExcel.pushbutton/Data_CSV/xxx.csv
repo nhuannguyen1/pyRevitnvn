@@ -1,4 +1,0 @@
-Count,Family Column,Family Column Type,Balse Level,Top Level,Family Name,Family Type Name,Level Raffter,Length,Plate Column,Path,Slope,Plate Rafter,Offset Top Level,Select Level Type ,Clear Height,Peak Height,Eave Height,Purlin ,Purlin Type,Unnamed: 20,Unnamed: 21,Unnamed: 22,Unnamed: 23,Unnamed: 24,Unnamed: 25,Unnamed: 26,0,Unnamed: 28
-1,3611a.Column-Connection-Flange -Up-Up-VE_V02,200x200mm,G.R,EH,4112.Rafter-Hincline_V01_Tool,HINCLINE 4,EH,3000,12,C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\TestCode.panel\TestDataToExcel.pushbutton\Data_CSV\Left_Genneral_All.csv,10.0,12,20.0,Clear Height & Peak Height,EH,PH,,4121.Purlin-Z,Z250x73x79x20x1.8,,,,,,,2000.0,,0.0
-2,,,,,4112.Rafter-Hincline_V01_Tool,HINCLINE 4,,BAL,12,,,12,,,,,,,,,,,,,,,0.0,
-3,,,,,4111b.Rafter-Tapper-Vertical-Right_Tool,VERTICAL RIGHT,,4000,12,,,12,,,,,,,,,,,,,,,,

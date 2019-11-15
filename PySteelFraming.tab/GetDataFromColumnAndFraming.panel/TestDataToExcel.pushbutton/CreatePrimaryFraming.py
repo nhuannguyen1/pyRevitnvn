@@ -1,25 +1,26 @@
 import csv
-from Csv_Connect_Data import DataCSV
-import DirectoryPath
-from DirectoryPath import Path_Config_Setting
+from Csv_Steel.Csv_Connect_Data import DataCSV
 from GlobalParameter import DataFromCSV
+from PySteelFraming.SteelPath import PathSteel
 import CreateMiddlemenElement
-DataCSV_C = DataCSV(Path_Config_Setting)
-ArrPathIn = DirectoryPath.ReturnPath()
-def PrimaryFraming():
-    for index,path in enumerate(ArrPathIn):
-        if index in [int(7),int(8)]:
-            DataCSV_C = DataCSV(path)
-            DataCSV_C.SynChronizeValueToCSV(Path_Config_Setting)
-            DataFromCsv_New  = DataCSV(path)
-            ArrDataExcell = DataFromCsv_New.ArrFistForDefautValue()
-            DataFromdem = DataFromCSV(*ArrDataExcell)
-            DataFromdem.Set_Count(1)
-            DataFromdem.SetPath(path)
-            arr = DataFromdem.GetContentDataFromExcel(path,1)
-            DataFromdem = DataFromCSV(*arr)
-            if index == 7 :
-                DataFromdem.CreateElement()
-            else:
-                ReturnARR = DataFromdem.CreateElement()
-                CreateMiddlemenElement.CreateElementByMirror(ReturnARR[0],ReturnARR[1],ReturnARR[2])
+class CreateFraming:
+    def  __init__(self, path):
+        self.path = path
+        self.DataCSV_C = DataCSV(self.path)
+        self.PathSteelHD = PathSteel(path = self.path,Is_Directory_Path_To_Config = True)
+        self.ArrPathIn = self.PathSteelHD.ReturnPath()
+    def PrimaryFraming(self):
+        for index,path in enumerate(self.ArrPathIn):
+            if index in [int(7),int(8)]:
+                self.DataCSV_C.SynChronizeValueToCSV(self.path)
+                ArrDataExcell = self.DataCSV_C.ArrFistForDefautValue()
+                DataFromdem = DataFromCSV(*ArrDataExcell)
+                DataFromdem.Set_Count(1)
+                DataFromdem.SetPath(path)
+                arr = DataFromdem.GetContentDataFromExcel(path,1)
+                DataFromdem = DataFromCSV(*arr)
+                if index == 7 :
+                    DataFromdem.CreateElement()
+                else:
+                    ReturnARR = DataFromdem.CreateElement()
+                    CreateMiddlemenElement.CreateElementByMirror(ReturnARR[0],ReturnARR[1],ReturnARR[2])

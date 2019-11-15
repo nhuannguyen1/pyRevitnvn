@@ -1,82 +1,104 @@
 import os
-from Csv_Connect_Data import DataCSV,SaveDataToCSV
-from DirectoryPath import Path_Config_Setting,dir_path,ReturnPath
-ArrPath = ReturnPath()
-Right_Member_All = ArrPath[8]
-Left_DataSaveToCaculation = ArrPath[1]
-from ConvertAndCaculation import FindV34,GetSlope,FindSlopeFromPHandEV,GetSlopetEhAndPh,FindX_RightAndX_Left,FindOffsetLevel
-PathTemplate = DataCSV (Path_Config_Setting)
-def GetFixLevel (count):
-    GetFixLevelrt = PathTemplate.ReturnDataAllRowByIndex(count)
-    return GetFixLevelrt
-def GetParameterName (path):
-    BaseName = os.path.basename(path)
-    ArrSlope = PathTemplate.ReturnDataAllRowByIndex(3)
-    ArrPathName = PathTemplate.ReturnDataAllRowByIndex(2)
-    for index,ele in enumerate (ArrPathName):
-        if (BaseName == ele) and index == 7:
-            SlopeName = ArrSlope[0]
-            break
+from Csv_Connect_Data import DataCSV
+from ConvertAndCaculation import CaculateForFraming
+from PySteelFraming.SteelPath import PathSteel
+class CheckChoice:
+    def  __init__(self, path = None, Path_Config_Setting = None, Select_Level = None,Clear_Height = None,Peak_Height = None ,Eave_Height = None ,Slope = None,\
+        Offset_Top_Level  = None,Top_Level_Col  = None,ColumnCreate = None ,X_Left = None,X_Right = None ,Length_From_Gird = None,\
+            GetElementType = None ,ElevationCH = None):
+            self.path = path
+            self.Path_Config_Setting = Path_Config_Setting
+            self.Select_Level = Select_Level
+            self.Clear_Height = Clear_Height
+            self.Peak_Height = Peak_Height
+            self.Eave_Height = Eave_Height
+            self.Slope = Slope
+            self.Offset_Top_Level = Offset_Top_Level
+            self.Top_Level_Col = Top_Level_Col
+            self.ColumnCreate = ColumnCreate
+            self.X_Left = X_Left
+            self.X_Right = X_Right
+            self.Length_From_Gird = Length_From_Gird
+            self.GetElementType = GetElementType
+            self.ElevationCH = ElevationCH
+            self.PathSteel_Hd = PathSteel(self.Path_Config_Setting)
+            self.ArrPath = self.PathSteel_Hd.ReturnPath()
+            self.Right_Member_All = self.ArrPath[8]
+            self.Left_DataSaveToCaculation = self.ArrPath[1]
+    def GetSelectLevel(self):
+        # get arr select level choice 
+        Clear_Height = self.Clear_Height.Elevation
+        Peak_Height = self.Peak_Height.Elevation
+        CaculateForFramingHd = CaculateForFraming (ElementInstance=self.ColumnCreate,Slope = self.Slope,\
+        Offset_Top_Level= self.Offset_Top_Level,X_Left_X=self.X_Left,X_Right_X=self.X_Right,CH= Clear_Height,\
+            PH=Peak_Height,Length=self.Length_From_Gird,ElementType= self.GetElementType,Path_Config_Setting = self.Path_Config_Setting)
+        GetFixLevellr = self.PathSteel_Hd.ReturnDataAllRowByIndexpathIncludeIndex0(5)
+        if path != Right_Member_All:
+            if (self.Select_Level == GetFixLevellr[0]):
+                Offset_Top_Level1 = float(0)
+                Slope = Slope
+            elif (self.Select_Level == GetFixLevellr[1]):
+                ArrSL = CaculateForFramingHd.FindSlopeFromPHandEV()
+                Slope = ArrSL[0]
+                Offset_Top_Level1 = float (0)
+            elif (self.Select_Level == GetFixLevellr[2]):
+                Offset_Top_Level1 = CaculateForFramingHd.FindV34() 
+                Slope = Slope
+            elif (self.Select_Level == GetFixLevellr[3]):
+                CaculateForFramingHd = CaculateForFraming (ElementInstance=self.ColumnCreate,EH = self.Eave_Height,PH= self.Peak_Height, Length=self.Length_From_Gird)
+                Slope = CaculateForFramingHd.GetSlope()
+                CaculateForFramingHd = CaculateForFraming (ElementInstance=self.ColumnCreate,EH = self.Eave_Height,PH= self.Peak_Height,\
+                     Length=self.Length_From_Gird,Slope=Slope,X_Left_X=self.X_Left,X_Right_X=self.X_Right,ElementType=self.GetElementType,Offset_Top_Level=self.Offset_Top_Level)
+                Offset_Top_Level1 = CaculateForFramingHd.FindV34(self.ColumnCreate,Slope,self.Offset_Top_Level,self.X_Left,self.X_Right,self.GetElementType)
+            else:
+                print ("Other Case ")
+            return [Slope,Offset_Top_Level1]
         else:
-            if (BaseName == ele) and index == 8:
-                SlopeName = ArrSlope[1]
-                break
-    return SlopeName
-def GetSelectLevel(path, Select_Level,Clear_Height,Peak_Height,Eave_Height,Slope,Offset_Top_Level,Top_Level_Col,ColumnCreate,X_Left,X_Right,Length_From_Gird,GetElementType):
-    GetFixLevellr =GetFixLevel(5)
-    if path != Right_Member_All:
-        if (Select_Level == GetFixLevellr[0]):
-            Offset_Top_Level1 = float(0)
-            Slope = Slope
-        elif (Select_Level == GetFixLevellr[1]):
-            Clear_Height = Clear_Height.Elevation
-            Peak_Height = Peak_Height.Elevation
-            ArrSL = FindSlopeFromPHandEV(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,Clear_Height,Peak_Height,Length_From_Gird,GetElementType)
-            Slope = ArrSL[0]
-            Offset_Top_Level1 = float (0)
-        elif (Select_Level == GetFixLevellr[2]):
-            Offset_Top_Level1 = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,GetElementType) 
-            Slope = Slope
-        elif (Select_Level == GetFixLevellr[3]):
-            Slope = GetSlope(Eave_Height,Peak_Height,Length_From_Gird) 
-            Offset_Top_Level1 = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,GetElementType)
-        else:
-            print ("Other Case ")
-        return [Slope,Offset_Top_Level1]
-    else:
+            Data = DataCSV(self.Left_DataSaveToCaculation)
+            Strarr = Data.ReturnDataAllRowByIndexpath(Left_DataSaveToCaculation,1)
+            if (Select_Level == GetFixLevellr[1]):
+                ElevationCH = self.Clear_Height.Elevation
+                Peak_Height = float(Strarr[1])
+                CaculateForFramingHd = CaculateForFraming (ElementInstance=self.ColumnCreate,Slope = self.Slope,\
+                Offset_Top_Level= self.Offset_Top_Level,X_Left_X=self.X_Left,X_Right_X=self.X_Right,CH= Clear_Height,\
+                PH=Peak_Height,Length=self.Length_From_Gird,ElementType= self.GetElementType,Path_Config_Setting = self.Path_Config_Setting)
+                ArrSL = CaculateForFramingHd.FindSlopeFromPHandEV()
+                V_CH = ArrSL[1]
+                ElevationEH  = float(ElevationCH) + float (V_CH)
+                CaculateForFramingHd = CaculateForFraming (ElevationEH=ElevationEH,PH= Peak_Height,Length=self.Length_From_Gird)
+                Slope = CaculateForFramingHd.GetSlopetEhAndPh()
+                Offset_Top_Level1 = ArrSL[2]
+            elif (Select_Level == GetFixLevellr[2]):
+                ElevationPH = float(Strarr[1]) 
+                ElevationEH = self.Eave_Height.Elevation
+                CaculateForFramingHd = CaculateForFraming (ElementInstance=self.ColumnCreate,Slope = self.Slope,\
+                Offset_Top_Level= self.Offset_Top_Level,X_Left_X=self.X_Left,X_Right_X=self.X_Right,CH= Clear_Height,\
+                PH=Peak_Height,Length=self.Length_From_Gird,ElementType= self.GetElementType,ElevationEH=ElevationEH,ElevationPH=ElevationPH)
+                Offset_Top_Level1 = CaculateForFramingHd.FindOffsetLevel(self.ColumnCreate,self.Slope,self.Offset_Top_Level,self.X_Left,self.X_Right,ElevationPH,ElevationEH,self.Length_From_Gird) 
+                Slope = Slope
+            elif (Select_Level == GetFixLevellr[3]):
+                GetElementType = float(0)
+                Peak_Height = float(Strarr[1]) + GetElementType
+                ElevationEH = self.Eave_Height.Elevation
+                CaculateForFramingHd = CaculateForFraming (ElevationEH=ElevationEH,PH= Peak_Height,Length=self.Length_From_Gird)
+                Slope = CaculateForFramingHd.GetSlopetEhAndPh(ElevationEH,Peak_Height,self.Length_From_Gird)
+                CaculateForFramingHd = CaculateForFraming (ElementInstance=self.ColumnCreate,EH = self.Eave_Height,PH= self.Peak_Height,\
+                    Length=self.Length_From_Gird,Slope=Slope,X_Left_X=self.X_Left,X_Right_X=self.X_Right,ElementType=self.GetElementType,Offset_Top_Level=self.Offset_Top_Level)
+                Offset_Top_Level1 = CaculateForFramingHd.FindV34(self.ColumnCreate,Slope,self.Offset_Top_Level,self.X_Left,self.X_Right,GetElementType) 
+            else:
+                print (" ReCheck select member level")
+            return [Slope,Offset_Top_Level1]
+    def CheckAndReturnX_RightAndX_Left (self):
+        GetFixLevellr = self.PathSteel_Hd.ReturnDataAllRowByIndexpathIncludeIndex0(4)
         Data = DataCSV(Left_DataSaveToCaculation)
         Strarr = Data.ReturnDataAllRowByIndexpath(Left_DataSaveToCaculation,1)
-        if (Select_Level == GetFixLevellr[1]):
-            ElevationCH = Clear_Height.Elevation
-            Peak_Height = float(Strarr[1]) 
-            ArrSL = FindSlopeFromPHandEV(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,ElevationCH,Peak_Height,Length_From_Gird)
-            V_CH = ArrSL[1]
-            ElevationEH  = float(ElevationCH) + float (V_CH)
-            Slope = GetSlopetEhAndPh(ElevationEH,Peak_Height,Length_From_Gird)
-            Offset_Top_Level1 = ArrSL[2]
-        elif (Select_Level == GetFixLevellr[2]):
-            ElevationPH = float(Strarr[1]) 
-            ElevationEH = Eave_Height.Elevation
-            Offset_Top_Level1 = FindOffsetLevel(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,ElevationPH,ElevationEH,Length_From_Gird) 
-            Slope = Slope
-        elif (Select_Level == GetFixLevellr[3]):
-            GetElementType = float(0)
-            #Peak_Height = float(Strarr[1]) + float(ElevationEH)
-            Peak_Height = float(Strarr[1]) + GetElementType
-            ElevationEH = Eave_Height.Elevation
-            Slope = GetSlopetEhAndPh(ElevationEH,Peak_Height,Length_From_Gird)
-            Offset_Top_Level1 = FindV34(ColumnCreate,Slope,Offset_Top_Level,X_Left,X_Right,GetElementType) 
-        else:
-            print (" ReCheck select member level")
-        return [Slope,Offset_Top_Level1]
-def CheckAndReturnX_RightAndX_Left (path,Select_Level,Slope,X_Left_X,X_Right_X,Length,ElevationEH):
-    GetFixLevellr =GetFixLevel(5)
-    Data = DataCSV(Left_DataSaveToCaculation)
-    Strarr = Data.ReturnDataAllRowByIndexpath(Left_DataSaveToCaculation,1)
-    ElevationPH = float(Strarr[1]) 
-    if (path == Right_Member_All and  (Select_Level == GetFixLevellr[2])):
-        ElevationEH = ElevationEH.Elevation
-        FindX_RightAndX_Left1 = FindX_RightAndX_Left (Slope,X_Left_X,X_Right_X,Length,ElevationEH,ElevationPH)
-        X_Left_X = FindX_RightAndX_Left1[0]
-        X_Right_X = FindX_RightAndX_Left1[1]
-    return [X_Left_X,X_Right_X]
+        ElevationPH = float(Strarr[1]) 
+        if (self.path == Right_Member_All and (self.Select_Level == GetFixLevellr[2])):
+            ElevationEH = self.ElevationEH.Elevation
+            CaculateForFramingHd = CaculateForFraming (ElementInstance=self.ColumnCreate,Slope = self.Slope,\
+            Offset_Top_Level= self.Offset_Top_Level,X_Left_X=self.X_Left,X_Right_X=self.X_Right,CH= Clear_Height,\
+            PH=Peak_Height,Length=self.Length_From_Gird,ElementType= self.GetElementType,ElevationPH=ElevationPH,ElevationEH=ElevationEH)
+            FindX_RightAndX_Left1 = CaculateForFramingHd.FindX_RightAndX_Left (self.Slope,self.X_Left_X,self.X_Right_X,self.Length,ElevationEH,ElevationPH)
+            X_Left_X = FindX_RightAndX_Left1[0]
+            X_Right_X = FindX_RightAndX_Left1[1]
+        return [X_Left_X,X_Right_X]

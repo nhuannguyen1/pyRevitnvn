@@ -8,3 +8,6 @@ symbol_type = unit_format_options.UnitSymbol
 def Convert_length(length):
     Int_Length = (UnitUtils.ConvertFromInternalUnits(float(length), display_unit))
     return int(round(Int_Length))
+def ConvertFromInteralUnitToMM (Parameter):
+    Parameter = UnitUtils.ConvertFromInternalUnits(float(Parameter), DisplayUnitType.DUT_MILLIMETERS)
+    return Parameter

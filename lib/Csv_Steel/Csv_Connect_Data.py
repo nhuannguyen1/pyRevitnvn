@@ -72,7 +72,6 @@ class DataCSV:
                  writer.writerows(lines)
         writeFile.close()
         Str_Path_Conf =  self.ReturnDataAllRowByIndexpath(Path_Conf,10)
-        print ("self.path",self.path)
         with open(self.path,'r') as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
             lines = list(readcsv)
@@ -87,7 +86,7 @@ class DataCSV:
         RowF0 = self.ReturnDataAllRowByIndexpath(path,0)
         del RowF0[0]
         countRow = self.CountNumberOfRow()
-        with open(self.path) as csvFile:
+        with open(self.path,"rU") as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
             lines = list(readcsv)
             ReturnFirstRow = self.ReturnDataAllRowByIndex(1)
@@ -103,12 +102,14 @@ class DataCSV:
         RowF0 = self.ReturnDataAllRowByIndexpath(path,0)
         del RowF0[0]
         countRow = self.CountNumberOfRow()
+        print (countRow)
         with open(self.path) as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
             lines = list(readcsv)
+            print ("Count",Count)
             ReturnFirstRow = self.ReturnDataAllRowByIndex(Count)
             for indexCol in RowF0:
-                for IndexRow in range(1,int(countRow)): 
+                for IndexRow in range(1,int(countRow)):
                     lines[int(IndexRow)][int(indexCol)] = ReturnFirstRow[int(indexCol)]
         csvFile.close() 
         with open(self.path, 'w') as writeFile:
@@ -132,7 +133,7 @@ class DataCSV:
                  writer.writerows(lines)
         writeFile.close()
     def ReturnDataAllRowByIndexpath (self,path,NumberRow):
-        with open(path) as csvFile:
+        with open(path,"rU") as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
             readcsv = list(readcsv)
             RowNumber = readcsv[NumberRow]
@@ -148,7 +149,7 @@ class DataCSV:
         csvFile.close()
         return rowF
     def ReturnDataAllRowByIndex (self,NumberRow):
-        with open(self.path) as csvFile:
+        with open(self.path,"rU") as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
             readcsv = list(readcsv)
             RowNumber = readcsv[NumberRow]
@@ -161,7 +162,6 @@ class DataCSV:
                 writer = csv.writer(csvFile)
                 writer.writerow(Str_Row)
             csvFile.close()
-            
 class SaveDataToCSV:
     def  __init__(self, path):
         self.path = path
@@ -172,7 +172,7 @@ class SaveDataToCSV:
             writer.writerows(lines)
         csvFile.close()
 def ReturnArrContainSelectedAndText (path,NumberRowSelectedItem,NumberRowText, NumberTextModify,SelectedItem,Text):
-        with open(path) as csvFile:
+        with open(path,"rU") as csvFile:
             readcsv =csv.reader(csvFile, delimiter=',')
             readcsv = list(readcsv)
             NumberRowSelectedItems = readcsv[NumberRowSelectedItem]

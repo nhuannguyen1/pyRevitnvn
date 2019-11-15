@@ -5,9 +5,9 @@ from Autodesk.Revit.DB import Transaction, FilteredElementCollector,\
 BuiltInCategory,FamilySymbol,Element,Family,Level,Grid
 from pyrevit import script, forms
 import os.path 
-import CreatePrimaryFraming
+from CreatePrimaryFraming import CreateFraming
 import rpw
-from GlobalParameter import DataFromCSV,CheckSelectedValueForFamily,ArrFistForDefautValue_FC,CountNumberOfRow,writeRowTitle
+from GlobalParameter import DataFromCSV,CheckSelectedValueForFamily
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from pyrevit.forms import WPFWindow
@@ -23,11 +23,6 @@ PathSteel_Hd.SetPath(Path_Config_Setting)
 ReturnPath_ARR = PathSteel_Hd.ReturnPath()
 GetPath_Left_Member_All = ReturnPath_ARR[7]
 GetPath_Right_Member_All = ReturnPath_ARR[8]
-def GetArrDataExcell(DataToolTemplate):
-    DataCSV1 = DataCSV(DataToolTemplate)
-    DataCSV1.writeRowTitle(Path_Config_Setting)
-    ArrDataExcell = ArrFistForDefautValue_FC(DataToolTemplate)
-    return ArrDataExcell
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
@@ -53,22 +48,25 @@ class WPF_PYTHON(WPFWindow):
         #try:
             self.InputNumberLeft.Text = str (1)
             DataToolTemplate = self.ReturnPath()
-            ArrDataExcell = GetArrDataExcell(DataToolTemplate)
-            count_dem = CountNumberOfRow(DataToolTemplate) - 1
-            self.SetValueFromContentData(ArrDataExcell,count_dem)
+            #ArrDataExcell = GetArrDataExcell(DataToolTemplate)
+            DataCSV_HD = DataCSV(DataToolTemplate)
+            count_dem = DataCSV_HD.CountNumberOfRow() - 1
+            self.SetValueFromContentData(count_dem)
         #except:
             #print ("no Object selected")
-    def SetValueFromContentData (self,ArrDataExcell,count_dem):
+    def SetValueFromContentData (self,count_dem):
         DataToolTemplate = self.ReturnPath()
         if count_dem != 0:
-            DataFromdem = DataFromCSV(*ArrDataExcell)
+            DataFromdem = DataFromCSV(Path_Config_Setting=Path_Config_Setting)
             DataFromdem.Set_Count(1)
             DataFromdem.SetPath(DataToolTemplate)
             GetDataFirst = DataFromdem.GetContentDataFromExcel(DataToolTemplate,0)
             self.GetValueOfSelectedValue(GetDataFirst,"P")
+        """
         else:
             GetDataFirst = ArrDataExcell
             self.GetValueOfSelectedValue(GetDataFirst,"P")
+        """
     def ReturnPath(self):
         GetFixLevellr4 =PathSteel_Hd.ReturnDataAllRowByIndexpathIncludeIndex0(4)
         Select_Membered = self.Select_Member.SelectedItem
@@ -116,8 +114,8 @@ class WPF_PYTHON(WPFWindow):
     def Reset_Data(self, sender, e):
         try:
             DataToolTemplate = self.ReturnPath()
-            ArrDataExcell = GetArrDataExcell(DataToolTemplate)
-            DataFromdem = DataFromCSV(*ArrDataExcell)
+            #ArrDataExcell = GetArrDataExcell(DataToolTemplate)
+            DataFromdem = DataFromCSV(Path_Config_Setting=Path_Config_Setting)
             DataFromdem.Set_Count(1)
             DataFromdem.SetPath(DataToolTemplate)
             DataFromdem.DeleteRowToReset(DataToolTemplate)
@@ -183,9 +181,10 @@ class WPF_PYTHON(WPFWindow):
         try:
             Count_Continue = int(self.InputNumberLeft.Text)
             DataToolTemplate = self.ReturnPath()
-            count_dem = CountNumberOfRow(DataToolTemplate) - 1
+            DataCSV_HD = DataCSV(DataToolTemplate)
+            count_dem = DataCSV_HD.CountNumberOfRow() - 1
             ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
-            DataFromCSV_1 = DataFromCSV(*ArraySelectedItem)
+            DataFromCSV_1 = DataFromCSV(*ArraySelectedItem,Path_Config_Setting=Path_Config_Setting)
             DataFromCSV_1.SetPath(DataToolTemplate)
             if (Count_Continue > (count_dem) and Count_Continue != 1):
                 #a = Count_Continue
@@ -194,8 +193,8 @@ class WPF_PYTHON(WPFWindow):
             elif (Count_Continue == 1 and count_dem == 1):
                 Return_Row1 =DataFromCSV_1.Return_Row()
                 ArraySelectedItem [0] = Count_Continue 
-                DataFromCSV_1 = DataFromCSV(*ArraySelectedItem)
-                DataFromCSV_1.SetPath(DataToolTemplate)
+                #DataFromCSV_1 = DataFromCSV(*ArraySelectedItem)
+                #DataFromCSV_1.SetPath(DataToolTemplate)
                 arr = DataFromCSV_1.GetContentDataFromExcel(DataToolTemplate,0)
                 self.GetValueOfSelectedValue(arr,"")
                 DataFromCSV_1.InputDataChangeToCSV_Excel(Return_Row1,DataToolTemplate)
@@ -220,26 +219,28 @@ class WPF_PYTHON(WPFWindow):
     def Ok_Prevous(self, sender, e):
         try:
             DataToolTemplate = self.ReturnPath()
-            count_dem = CountNumberOfRow(DataToolTemplate)
+            DataCSV_HD = DataCSV(DataToolTemplate)
+            count_dem = DataCSV_HD.CountNumberOfRow()
+            #count_dem = CountNumberOfRow(DataToolTemplate)
             Count_Continue = int(self.InputNumberLeft.Text)
             if count_dem == Count_Continue:
                 ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
-                DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
+                DataFromCSV_2 = DataFromCSV(*ArraySelectedItem,Path_Config_Setting=Path_Config_Setting)
                 DataFromCSV_2.SetPath(DataToolTemplate)
                 Return_Row1 =DataFromCSV_2.Return_Row()
                 DataCSV1 = DataCSV(DataToolTemplate)
                 DataCSV1.DataForLastRowIndex(Count_Continue,Return_Row1)
                 self.InputNumberLeft.Text = str (int(Count_Continue) - 1)
-                DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
+                DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem,Path_Config_Setting=Path_Config_Setting)
                 DataFromCSV_DATA.SetPath(DataToolTemplate)
                 arr = DataFromCSV_DATA.GetContentDataFromExcel(DataToolTemplate,-1)
                 self.GetValueOfSelectedValue(arr,"")
             else:
                 ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
-                DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
+                DataFromCSV_2 = DataFromCSV(*ArraySelectedItem,Path_Config_Setting=Path_Config_Setting)
                 Return_Row1 =DataFromCSV_2.Return_Row()
                 ArraySelectedItem[0] = int(Count_Continue)
-                DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem)
+                DataFromCSV_DATA = DataFromCSV(*ArraySelectedItem,Path_Config_Setting=Path_Config_Setting)
                 DataFromCSV_DATA.SetPath(DataToolTemplate)
                 arr = DataFromCSV_DATA.GetContentDataFromExcel(DataToolTemplate,-1)
                 self.GetValueOfSelectedValue(arr,"")
@@ -254,7 +255,7 @@ class WPF_PYTHON(WPFWindow):
             Count_Continue = int(self.InputNumberLeft.Text)
             DataToolTemplate = self.ReturnPath()
             ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
-            DataFromCSV_2 = DataFromCSV(*ArraySelectedItem)
+            DataFromCSV_2 = DataFromCSV(*ArraySelectedItem,Path_Config_Setting=Path_Config_Setting)
             DataFromCSV_2.SetPath(DataToolTemplate)
             Return_Row1 = DataFromCSV_2.Return_Row()
             DataCSV1 = DataCSV(DataToolTemplate)
@@ -262,7 +263,8 @@ class WPF_PYTHON(WPFWindow):
             DataCSV1.SysWhenStart(Return_Row1,Count_Continue,Path_Config_Setting)
             GetDataToPrimaryFile(DataToolTemplate,self.ReturnPath_Rev(),Path_Config_Setting,1)
             self.Close()
-            CreatePrimaryFraming.PrimaryFraming()
+            CreateFraminghD = CreateFraming(Path_Config_Setting)
+            CreateFraminghD.PrimaryFraming()
         #except:
             #print ("Check Selectd Level")
 WPF_PYTHON = WPF_PYTHON('WPF_PYTHON.xaml').ShowDialog()
