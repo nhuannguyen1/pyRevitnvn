@@ -15,13 +15,15 @@ uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 import math 
 from  PySteelFraming.GetElementByName import ElementName
+from  PySteelFraming.SteelPath import PathSteel
 from  Line_Steel.Line_Steel import LineInterSection
 class DataFromCSV:
     def  __init__(self, Count = 1,FamilyCol = None,FamilyColType = None,Base_Level_Col= None,Top_Level_Col = None,\
         FamilyRafter= None,FamilyRafterType = None,LevelRafter = None,Length_Rafter = None,Thinkess_Plate = None, path = None,Gird_Ver=None,Gird_hor = None,\
             Slope = None,Gird_Ver_Ged = None,Gird_Hor_Ged = None,Length_From_Gird = None, Plate_Column = None,Move_Left = None, Move_Right = None,\
                 Move_Up = None,Move_Bottom = None, Offset_Top_Level  = None, Select_Level = None,Clear_Height = None, Peak_Height = None, Eave_Height = None,\
-                    Choose_Purlin = None,Choose_Type_Purlin= None, Path_Config_Setting = None,Right_Member_All = None):
+                    Choose_Purlin = None,Choose_Type_Purlin= None, Path_Config_Setting = None,Right_Member_All = None,Left_DataSaveToCaculation = None):
+
         self.Count = Count
         self.FamilyCol = FamilyCol
         self.FamilyColType =  FamilyColType
@@ -51,9 +53,10 @@ class DataFromCSV:
         self.Eave_Height = Eave_Height
         self.Choose_Purlin =Choose_Purlin
         self.Choose_Type_Purlin = Choose_Type_Purlin
+        #not fill out to csv
         self.Path_Config_Setting = Path_Config_Setting
         self.Right_Member_All = Right_Member_All
-        
+        self.Left_DataSaveToCaculation = Left_DataSaveToCaculation
     def ArrDataList(self):
         ArrDataList = [self.Count,self.FamilyCol, self.FamilyColType ,self.Base_Level_Col,\
             self.Top_Level_Col,self.FamilyRafter,self.FamilyRafterType,self.LevelRafter,\
@@ -83,24 +86,34 @@ class DataFromCSV:
         self.Move_Left  = ConvertToInternalUnitsmm (self.Move_Left)
         self.Move_Right  = ConvertToInternalUnitsmm (self.Move_Right)
         LEVEL_ELEV_Base_Level= self.Top_Level_Col.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
-        LineInterSection_HD = LineInterSection(self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,Right_Member_All)
+        LineInterSection_HD = LineInterSection(self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,self.Right_Member_All)
         Getcondination =  LineInterSection_HD.Getintersection()
+
         Base_Leveled_Point =XYZ (Getcondination.X - self.Move_Left + self.Move_Right ,\
             Getcondination.Y,(LEVEL_ELEV_Base_Level + self.Move_Up - self.Move_Bottom))
         FamilySymbol.FamilySymbolAtive(self.FamilyColType)
+
         t = Transaction (doc,"Place Element 1")
         t.Start()
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,\
             self.Base_Level_Col, Structure.StructuralType.NonStructural)
-        NameParameter = CheckAndChoice.GetParameterName(self.path)
+        PathSteelHd = PathSteel (path = self.path, Path_Conf =self.Path_Config_Setting )
+        NameParameter = PathSteelHd.GetParameterName()
         # check path and get distance from gird 
-        Distance = LineInterSection_HD.GetDistanceRight (self.Length_From_Gird)
+        LineInterSection_HD1 = LineInterSection(self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,self.Right_Member_All)
+        Distance = LineInterSection_HD1.GetDistanceRight (self.Length_From_Gird)
+
         self.SetLength_From_Gird (Distance)
         # Modify Slope, E.H
-        GetElementType = GetParamaterFromElementType(self.Choose_Type_Purlin,"D1")
-        OfficeSetEH = CheckAndChoice.GetSelectLevel(self.path, self.Select_Level,\
-            self.Clear_Height,self.Peak_Height,self.Eave_Height,self.Slope,self.Offset_Top_Level,\
-                self.Top_Level_Col,ColumnCreate,self.Move_Left,self.Move_Right,self.Length_From_Gird,GetElementType)
+        Get_Parameter_D1_Of_Purlin = GetParamaterFromElementType(self.Choose_Type_Purlin,"D1")
+
+        CheckChoice1 = CheckAndChoice.CheckChoice(path=self.path,Select_Level=self.Select_Level,\
+            Clear_Height=self.Clear_Height,Peak_Height=self.Peak_Height,Eave_Height=self.Eave_Height,\
+                Slope=self.Slope,Offset_Top_Level=self.Offset_Top_Level,Top_Level_Col=self.Top_Level_Col,\
+                    ColumnCreate=ColumnCreate,X_Left=self.Move_Left,X_Right=self.Move_Right,Length_From_Gird=self.Length_From_Gird,\
+                        Path_Config_Setting=self.Path_Config_Setting,LengthPurlin=Get_Parameter_D1_Of_Purlin)
+
+        OfficeSetEH = CheckChoice1.GetSelectLevel()
         OfficeSetEH1 = ConvertFromInteralUnitToMM (OfficeSetEH[1])
         self.SetSlope(OfficeSetEH[0])
         self.SetOffsetColumn(str(- OfficeSetEH1))
@@ -118,7 +131,8 @@ class DataFromCSV:
         ColumnCreate = self.PlaceElement()
         RaffterElment = self.PlaceElementRafterFather(ColumnCreate)
         RaffterElment.Add(ColumnCreate.Id)
-        Getcondination =  self.LineInterSection_HD.Getintersection ()
+        LineInterSection_HD = LineInterSection(self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,self.Right_Member_All)
+        Getcondination =  LineInterSection_HD.Getintersection ()
         return [RaffterElment,Getcondination,self.Length_From_Gird] 
     def PlaceElementRafterFather(self,ColumnCreate):
         ArrPlaceElementRafterFather = List[ElementId]()
@@ -126,7 +140,7 @@ class DataFromCSV:
         t.Start()
         Point_Levels = self.GetParameterFromSubElement (ColumnCreate)
         for Point_Level,FamilyRafterType,Length_Rafter, Thinkess_Plate in Point_Levels:
-            PlaceElementRafter_FN = PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate),self.path)
+            PlaceElementRafter_FN = self.PlaceElementRafter(Point_Level,FamilyRafterType,self.LevelRafter,Length_Rafter,self.Slope,float(Thinkess_Plate),self.path)
             ArrPlaceElementRafterFather.Add(PlaceElementRafter_FN.Id)
         t.Commit()
         return ArrPlaceElementRafterFather
@@ -139,7 +153,8 @@ class DataFromCSV:
         lr_Row = DataCSV_HD.CountNumberOfRow()
         Arr_Point_Type_Length = []
         ArrTotal = []
-        Getcondination =  self.LineInterSection_HD.Getintersection ()
+        LineInterSection_HD = LineInterSection(self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,self.Right_Member_All)
+        Getcondination =  LineInterSection_HD.Getintersection ()
         CaculateForFramingHD = CaculateForFraming(ElementInstance =ElementInstance,Slope = self.Slope, Plate_Column= self.Plate_Column,\
              X_Left_X = self.Move_Left,X_Right_X= self.Move_Right,Offset_Top_Level = self.Offset_Top_Level)
         LIST =  CaculateForFramingHD.GetCondinationH_nAndH_V()
@@ -149,7 +164,7 @@ class DataFromCSV:
         Length_From_Gird_T = ConvertToInternalUnitsmm(float (self.Length_From_Gird)) - H_n
         Length_From_Gird = self.LengthToTotalInlineFromGird(Length_From_Gird_T)
         for i in range(1,int(lr_Row)):
-            DataFromCSV_DATA = DataFromCSV(Count= i,path=self.path)
+            DataFromCSV_DATA = DataFromCSV(Count= i,path=self.path,Path_Config_Setting= self.Path_Config_Setting)
             arr = DataFromCSV_DATA.GetContentDataFromExcel(self.path,0)
             Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
             SumLength = checkLengthAngGetSumOfItemRafterFromCsv(self.path,lr_Row)
@@ -162,15 +177,15 @@ class DataFromCSV:
                 Length_Rafter = ConvertToInternalUnitsmm(Length_Rafter)
             Arr_Point_Type_Length=[Point_Level,arr[6],Length_Rafter,arr[9]]
             Thinkess_Plate1 = ConvertToInternalUnitsmm(arr[9])
-            #print ("arr[6] is ",arr[6])
-            CaculateForFramingHD = CaculateForFraming(ElementType=arr[6],Length_Rafter=Length_Rafter,Thinkess_Plate1=Thinkess_Plate1,Slope = self.Slope, Plate_Column= self.Plate_Column,\
+            CaculateForFramingHD = CaculateForFraming(ElementType=arr[6],Length_Rafter=Length_Rafter,Thinkess_Plate1=Thinkess_Plate1,Slope = Slope, Plate_Column= self.Plate_Column,\
              X_Left_X = self.Move_Left,X_Right_X= self.Move_Right,Offset_Top_Level = self.Offset_Top_Level,H_n=H_n,H_t=H_t)
             GetHt_Hn = CaculateForFramingHD.GetCoordinateContinnue()
             H_n = GetHt_Hn[0]
             H_t = GetHt_Hn[1]
             ArrTotal.append(Arr_Point_Type_Length)    
             ElevationCH = self.Top_Level_Col.Elevation
-        SaveDataToCSV.SaveDataH_tAndH_N(H_n, float(H_t) + float (ElevationCH) )
+        SaveDataToCSV_hd = SaveDataToCSV (self.Left_DataSaveToCaculation)
+        SaveDataToCSV_hd.SaveDataH_tAndH_N(H_n, float(H_t) + float (ElevationCH) )
         return ArrTotal
     def DeleteRowToReset(self,path):
         DataFromCsv_New  = DataCSV(path)
@@ -192,16 +207,19 @@ class DataFromCSV:
     def SynChronizeValueToCSV_T(self):
         DataFromCsv_New  = DataCSV (self.path)
         DataFromCsv_New.SynChronizeValueToCSV(self.Path_Config_Setting)
-def PlaceElementRafter (Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate,path):
-    FamilySymbol.FamilySymbolAtive(Rater_Type_Lefted)
-    Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)
-    NameParameter = CheckAndChoice.GetParameterName(path)
-    a= Global(Slope_Type,NameParameter,Elementinstance)
-    a.globalparameterchange()
-    a= Global(Thinkess_Plate,"Pl_Right",Elementinstance)
-    a.SetParameterInstance()
-    setparameterfromvalue(Elementinstance,'Length',Length_Rater_Lefted)
-    return Elementinstance
+    def PlaceElementRafter (self,Point_Level,Rater_Type_Lefted,Level_Rater_Type_Lefted,Length_Rater_Lefted,Slope_Type,Thinkess_Plate,path):
+        FamilySymbol.FamilySymbolAtive(Rater_Type_Lefted)
+        Elementinstance = doc.Create.NewFamilyInstance(Point_Level,Rater_Type_Lefted, Level_Rater_Type_Lefted, Structure.StructuralType.NonStructural)
+
+        PathSteelHd = PathSteel (path = self.path, Path_Conf =self.Path_Config_Setting )
+        #NameParameter = PathSteelHd.GetParameterName()
+        NameParameter = PathSteelHd.GetParameterName()
+        a= Global(Slope_Type,NameParameter,Elementinstance)
+        a.globalparameterchange()
+        a= Global(Thinkess_Plate,"Pl_Right",Elementinstance)
+        a.SetParameterInstance()
+        setparameterfromvalue(Elementinstance,'Length',Length_Rater_Lefted)
+        return Elementinstance
 def CheckTypeLengthBal(Length_Rater):
     if  Length_Rater == "BAL":
         Length = "BAL"

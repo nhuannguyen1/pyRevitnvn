@@ -16,6 +16,7 @@ from PySteelFraming.SteelPath import PathSteel
 dir_path = os.path.dirname(os.path.realpath(__file__))
 PathSteel_Hd = PathSteel(dir_path = dir_path,FolderName ="Data_CSV")
 Path_Config_Setting = PathSteel_Hd.ReturnPath_Conf("Config_Setting.csv")
+Right_Genneral_All_Path = PathSteel_Hd.ReturnPath_Conf("Right_Genneral_All.csv")
 #from DirectoryPath import Path_Config_Setting
 from Csv_Steel.Csv_Connect_Data import DataCSV,ReturnArrContainSelectedAndText,GetDataToPrimaryFile
 PathSteel_Hd.SetPath(Path_Config_Setting)
@@ -23,6 +24,7 @@ PathSteel_Hd.SetPath(Path_Config_Setting)
 ReturnPath_ARR = PathSteel_Hd.ReturnPath()
 GetPath_Left_Member_All = ReturnPath_ARR[7]
 GetPath_Right_Member_All = ReturnPath_ARR[8]
+Left_DataSaveToCaculation = ReturnPath_ARR[1]
 class WPF_PYTHON(WPFWindow):
     def __init__(self, xaml_file_name):
         WPFWindow.__init__(self, xaml_file_name)
@@ -104,7 +106,7 @@ class WPF_PYTHON(WPFWindow):
         #print (GetDataFirst)
         for i in range(1,len(ArrContainSelectedAndText)):
             if P=="P":
-                if  i in [4,10]:
+                if  i in [10]:
                     continue
             else:
                 if str(i) in strIndex:
@@ -184,7 +186,7 @@ class WPF_PYTHON(WPFWindow):
             DataCSV_HD = DataCSV(DataToolTemplate)
             count_dem = DataCSV_HD.CountNumberOfRow() - 1
             ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
-            DataFromCSV_1 = DataFromCSV(*ArraySelectedItem,Path_Config_Setting=Path_Config_Setting)
+            DataFromCSV_1 = DataFromCSV(*ArraySelectedItem,Path_Config_Setting=Path_Config_Setting,Right_Member_All = GetPath_Right_Member_All)
             DataFromCSV_1.SetPath(DataToolTemplate)
             if (Count_Continue > (count_dem) and Count_Continue != 1):
                 #a = Count_Continue
@@ -255,7 +257,7 @@ class WPF_PYTHON(WPFWindow):
             Count_Continue = int(self.InputNumberLeft.Text)
             DataToolTemplate = self.ReturnPath()
             ArraySelectedItem = self.ArraySelectedItemfs(Count_Continue)
-            DataFromCSV_2 = DataFromCSV(*ArraySelectedItem,Path_Config_Setting=Path_Config_Setting)
+            DataFromCSV_2 = DataFromCSV(*ArraySelectedItem,Path_Config_Setting=Path_Config_Setting,Right_Member_All = GetPath_Right_Member_All)
             DataFromCSV_2.SetPath(DataToolTemplate)
             Return_Row1 = DataFromCSV_2.Return_Row()
             DataCSV1 = DataCSV(DataToolTemplate)
@@ -263,7 +265,7 @@ class WPF_PYTHON(WPFWindow):
             DataCSV1.SysWhenStart(Return_Row1,Count_Continue,Path_Config_Setting)
             GetDataToPrimaryFile(DataToolTemplate,self.ReturnPath_Rev(),Path_Config_Setting,1)
             self.Close()
-            CreateFraminghD = CreateFraming(Path_Config_Setting)
+            CreateFraminghD = CreateFraming(path = Path_Config_Setting,PathRight=GetPath_Right_Member_All,Left_DataSaveToCaculation=Left_DataSaveToCaculation)
             CreateFraminghD.PrimaryFraming()
         #except:
             #print ("Check Selectd Level")

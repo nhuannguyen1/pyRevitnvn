@@ -92,7 +92,7 @@ class CaculateForFraming:
         G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
         V34 = v34u - V4u
         h_t = V34 + G2_V1  - math.tan(Slope) * Pl_Total + math.sin(Slope) * (Plate_Column * 2)
-        return [h_n - self.X_Left_X + self.X_Right_X,self.H_t  + Offset_Top_Level]
+        return [h_n - self.X_Left_X + self.X_Right_X, h_t  + Offset_Top_Level]
     def GetCoordinateContinnue (self):
         FamilyRafterName = self.ElementType.FamilyName 
         if "4111" in FamilyRafterName:
@@ -123,6 +123,9 @@ class CaculateForFraming:
         G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
         V34 = v34u - V4u 
         MoveDistance = self.X_Left_X + self.X_Right_X 
+
+        print ("self.LengthPurlin ",self.LengthPurlin )
+
         V_ct = V34 + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope) + self.LengthPurlin / math.cos(Slope)
         return V_ct
     def GetSlope(self):
@@ -143,7 +146,7 @@ class CaculateForFraming:
         A = ElementType.LookupParameter('A').AsDouble() 
         Length = UnitUtils.ConvertToInternalUnits(float(self.Length), DisplayUnitType.DUT_MILLIMETERS)
         MoveDistance = self.X_Left_X + self.X_Right_X 
-        CheckConfig = DataCSV(Path_Config_Setting)
+        CheckConfig = DataCSV(self.Path_Config_Setting)
         ArrCheckConfig = CheckConfig.ReturnDataAllRowByIndexpath(self.Path_Config_Setting ,6)
         if ArrCheckConfig[1] == "Top_Rafter":
             for i in frange (3,30,0.01):
@@ -155,7 +158,7 @@ class CaculateForFraming:
         else:
             for i in frange (3,30,0.01):
                 Slope = UnitUtils.ConvertToInternalUnits( float(i) , DisplayUnitType.DUT_DECIMAL_DEGREES)
-                V1 = - math.tan(Slope)* Length - CH + PH - (float(self.LengthPurlin) / math.cos(Slope))
+                V1 = - math.tan(Slope)* Length - float(self.CH) + float(self.PH) - (float(self.LengthPurlin) / math.cos(Slope))
                 V2 = math.cos(Slope) * Tw2_Rafter - math.tan(Slope) * ( Tw2 - (math.tan(Slope) * (( math.cos(Slope) * Tw2_Rafter) + A))) + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope)
                 if round(V1,1) == round(V2,1):
                     break
@@ -189,7 +192,7 @@ class CaculateForFraming:
         #Plate_Column  = ConvertToInternalUnitsmm (Plate_Column)
         Pl_Right = self.ElementInstance.LookupParameter('Pl_Rafter').AsDouble()
         ElementType =  doc.GetElement(self.ElementInstance.GetTypeId())
-        Tw2_Rafter = self.ElementType.LookupParameter('Tw2_WF_R').AsDouble()
+        Tw2_Rafter = ElementType.LookupParameter('Tw2_WF_R').AsDouble()
         Tf = ElementType.LookupParameter('Tf').AsDouble()
         Tw1 = ElementType.LookupParameter('Tw1').AsDouble() 
         Tw2 = ElementType.LookupParameter('Tw2').AsDouble() 

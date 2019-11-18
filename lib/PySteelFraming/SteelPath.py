@@ -2,10 +2,11 @@ import csv
 import os
 from pathlib import Path
 class PathSteel:
-    def  __init__(self, path = None,dir_path = None,FolderName = None,Is_Directory_Path_To_Config = False):
+    def  __init__(self, path = None,dir_path = None,FolderName = None,Is_Directory_Path_To_Config = False,Path_Conf = None):
             self.path = path
             self.dir_path = dir_path
             self.FolderName = FolderName
+            self.Path_Conf = Path_Conf
             self.Is_Directory_Path_To_Config = Is_Directory_Path_To_Config
     #Return element Arr follow number of row 
     def ReturnDataAllRowByIndexpath (self,NumberRow):
@@ -74,9 +75,9 @@ class PathSteel:
         return GetFixLevelrt
     # Get Slope parameter 
     def GetParameterName (self):
-        BaseName = os.path.basename(path)
-        ArrSlope = self.ReturnDataAllRowByIndexpathIncludeIndex0(3)
-        ArrPathName = self.ReturnDataAllRowByIndexpathIncludeIndex0(2)
+        BaseName = os.path.basename(self.path)
+        ArrSlope = self.ReturnDataAllRowByIndexpathIncludeIndex0_paTH(3,self.Path_Conf)
+        ArrPathName = self.ReturnDataAllRowByIndexpathIncludeIndex0_paTH(2,self.Path_Conf)
         for index,ele in enumerate (ArrPathName):
             if (BaseName == ele) and index == 7:
                 SlopeName = ArrSlope[0]
@@ -88,4 +89,10 @@ class PathSteel:
         return SlopeName
     def Set_DirPath(self,Value_DirPath):
         self.dir_path = Value_DirPath
-        
+    def ReturnDataAllRowByIndexpathIncludeIndex0_paTH (self,NumberRow,path):
+        with open(path,"rU") as csvFile:
+            readcsv = csv.reader(csvFile, delimiter=',')
+            readcsv = list(readcsv)
+            RowNumber = readcsv[NumberRow]
+            csvFile.close()
+        return RowNumber
