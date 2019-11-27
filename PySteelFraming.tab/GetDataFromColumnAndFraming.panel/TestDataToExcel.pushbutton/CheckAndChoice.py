@@ -84,9 +84,8 @@ class CheckChoice:
                 Offset_Top_Level1 = CaculateForFramingHd.FindOffsetLevel() 
                 Slope = self.Slope
             elif (self.Select_Level == GetFixLevellr[3]):
-                LengthPurlin = float(0)
+                #LengthPurlin = float(0)
                 Peak_Height = float(Strarr[1])  + float(self.LengthPurlin)
-
                 #Peak_Height = float(Strarr[1]) + LengthPurlin
                 ElevationEH = self.Eave_Height.Elevation
                 CaculateForFramingHd = CaculateForFraming (EH=ElevationEH,PH= Peak_Height,Length=self.Length_From_Gird)

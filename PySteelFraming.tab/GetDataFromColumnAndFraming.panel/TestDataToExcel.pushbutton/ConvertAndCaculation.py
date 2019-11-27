@@ -50,7 +50,9 @@ def setparameterfromvalue (elemeninstance,ValueName,setvalue):
 class CaculateForFraming:
     def  __init__(self, ElementInstance = None,ElementType= None,Slope = None,Plate_Column = None,\
         X_Left_X= None,X_Right_X= None,Offset_Top_Level = None,Thinkess_Plate1 = None,\
-            H_n = None,H_t = None,LengthPurlin = None,CH = None, EH = None, PH = None,Length = None,Length_Rafter= None, ElevationEH = None, ElevationPH = None, path = None, Path_Config_Setting = None):
+            H_n = None,H_t = None,LengthPurlin = None,CH = None, EH = None, PH = None,Length = None,\
+                Length_Rafter= None, ElevationEH = None, ElevationPH = None,\
+                     path = None, Path_Config_Setting = None):
         self.ElementInstance = ElementInstance 
         self.ElementType = ElementType
         self.Slope = Slope
@@ -123,9 +125,6 @@ class CaculateForFraming:
         G2_V1= V4u + math.cos(Slope) * Tf + math.sin(Slope) * Pl_Total
         V34 = v34u - V4u 
         MoveDistance = self.X_Left_X + self.X_Right_X 
-
-        print ("self.LengthPurlin ",self.LengthPurlin )
-
         V_ct = V34 + Tw1 / 2 * math.tan(Slope) + Tf/(math.cos(Slope)) + MoveDistance * math.tan(Slope) + self.LengthPurlin / math.cos(Slope)
         return V_ct
     def GetSlope(self):

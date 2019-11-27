@@ -23,7 +23,7 @@ class DataFromCSV:
             Slope = None,Gird_Ver_Ged = None,Gird_Hor_Ged = None,Length_From_Gird = None, Plate_Column = None,Move_Left = None, Move_Right = None,\
                 Move_Up = None,Move_Bottom = None, Offset_Top_Level  = None, Select_Level = None,Clear_Height = None, Peak_Height = None, Eave_Height = None,\
                     Choose_Purlin = None,Choose_Type_Purlin= None, Path_Config_Setting = None,Right_Member_All = None,Left_DataSaveToCaculation = None):
-
+        
         self.Count = Count
         self.FamilyCol = FamilyCol
         self.FamilyColType =  FamilyColType
@@ -88,11 +88,9 @@ class DataFromCSV:
         LEVEL_ELEV_Base_Level= self.Top_Level_Col.get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()
         LineInterSection_HD = LineInterSection(self.Gird_Ver.Curve,self.Gird_hor.Curve,self.Gird_Ver_Ged.Curve,self.Gird_Hor_Ged.Curve,self.path,self.Right_Member_All)
         Getcondination =  LineInterSection_HD.Getintersection()
-
         Base_Leveled_Point =XYZ (Getcondination.X - self.Move_Left + self.Move_Right ,\
             Getcondination.Y,(LEVEL_ELEV_Base_Level + self.Move_Up - self.Move_Bottom))
         FamilySymbol.FamilySymbolAtive(self.FamilyColType)
-
         t = Transaction (doc,"Place Element 1")
         t.Start()
         ColumnCreate = doc.Create.NewFamilyInstance(Base_Leveled_Point, self.FamilyColType,\
@@ -166,7 +164,10 @@ class DataFromCSV:
         for i in range(1,int(lr_Row)):
             DataFromCSV_DATA = DataFromCSV(Count= i,path=self.path,Path_Config_Setting= self.Path_Config_Setting)
             arr = DataFromCSV_DATA.GetContentDataFromExcel(self.path,0)
-            Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t)
+            #caculation Distance of rafter level anh column)
+            H_t_Distance = (float(self.Top_Level_Col.Elevation) - float(self.LevelRafter.Elevation))
+
+            Point_Level =XYZ (Getcondination.X + H_n,Getcondination.Y, H_t + H_t_Distance)
             SumLength = checkLengthAngGetSumOfItemRafterFromCsv(self.path,lr_Row)
             Length_Rafter = arr[8]
             if Length_Rafter =="BAL":

@@ -49,4 +49,3 @@ def ReturnDataAllRowByIndexpath (path,NumberRow):
         csvFile.close()
         del RowNumber[0]
         return RowNumber
-    

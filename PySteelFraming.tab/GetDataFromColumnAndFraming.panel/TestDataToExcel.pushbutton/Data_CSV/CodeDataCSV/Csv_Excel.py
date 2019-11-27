@@ -2,39 +2,38 @@ from openpyxl.styles import Alignment
 from ReturnDataAllRowByIndexpath import ReturnDataAllRowByIndexpath
 from Path_Connect_Excel import Right_Genneral_All_path,Left_Genneral_All_path,DataExcel,Config_Setting_Path
 
-ValueGeneral = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,22)]
+ValueGeneral = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,12)]
 #remove Column move 
 #Columnmove = ReturnDataAllRowByIndexpath(Config_Setting_Path,32)
-Columnmove = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,32)]
+Columnmove = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,16)]
 
-LocationCellForMoveColumn = ReturnDataAllRowByIndexpath(Config_Setting_Path,34)
+LocationCellForMoveColumn = ReturnDataAllRowByIndexpath(Config_Setting_Path,17)
 
-ArrRangMax = [* range(max([int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,22)] + Columnmove + [int(i) for i in  ReturnDataAllRowByIndexpath(Config_Setting_Path,0)]) + 1)]
+ArrRangMax = [* range(max([int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,11)] + Columnmove + [int(i) for i in  ReturnDataAllRowByIndexpath(Config_Setting_Path,0)]) + 1)]
 
 ValueChangeLeft_Right  = set(ArrRangMax).difference(set(ValueGeneral + Columnmove))
 
 IndexChangeRemoveColumn = set([int(i) for i in  ReturnDataAllRowByIndexpath(Config_Setting_Path,0)]).difference(set(Columnmove))
 
-GenneralColumnNotChange =  [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,38)]
+GenneralColumnNotChange =  [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,19)]
 
-GeneralConcernRaffter = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,40)]
+GeneralConcernRaffter = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,20)]
 
-Genneral_Select = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,42)]
+Genneral_Select = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,21)]
 
-LocationOfRowLeft = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,46)]
+LocationOfRowLeft = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,23)]
 
-LocationOfRowRight = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,48)]
+LocationOfRowRight = [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,24)]
 
-ExcelCellForMoveColumnRight = ReturnDataAllRowByIndexpath(Config_Setting_Path,50)
+ExcelCellForMoveColumnRight = ReturnDataAllRowByIndexpath(Config_Setting_Path,25)
 
-LocationOfPurlin =  [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,52)]
+LocationOfPurlin =  [int(i) for i in ReturnDataAllRowByIndexpath(Config_Setting_Path,26)]
 
-TitleLocationMoveColumn = ReturnDataAllRowByIndexpath(Config_Setting_Path,54)
+TitleLocationMoveColumn = ReturnDataAllRowByIndexpath(Config_Setting_Path,27)
 
-Index_Path_From_CSV  = ReturnDataAllRowByIndexpath(Config_Setting_Path,56)
+Index_Path_From_CSV  = ReturnDataAllRowByIndexpath(Config_Setting_Path,28)
 
-startrow = ReturnDataAllRowByIndexpath(Config_Setting_Path,60)
-
+startrow = ReturnDataAllRowByIndexpath(Config_Setting_Path,30)
 
 def HandlingDataSTr (Element):
     Element1 = Element.replace(":",",")
@@ -67,7 +66,7 @@ def WriteMoveColumn (pd,worksheet,path,LocationMoveColumn,Columnmove):
         worksheet.cell(row = cellstr[0], column = cellstr[1]).value = df.iat[0,0]
 
 def Write_Path_ToExcel (worksheet,path):
-    Location_Of_Cell_Path = ReturnDataAllRowByIndexpath(Config_Setting_Path,58)
+    Location_Of_Cell_Path = ReturnDataAllRowByIndexpath(Config_Setting_Path,29)
     LocCell = [HandlingDataSTr(loc) for loc in Location_Of_Cell_Path]
     if path == Left_Genneral_All_path:
         LocCell_C =  LocCell[0]
@@ -76,11 +75,10 @@ def Write_Path_ToExcel (worksheet,path):
     worksheet.cell(row = LocCell_C[0], column = LocCell_C[1]).value = "Path CSV"
     worksheet.cell(row = LocCell_C[0], column = (int(LocCell_C[1]) + 1)).value = path
 def Write_Path_ToCSV (worksheet,path):
-    Location_Of_Cell_Path = ReturnDataAllRowByIndexpath(Config_Setting_Path,58)
+    Location_Of_Cell_Path = ReturnDataAllRowByIndexpath(Config_Setting_Path,29)
     LocCell = [HandlingDataSTr(loc) for loc in Location_Of_Cell_Path]
     if path == Left_Genneral_All_path:
         LocCell_C =  LocCell[0]
     else:
        LocCell_C =  LocCell[1]
     return LocCell_C
-

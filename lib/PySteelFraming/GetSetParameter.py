@@ -25,12 +25,19 @@ def GetValueName (symbol,Dict_Arr,Index_Row,path_Conf):
     Value_Check_For_For_Case_Expect = StringProcessing_HD.Handling_DataS_Tr_For_Case_Expect()
     for Value_Arr in Value_Check_For_For_Case_Expect:
         if (int(Value_Arr[0]) - 4) == Index_Row:
-            Parameter1 = symbol.LookupParameter(Value_Arr[2]).AsDouble()
-            Parameter2 = symbol.LookupParameter(Value_Arr[3]).AsDouble()
-            StringToFillOutLambla = lambda Parameter1,Parameter2: Dict_Arr.get(keys[4]) if (Parameter1 == Parameter2) else Dict_Arr.get(keys[3])
-            StringToFillOut = StringToFillOutLambla(Parameter1,Parameter2)
+            print ("Index_Row",Index_Row)
+            try: 
+                Parameter1 = symbol.LookupParameter(Value_Arr[2]).AsDouble()
+                Parameter2 = symbol.LookupParameter(Value_Arr[3]).AsDouble()
+                StringToFillOutLambla = lambda Parameter1,Parameter2: Dict_Arr.get(keys[4]) if (Parameter1 == Parameter2) else Dict_Arr.get(keys[3])
+                StringToFillOut = StringToFillOutLambla(Parameter1,Parameter2)
+            except:
+                print ("check symbol family again")
         else:
-            StringToFillOut = Dict_Arr.get(keys[3])
+            try:
+                StringToFillOut = Dict_Arr.get(keys[3])
+            except:
+                print ("check symbol family again in GetValueName function")
     Parameter_Name_Arr = Dict_Arr.get(keys[2])
     ParameterValue = [[Convert_length(symbol.LookupParameter(vt).AsDouble()),vt] for vt in Parameter_Name_Arr]
     for Ele_Para in ParameterValue:

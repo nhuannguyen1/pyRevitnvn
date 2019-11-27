@@ -194,11 +194,11 @@ def GetDataToPrimaryFile (path1,path2,path_Conf,Count):
     RowCount = DataCSVP2.CountNumberOfRow()
     RowF0 = DataCSVPConf.ReturnDataAllRowByIndexpath(path_Conf,11)
     del RowF0[0]
-    with open(path1, 'r') as readFile:
+    with open(path1, 'rU') as readFile:
             reader = csv.reader(readFile)
             lines = list(reader)
             row_input = lines[Count]
-            Row_Input1 = [row_input[int(vt)] for vt in RowF0]          
+            Row_Input1 = [row_input[int(vt)] for vt in RowF0]
     with open(path2, 'rU') as writeFile:
         reader = csv.reader(writeFile)
         lines = list(reader)

@@ -6,7 +6,6 @@ from Csv_Excel import HandlingDataSTr,GetIndexOfNotChange,AligntText,ValueGenera
         TitleLocationMoveColumn,Duplicate_Row_Dataframe,startrow,LocationOfRowLeft,LocationOfRowRight,LocationOfPurlin,Index_Path_From_CSV,Write_Path_ToCSV
 from Create_Dict_Between_Csv_And_File import Update_Dict_Joint
 from ReturnDataAllRowByIndexpath import ReturnDataAllRowByIndexpath
-book = load_workbook("new_big_file.xlsx")
 def Return_cell_obj_Arr (sheet,minrow,mincol, maxcol, maxrow):
     ArrRafterTT = []
     for row in sheet.iter_cols (min_row = minrow,min_col = mincol, max_col = maxcol, max_row = maxrow):
@@ -24,6 +23,7 @@ def ReturnCountRafter (kk,sheet):
                 break
         return last_row
 def CreateFileCSV():
+    book = load_workbook("new_big_file.xlsx")
     #Wirite csv 
     sheet = book.get_sheet_by_name('General Member')
     #Create dict Genneral value 
@@ -77,4 +77,3 @@ def CreateFileCSV():
         df = pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in Genenral_Dict_Sorted.items()]))
         df_ed = Duplicate_Row_Dataframe(df)
         df_ed.to_csv(Pathdt,index=False,header= False)
-CreateFileCSV()

@@ -1,0 +1,1 @@
+exec(open("TextGetDataFromExcel.py").read())
