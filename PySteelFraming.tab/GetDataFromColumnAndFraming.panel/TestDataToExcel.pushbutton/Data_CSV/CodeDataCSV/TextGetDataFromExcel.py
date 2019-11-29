@@ -1,10 +1,9 @@
 import pandas as pd
-import Pynvn
 from pandas import ExcelWriter,ExcelFile
 import numpy as np
 from openpyxl import load_workbook
-from Pynvn.ReturnDataAllRowByIndexpath import ReturnDataAllRowByIndexpath
-from Pynvn.Csv_Excel import AligntText,ValueGeneral,Columnmove,LocationCellForMoveColumn,\
+from ReturnDataAllRowByIndexpath import ReturnDataAllRowByIndexpath
+from Csv_Excel import AligntText,ValueGeneral,Columnmove,LocationCellForMoveColumn,\
     GenneralColumnNotChange,GeneralConcernRaffter,Genneral_Select,LocationOfRowLeft,LocationOfRowRight,\
         ExcelCellForMoveColumnRight,LocationOfPurlin,WriteMoveColumn,Write_Path_ToExcel,startrow
 from Path_Connect_Excel import Right_Genneral_All_path,Left_Genneral_All_path,DataExcel
