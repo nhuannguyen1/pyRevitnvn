@@ -170,7 +170,6 @@ def addTopIndicator(what):
         
         b = ttk.Button(rsiQ, text="Submit", width=10, command=callback)
         b.pack()
-
         tk.mainloop()
 
     elif what == "macd":

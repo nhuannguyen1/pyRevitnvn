@@ -1,3 +1,7 @@
+import os
+import sys
+for path in sys.path:
+    print(path)
 import pandas as pd
 from pandas import ExcelWriter,ExcelFile
 import numpy as np
@@ -8,7 +12,7 @@ from Csv_Excel import AligntText,ValueGeneral,Columnmove,LocationCellForMoveColu
         ExcelCellForMoveColumnRight,LocationOfPurlin,WriteMoveColumn,Write_Path_ToExcel,startrow
 from Path_Connect_Excel import Right_Genneral_All_path,Left_Genneral_All_path,DataExcel
 import openpyxl
-import os
+
 path = os.path.abspath(openpyxl.__file__)
 #from Csv_Connect_Data import ReturnDataAllRowByIndexpath
 book = load_workbook(DataExcel)
