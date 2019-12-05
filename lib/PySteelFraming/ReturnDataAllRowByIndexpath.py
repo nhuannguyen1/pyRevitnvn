@@ -1,5 +1,3 @@
-import csv
-import os
 class PathSteel:
     def  __init__(self, path = None,dir_path = None ):
             self.path = path

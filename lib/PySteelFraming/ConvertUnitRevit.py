@@ -1,4 +1,3 @@
-import rpw
 from Autodesk.Revit.DB import UnitUtils,UnitType,DisplayUnitType
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document

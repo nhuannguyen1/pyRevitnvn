@@ -1,6 +1,4 @@
 from Autodesk.Revit.DB import Element, FilteredElementCollector,FamilySymbol,XYZ,Structure,Family,Level,Grid
-import rpw
-import csv
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 from PySteelFraming.SteelPath import PathSteel
@@ -43,4 +41,3 @@ class ElementName:
         else:
             vt_Element = NameElement
             return vt_Element  
-    

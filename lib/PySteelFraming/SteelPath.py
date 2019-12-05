@@ -1,13 +1,13 @@
-import csv
-import os
 from pathlib import Path
 class PathSteel:
-    def  __init__(self, path = None,dir_path = None,FolderName = None,Is_Directory_Path_To_Config = False,Path_Conf = None):
+    def  __init__(self, path = None,dir_path = None,FolderName = None,\
+        Is_Directory_Path_To_Config = False,Path_Conf = None, FileName = None):
             self.path = path
             self.dir_path = dir_path
             self.FolderName = FolderName
             self.Path_Conf = Path_Conf
             self.Is_Directory_Path_To_Config = Is_Directory_Path_To_Config
+            self.FileName = FileName
     #Return element Arr follow number of row 
     def ReturnDataAllRowByIndexpath (self,NumberRow):
         with open(self.path) as csvFile:

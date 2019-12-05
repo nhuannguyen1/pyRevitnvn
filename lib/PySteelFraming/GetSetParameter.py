@@ -1,6 +1,5 @@
 from Autodesk.Revit.DB import Transaction, FilteredElementCollector,\
 BuiltInCategory,FamilySymbol,FamilyInstance,UnitUtils,DisplayUnitType,BuiltInParameter,UnitType
-import rpw
 #from PySteelFraming.SteelFramingCSV import keys,Handling_DataS_Tr_For_Case_Expect
 from SteelFramingCSV import StringProcessing
 from ConvertUnitRevit import Convert_length
