@@ -18,11 +18,39 @@ from  PySteelFraming.GetElementByName import ElementName
 from  PySteelFraming.SteelPath import PathSteel
 from  Line_Steel.Line_Steel import LineInterSection
 class DataFromCSV:
-    def  __init__(self, Count = 1,FamilyCol = None,FamilyColType = None,Base_Level_Col= None,Top_Level_Col = None,\
-        FamilyRafter= None,FamilyRafterType = None,LevelRafter = None,Length_Rafter = None,Thinkess_Plate = None, path = None,Gird_Ver=None,Gird_hor = None,\
-            Slope = None,Gird_Ver_Ged = None,Gird_Hor_Ged = None,Length_From_Gird = None, Plate_Column = None,Move_Left = None, Move_Right = None,\
-                Move_Up = None,Move_Bottom = None, Offset_Top_Level  = None, Select_Level = None,Clear_Height = None, Peak_Height = None, Eave_Height = None,\
-                    Choose_Purlin = None,Choose_Type_Purlin= None, Path_Config_Setting = None,Right_Member_All = None,Left_DataSaveToCaculation = None):
+    def  __init__(self, Count = 1,
+                    FamilyCol = None,
+                    FamilyColType = None,
+                    Base_Level_Col= None,
+                    Top_Level_Col = None,
+                    FamilyRafter= None,
+                    FamilyRafterType = None,
+                    LevelRafter = None,
+                    Length_Rafter = None,
+                    Thinkess_Plate = None,
+                    path = None,
+                    Gird_Ver=None,
+                    Gird_hor = None,
+                    Slope = None,
+                    Gird_Ver_Ged = None,
+                    Gird_Hor_Ged = None,
+                    Length_From_Gird = None, 
+                    Plate_Column = None,
+                    Move_Left = None, 
+                    Move_Right = None,
+                    Move_Up = None,
+                    Move_Bottom = None,
+                    Offset_Top_Level  = None,
+                    Select_Level = None,
+                    Clear_Height = None, 
+                    Peak_Height = None, 
+                    Eave_Height = None,
+                    Choose_Purlin = None,
+                    Choose_Type_Purlin= None, 
+                    Path_Config_Setting = None,
+                    Right_Member_All = None,
+                    Left_DataSaveToCaculation = None
+                    ):
         
         self.Count = Count
         self.FamilyCol = FamilyCol
@@ -58,13 +86,34 @@ class DataFromCSV:
         self.Right_Member_All = Right_Member_All
         self.Left_DataSaveToCaculation = Left_DataSaveToCaculation
     def ArrDataList(self):
-        ArrDataList = [self.Count,self.FamilyCol, self.FamilyColType ,self.Base_Level_Col,\
-            self.Top_Level_Col,self.FamilyRafter,self.FamilyRafterType,self.LevelRafter,\
-                self.Length_Rafter, self.Thinkess_Plate,self.path,self.Gird_Ver,self.Gird_hor,self.Slope,\
-                    self.Gird_Ver_Ged,self.Gird_Hor_Ged, self.Length_From_Gird,self.Plate_Column,\
-                        self.Move_Left,self.Move_Right, self.Move_Up,self.Move_Bottom,\
-                            self.Offset_Top_Level,self.Select_Level,self.Clear_Height,\
-                                self.Peak_Height,self.Eave_Height,self.Choose_Purlin,self.Choose_Type_Purlin]
+        ArrDataList = [self.Count,
+                       self.FamilyCol, 
+                       self.FamilyColType,
+                       self.Base_Level_Col,
+                       self.Top_Level_Col,
+                       self.FamilyRafter,
+                       self.FamilyRafterType,
+                       self.LevelRafter,
+                       self.Length_Rafter, 
+                       self.Thinkess_Plate,
+                       self.path,self.Gird_Ver,
+                       self.Gird_hor,self.Slope,
+                       self.Gird_Ver_Ged,
+                       self.Gird_Hor_Ged, 
+                       self.Length_From_Gird,
+                       self.Plate_Column,
+                       self.Move_Left,
+                       self.Move_Right, 
+                       self.Move_Up,
+                       self.Move_Bottom,
+                       self.Offset_Top_Level,
+                       self.Select_Level,
+                       self.Clear_Height,
+                       self.Peak_Height,
+                       self.Eave_Height,
+                       self.Choose_Purlin,
+                       self.Choose_Type_Purlin
+                       ]
         return ArrDataList
     def writefileExcel(self,a,CheckPath):
         row_Str = [CheckSelectedValueForFamily(vt) for vt in self.ArrDataList()]    
