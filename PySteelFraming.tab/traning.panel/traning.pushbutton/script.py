@@ -12,6 +12,21 @@ import os
 uidoc = __revit__.ActiveUIDocument
 doc = __revit__.ActiveUIDocument.Document
 view = doc.ActiveView
+# retrieve dir path from fullname 
+dir_path = os.path.dirname(os.path.abspath(__file__))
+# retrieve directory excel file 
+file_loc =os.path.join(dir_path,"Create_Grids.xlsx")
+# open wb by xlrd 
+workbook = xlrd.open_workbook(filename=file_loc)
+# retrieve sheet excel  by index
+sheet = workbook.sheet_by_index(0)
+def col2num(col):
+    """Return number corresponding to excel-style column."""
+    num = 0
+    for c in col:
+        if c in string.ascii_letters:
+            num = num * 26 + (ord(c.upper()) - ord('A')) + 1
+    return num
 
 def Convert_length(length):
     """ 
@@ -23,105 +38,59 @@ def Convert_length(length):
     display_unit = unit_format_options.DisplayUnits
     return UnitUtils.ConvertToInternalUnits(float(length), display_unit)
 
-offsetv = Convert_length(9000)
-
-print (offsetv)
-# retrieve dir path from fullname 
-dir_path = os.path.dirname(os.path.abspath(__file__))
-# retrieve directory excel file 
-file_loc =os.path.join(dir_path,"Create_Grids.xlsx")
-# open wb by xlrd 
-workbook = xlrd.open_workbook(file_loc)
-# retrieve sheet excel  by index
-sheet = workbook.sheet_by_index(0)
-def LbyRange (sheet = None, index_col = "A", value_ignore = ["",None]):
+def LbyRange (sheet = None, 
+                index_col = "A", 
+                value_ignore = ["",None],
+                start_row = 2
+                ):
+                
     """ 
-    return list by range excel
+    return list by range excel \n
+    sheet: worksheet input \n
+    index_col: index of column to create list from col_index
     """
-    trucX = [cell_value in row in range(rows) if all(sheet.cell_value(row,0) != value_ignore)]
+    Lrow = [sheet.cell_value(row,col2num(index_col)-1) for row in range(start_row,sheet.nrows) if sheet.cell_value(row,col2num(index_col) - 1) != value_ignore]
+    return Lrow
 
-trucX = []
-rows = sheet.nrows
-for row in range(rows):
-    cell = sheet.cell_value(row,0)
-    if cell != "":
-        trucX.append(cell)
-trucX = trucX[1:None]
-
-
-
-
-
-
-
-
-
-# ky hieu truc X
-trucX = []
-rows = sheet.nrows
-for row in range(rows):
-    cell = sheet.cell_value(row,0)
-    if cell != "":
-        trucX.append(cell)
-trucX = trucX[1:None]
-
-# ky hieu truc Y
-trucY = []
-rows = sheet.nrows
-for row in range(rows):
-    cell = sheet.cell_value(row,2)
-    if cell != "":
-        trucY.append(cell)
-trucY = trucY[1:None]
-
-# khaong cach truc X
-disX = []
-rows = sheet.nrows
-for row in range(rows):
-    cell = sheet.cell_value(row,1)
-    if cell != "":
-        disX.append(cell)
-disX = disX[1:None]
-
-# khoang cach truc Y
-disY = []
-rows = sheet.nrows
-for row in range(rows):
-    cell = sheet.cell_value(row,3)
-    if cell != "":
-        disY.append(cell)
-disY = disY[1:None]
+def dby_Lindex_col (sheet = None, 
+                key_index_column = "A", 
+                value_index_cols = ["B","C"],
+                value_ignore = ["",None],
+                start_row = 2
+                ):
+    dvalue =  [[sheet.cell_value(row,col2num(index_col)-1)\
+                for index_col in value_index_cols]\
+                for row  in range(start_row,sheet.nrows)\
+                if  sheet.cell_value(row,col2num(key_index_column)-1)\
+                not in value_ignore 
+                ]
+    key = LbyRange(sheet=sheet,index_col="A")
+    return dict(zip(key, dvalue))
 
 t = Transaction(doc, "Dimension grids")
 t.Start()
-# ham chuyen don vi mm
-def number_mm(mylist):
-    "chuyen doi mm"
-    mylist1 = UnitUtils.ConvertToInternalUnits(mylist, DisplayUnitType.DUT_MILLIMETERS)
-    return(mylist1)
-# truc X1
-dicta = dict(zip(trucX, disX))
-dictb = dict(zip(trucY, disY))
-c = 0
-v = 0
-for i in trucX:
-    x1 = dicta.get(i)
-    x2 = number_mm(x1)
-    c = c + x2
-    XYZStart1 = XYZ(c,0,0)
-    XYZEnd1 = XYZ(c,offset,0)
-    lineCD = Line.CreateBound(XYZStart1, XYZEnd1)
-    grid_1 = Grid.Create(doc, lineCD)
-    name = grid_1.get_Parameter(BuiltInParameter.DATUM_TEXT)
-    name_1 = name.Set(i)
-for y in trucY:
-    y1 = dictb.get(y)
-    y2 = number_mm(y1)
-    v = v + y2
-    XYZStart2 = XYZ(0,v,0)
-    XYZEnd2 = XYZ(offset,v,0)
-    line2 = Line.CreateBound(XYZStart2, XYZEnd2)
-    grid_2 = Grid.Create(doc, line2)
-    namex = grid_2.get_Parameter(BuiltInParameter.DATUM_TEXT)
-    name_2 = namex.Set(y)
+# create dict from range 
+dicta = dby_Lindex_col(sheet=sheet,key_index_column="A",value_index_cols=["B","C"])
+dictb = dby_Lindex_col(sheet=sheet,key_index_column="D",value_index_cols=["E","F"])
+c = 0 
+for key in list(dicta.keys()):
+    # retrieve distance and length 
+    dis,length = dicta[key]
+    # convert unit for dis
+    dis = Convert_length(dis)
+    # convert unit for distance
+    length = Convert_length(length)
+    # coord start 
+    dis = c + dis
+    scoord = XYZ(dis,0,0)
+    # coord start 
+    ecoord = XYZ(dis,length,0)
+    # create line reference 
+    line_ref = Line.CreateBound(scoord, ecoord)
+    # create gird  
+    grid_ins = Grid.Create(doc, line_ref)
+    # retrieve name for gird 
+    name = grid_ins.get_Parameter(BuiltInParameter.DATUM_TEXT)
+    # set name for gird 
+    name.Set(key)
 t.Commit()
