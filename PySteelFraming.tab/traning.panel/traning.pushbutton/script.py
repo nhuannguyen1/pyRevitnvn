@@ -3,8 +3,19 @@ __author__ = 'Nhuan'
 __title__ = 'Test Code'
 # Import commom language runtime
 import xlrd
+import string
+import re
 # Import commom language runtime
 # Import Revit API
+from Autodesk.Revit.DB import (Transaction,
+                                UnitType,
+                                UnitUtils,
+                                XYZ,
+                                Line,
+                                Grid,
+                                BuiltInParameter
+                                ) 
+                        
 from Autodesk.Revit.UI.Selection import  ObjectType 
 from Autodesk.Revit.Creation.ItemFactoryBase import NewDimension
 import os
@@ -73,7 +84,9 @@ t.Start()
 dicta = dby_Lindex_col(sheet=sheet,key_index_column="A",value_index_cols=["B","C"])
 dictb = dby_Lindex_col(sheet=sheet,key_index_column="D",value_index_cols=["E","F"])
 c = 0 
-for key in list(dicta.keys()):
+lkey = sorted(list(dicta.keys()),key=lambda x: int((re.findall('\d+', x ))[0]))
+# drawing gird x vertical 
+for key in lkey:
     # retrieve distance and length 
     dis,length = dicta[key]
     # convert unit for dis
@@ -85,6 +98,7 @@ for key in list(dicta.keys()):
     scoord = XYZ(dis,0,0)
     # coord start 
     ecoord = XYZ(dis,length,0)
+    c= dis
     # create line reference 
     line_ref = Line.CreateBound(scoord, ecoord)
     # create gird  
