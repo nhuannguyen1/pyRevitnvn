@@ -2,7 +2,7 @@ from Autodesk.Revit.DB import Transaction, FilteredElementCollector,\
 BuiltInCategory,FamilySymbol,FamilyInstance,UnitUtils,DisplayUnitType,BuiltInParameter,Family,Element 
 from Autodesk.Revit.UI.Selection import  ObjectType 
 import os
-dir_path = os.path.dirname(os.path.realpath(__file__))
+dir_path = os.path.dirname(os.path.abspath(__file__))
 filename = "Set_Config.csv"
 full_path = os.path.join(dir_path,filename)
 import rpw
