@@ -1,17 +1,0 @@
-Index Value change,1,2,3,4,7,10,13,18,19,20,21,22,23,24,25,26,27,28
-DataToolTemplate_Left,DataToolTemplate_Right,DataSaveToCaculation
-Genneral_Parameter.csv,Left_DataSaveToCaculation.csv,Left_Member_Change.csv,Left_Member_Change_U.csv,Right_DataSaveToCaculation.csv,Right_Member_Change.csv,Right_Member_Change_U.csv,Left_Genneral_All.csv,Right_Genneral_All.csv
-Slope_Left,Slope_Right
-Member Left,Member Right
-Clear Height & Slope,Clear Height & Peak Height,Eave Height & Slope,Eave Height & Peak Height
-SetPeaKHeight,Top_Tole, (Top_Tole,Top_Rafter)
-IndexValueHasSelectedItem,1,2,3,4,5,6,7,11,12,14,15,23,24,25,26,27,28
-IndexValueHasText,8,9,13,16,17,18,19,20,21,22
-Count_Continue,self.Column_Left,self.Column_Type,self.Base_Level,self.Top_Level,self.Rafter_Left,self.Rater_Type_Left,self.Level_Rater_Type_Left,self.Length_Rater_Left,self.Plate_Pt,self.ReturnPath(),self.Gird_Ver,self.Gird_Hor,self.Slope,self.Gird_Ver_G,self.Gird_Hor_G,self.Length_From_Gird,self.Plate_Column,self.Move_Left,self.Move_Right,self.Move_Up,self.Move_Bottom,self.Offset_Top_Level,self.Select_Level,self.Clear_Height,self.Peak_Height,self.Eave_Height,self.Choose_Purlin,self.Choose_Type_Purlin
-Count_Continue,Column_Left,Column_Type,Base_Level,Top_Level,Rafter_Left,Rater_Type_Left,Level_Rater_Type_Left,Length_Rater_Left,Plate_Pt,ReturnPath(),Gird_Ver,Gird_Hor,Slope,Gird_Ver_G,Gird_Hor_G,Length_From_Gird,Plate_Column,Move_Left,Move_Right,Move_Up,Move_Bottom,Offset_Top_Level,Select_Level,Clear_Height,Peak_Height,Eave_Height,Choose_Purlin,Choose_Type_Purlin
-Genneral_Parameter,11,12,14,15,16
-Family,1,5,27
-FamilySymbol,2,6,28
-Level,3,4,7,24,25,26
-Grid,11,12,14,15MoveColumn,18,19,20,21
-ExcelCellForMoveColumn Left, (21:9),(21:11),(20:10),(22:10)PathToConfg_Setting,C:\Users\nhuan.nguyen\AppData\Roaming\pyRevit\Extensions\PySteelFraming.extension\PySteelFraming.tab\GetDataFromColumnAndFraming.panel\TestDataToExcel.pushbutton\Data_CSVGeneralConcernColumn,1,2,3,4,17,22GeneralConcernRaffter,0,5,6,7,8,9Genneral_Select,23,24,25,26Choose Type Purlin,27,28Location Of Row Left,10,20,30,40Location Of Row Right,50,60,70,80ExcelCellForMoveColumn right, (51:9),(51:11),(50:10),(52:10)Location Of Purlin,27,28Title Location Move Column,Left,Right,Top,BottomIndexPath,10Location Of Cell Path, (9:1),(49:1)StartValueGeneral,2
