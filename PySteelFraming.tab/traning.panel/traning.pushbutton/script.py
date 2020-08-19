@@ -15,53 +15,10 @@ dir_path = os.path.dirname(os.path.abspath(__file__))
 # retrieve directory excel file 
 file_loc =os.path.join(dir_path,"Create_Grids.xlsx")
 
-
-
-
-
-class ButtonClass(Window):
-    @staticmethod
-    def openwb_conf(sender, e):
-        """
-        open excel file by input path
-        """
-        os.startfile(file_loc)
-    @staticmethod
-    def run_gird(sender, e):
-        """drawing gird by parameter from excel """
-        run()
-
-class gdraw(object):
-    """
-    Ui form organization 
-    """
-    def __init__(self,filename):
-        self.filename =  filename
-    def __call__(self,*kw,**kw)
-
-        # open wb by xlrd 
-        workbook = xlrd.open_workbook(filename=file_loc)
-
-        # retrieve sheet excel  by index
-        sheet = workbook.sheet_by_index(0)
-
-        # retreve value cell from excel
-        Origin_Coordx = eval(sheet.cell_value(0,1))
-        Origin_Coordy = eval(sheet.cell_value(0,4))
-
-        #UI form organization
-        components = [Button("Open Excel",
-                            on_click=ButtonClass.openwb_conf),
-                      Button("run",
-                            on_click= ButtonClass.run_gird)
-             ]
-    form = FlexForm('DGrid', components) 
-    form.show() 
-
-@gdraw(file_loc)
 def run():
     """ 
     drawing gird by parameter from excel 
+
     """
     t = Transaction(doc, "Create grids")
     t.Start()
@@ -80,4 +37,33 @@ def run():
           )
     t.Commit()
 
+class ButtonClass(Window):
+    @staticmethod
+    def openwb_conf(sender, e):
+        """
+        open excel file by input path
+        """
+        os.startfile(file_loc)
+    @staticmethod
+    def run_gird(sender, e):
+        """drawing gird by parameter from excel """
+        run()
 
+# open wb by xlrd 
+workbook = xlrd.open_workbook(filename=file_loc)
+
+# retrieve sheet excel  by index
+sheet = workbook.sheet_by_index(0)
+
+# retreve value cell from excel
+Origin_Coordx = eval(sheet.cell_value(0,1))
+Origin_Coordy = eval(sheet.cell_value(0,4))
+
+#UI form organization
+components = [Button("Open Excel",
+                    on_click=ButtonClass.openwb_conf),
+              Button("run",
+                     on_click= ButtonClass.run_gird)
+             ]
+form = FlexForm('DGrid', components) 
+form.show() 
