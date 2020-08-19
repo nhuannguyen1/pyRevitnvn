@@ -14,6 +14,15 @@ view = doc.ActiveView
 dir_path = os.path.dirname(os.path.abspath(__file__))
 # retrieve directory excel file 
 file_loc =os.path.join(dir_path,"Create_Grids.xlsx")
+# open wb by xlrd 
+workbook = xlrd.open_workbook(filename=file_loc)
+
+# retrieve sheet excel  by index
+sheet = workbook.sheet_by_index(0)
+
+# retreve value cell from excel
+Origin_Coordx = eval(sheet.cell_value(0,1))
+Origin_Coordy = eval(sheet.cell_value(0,4))
 
 def run():
     """ 
@@ -37,33 +46,52 @@ def run():
           )
     t.Commit()
 
-class ButtonClass(Window):
-    @staticmethod
-    def openwb_conf(sender, e):
+class dgrid:
+    def __init__(self,f):
+        self.f = f
+    
+    def fgui(self):
+        components = [Button("Open Excel",
+                     on_click=openwb_conf),
+        Button("run",
+                     on_click= run_gird)
+             ]
+    def openwb_conf(self,sender, e):
         """
         open excel file by input path
         """
         os.startfile(file_loc)
-    @staticmethod
-    def run_gird(sender, e):
-        """drawing gird by parameter from excel """
+    def run_gird(self,sender, e):
+        """
+        drawing gird by parameter from excel 
+        """
         run()
+    
+    def __call__(self):
 
-# open wb by xlrd 
-workbook = xlrd.open_workbook(filename=file_loc)
 
-# retrieve sheet excel  by index
-sheet = workbook.sheet_by_index(0)
 
-# retreve value cell from excel
-Origin_Coordx = eval(sheet.cell_value(0,1))
-Origin_Coordy = eval(sheet.cell_value(0,4))
 
+
+
+
+
+
+def openwb_conf(sender, e):
+    """
+    open excel file by input path
+    """
+    os.startfile(file_loc)
+def run_gird(sender, e):
+    """
+    drawing gird by parameter from excel 
+    """
+    run()
 #UI form organization
 components = [Button("Open Excel",
-                    on_click=ButtonClass.openwb_conf),
+                     on_click=openwb_conf),
               Button("run",
-                     on_click= ButtonClass.run_gird)
+                     on_click= run_gird)
              ]
 form = FlexForm('DGrid', components) 
 form.show() 
