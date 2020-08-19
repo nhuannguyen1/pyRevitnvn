@@ -13,7 +13,7 @@ from pyrevitnvn.hexcel import dby_Lindex_col
 from pyrevitnvn.units import Convert_length
 uidoc = __revit__.ActiveUIDocument
 doc = __revit__.ActiveUIDocument.Document   
-def dgird(name_text_gird = "A", 
+def dgrid(name_text_gird = "A", 
             dist_gird_col = 2000, 
             length_gird_col = 300, 
             coord_start = (0,0,0),
