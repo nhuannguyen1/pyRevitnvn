@@ -1,11 +1,10 @@
 
-# Import commom language runtime
-# Import Revit API
 import re
 from Autodesk.Revit.DB import (XYZ,
                                 Line,
                                 Grid,
-                                BuiltInParameter
+                                BuiltInParameter,
+                                Transaction
                                 ) 
                         
 from pyrevitnvn.hexcel import dby_Lindex_col
@@ -13,6 +12,7 @@ from pyrevitnvn.hexcel import dby_Lindex_col
 from pyrevitnvn.units import Convert_length
 uidoc = __revit__.ActiveUIDocument
 doc = __revit__.ActiveUIDocument.Document   
+
 def dgrid(name_text_gird = "A", 
             dist_gird_col = 2000, 
             length_gird_col = 300, 
@@ -26,7 +26,6 @@ def dgrid(name_text_gird = "A",
     dist_gird_col: distance of gird \n
     length_gird_col: length of gird \n
     """
-
     # create dict from range 
     dicta = dby_Lindex_col(sheet=sheet,
                         key_index_column=name_text_gird,
@@ -44,6 +43,7 @@ def dgrid(name_text_gird = "A",
         # convert unit for distance
         length = Convert_length(length)
         dis = c + dis
+        
         if type == "vertical":
             # coord start 
             scoord = XYZ(dis,0,0)
@@ -55,6 +55,11 @@ def dgrid(name_text_gird = "A",
             # coord start 
             ecoord = XYZ(length,dis,0)
         c= dis
+        # context-like objects that guard any 
+        # changes made to a Revit model
+        t = Transaction(doc, "Create grids")
+        # Starts the transaction.
+        t.Start()
         # create line reference 
         line_ref = Line.CreateBound(scoord, ecoord)
         # create gird  
@@ -63,3 +68,6 @@ def dgrid(name_text_gird = "A",
         name = grid_ins.get_Parameter(BuiltInParameter.DATUM_TEXT)
         # set name for gird 
         name.Set(key)
+        # Commits all changes made 
+        # to the model during the transaction.
+        t.Commit()

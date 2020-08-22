@@ -4,11 +4,10 @@ import os
 class draw:
     def __init__(self,filename):
         self.filename = filename
-    
     def fgui(self):
         self.components = [Button("Open Excel",
                              on_click=self.openwb_conf),
-                      Button("run",
+                           Button("run",
                              on_click= self.run_gird)
                     ]
     def openwb_conf(self,sender, e):

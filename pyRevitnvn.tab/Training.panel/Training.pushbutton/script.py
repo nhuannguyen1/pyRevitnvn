@@ -1,5 +1,5 @@
 __doc__ = 'Create gird by parameter from excel file'
-__author__ = 'Nguyen Van Nhuan'
+__author__ = 'Nguyen Van Nhuan - pyan.vn'
 __title__ = 'DGrid'
 import xlrd,os
 from Autodesk.Revit.DB import Transaction
@@ -43,10 +43,6 @@ def run():
     sheet: worksheet input \n
     coord_start: starting coordinates
     """
-    # context-like objects that guard any changes made to a Revit model
-    t = Transaction(doc, "Create grids")
-    # Starts the transaction.
-    t.Start()
     # drawing gird to project revit 
     dgrid(name_text_gird="D",
           dist_gird_col="E",
@@ -60,8 +56,7 @@ def run():
           dist_gird_col="B",
           length_gird_col="C",
           coord_start=Origin_Coordx,
-          sheet=sheet
+          sheet=sheet,
+          type="vertical"
           )
-    # Commits all changes made to the model during the transaction.
-    t.Commit()
 run()
