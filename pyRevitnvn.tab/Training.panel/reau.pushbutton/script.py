@@ -165,7 +165,6 @@ def plot_design_cordninates(list_values):
         new_list_cor.append(sum_val)
     return new_list_cor
 
-
 # Helper function to make points
 def make_point_from_coords(x, y, z=None):
     if z is None:
@@ -207,7 +206,6 @@ def get_edges_lines_corners_single_iteration(corr_linesA_x, corr_linesA_y, do_3d
         z = 0
     else:
         z = None
-
     plot_edges = []
     corner_points = []
     plot_lines = []
@@ -230,7 +228,6 @@ def get_edges_lines_corners_single_iteration(corr_linesA_x, corr_linesA_y, do_3d
 # This is the main function - it returns the edges, lines, corners 
 def get_edges_lines_corners_main(grid_spacing_front_to_back, grid_spacing_left_to_right, do_3d=False):
     """
-
     :param grid_spacing_front_to_back:
     :param grid_spacing_left_to_right:
     :param do_3d: boolean, should add 3d points (z=0) or not

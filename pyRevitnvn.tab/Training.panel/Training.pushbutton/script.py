@@ -20,43 +20,5 @@ file_loc =os.path.join(dir_path,"Create_Grids.xlsx")
 
 # open wb by xlrd 
 workbook = xlrd.open_workbook(filename=file_loc)
-
 # retrieve sheet excel  by index
 sheet = workbook.sheet_by_index(0)
-
-# retreve value cell from excel, starting coordinates of
-# horizontal(Origin_Coordy) and vertical (Origin_Coordx)
-Origin_Coordx = eval(sheet.cell_value(0,1))
-Origin_Coordy = eval(sheet.cell_value(0,4))
-
-@draw(file_loc)
-def run():
-    """ 
-    drawing gird by parameter from excel\n
-    name_text_gird: 
-    name_text_gird: colum index from  excel to retrieve text gird \n
-    dist_gird_col: distance of gird \n
-    length_gird_col: length of gird \n
-    type: horizontal or vertical \n  
-          the direction axis \n
-          default value: vertical \n
-    sheet: worksheet input \n
-    coord_start: starting coordinates
-    """
-    # drawing gird to project revit 
-    dgrid(name_text_gird="D",
-          dist_gird_col="E",
-          length_gird_col="F",
-          type="horizontal",
-          coord_start=Origin_Coordy,
-          sheet=sheet
-          )
-    # drawing gird to project revit 
-    dgrid(name_text_gird="A",
-          dist_gird_col="B",
-          length_gird_col="C",
-          coord_start=Origin_Coordx,
-          sheet=sheet,
-          type="vertical"
-          )
-run()
