@@ -4,7 +4,7 @@ __title__ = 'DGrid'
 import xlrd,os
 from Autodesk.Revit.DB import Transaction
 from pyrevitnvn.draw import draw
-from pyrevitnvn.draw.gird import dgrid
+from pyrevitnvn.draw.gird import dgrid,d2grid
 
 uidoc = __revit__.ActiveUIDocument
 doc = __revit__.ActiveUIDocument.Document
@@ -44,6 +44,9 @@ def run():
     coord_start: starting coordinates
     """
     # drawing gird to project revit 
-    dgrid(name_text_gird_col="A",dist_gird_col="B",length_gird_col="C",coord_start=ocx,type_d="vertical",sheet=sheet)
-    dgrid(name_text_gird_col="D",dist_gird_col="E",length_gird_col="F",coord_start=ocy,type_d="horizontal",sheet=sheet)
+    #dgrid(name_text_gird_col="A",dist_gird_col="B",length_gird_col="C",coord_start=ocx,type_d="vertical",sheet=sheet)
+    #dgrid(name_text_gird_col="D",dist_gird_col="E",length_gird_col="F",coord_start=ocy,type_d="horizontal",sheet=sheet)
+
+    d2grid(sheet=sheet,hor_coord_start=ocy,ver_coord_start=ocx)
+
 run()
