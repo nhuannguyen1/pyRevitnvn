@@ -5,9 +5,8 @@ from Autodesk.Revit.DB import (XYZ,
                                 BuiltInParameter,
                                 Transaction
                                 ) 
-                        
 from pyrevitnvn.hexcel import dby_Lindex_col
-                                
+from pyrevit import forms
 from pyrevitnvn.units import Convert_length
 uidoc = __revit__.ActiveUIDocument
 doc = __revit__.ActiveUIDocument.Document   
@@ -112,39 +111,57 @@ def d2grid(ver_name_text_gird_col = "A",
            hor_coord_start = (0,0,0),
            sheet = None
            ):
+
     """
     create grid to project \n
-    name_text_gird_col: colum index from  excel to retrieve text gird \n
-    dist_gird_col: distance of gird \n
-    length_gird_col: length of gird \n
+    sheet: worksheet to retreive from user
+    ver_name_text_gird_col: colum index from  excel to retrieve text vertical gird \n
+    ver_dist_gird_col: distance of gird vertical gird\n
+    ver_length_gird_col: length of gird  vertical gird\n
+    ver_coord_start : coord to start at vertical gird \n
+    hor_name_text_gird_col: colum index from  excel to retrieve text horizontal gird \n
+    hor_dist_gird_col: distance of gird horizontal gird\n
+    hor_length_gird_col: length of gird  horizontal gird\n
+    hor_coord_start : coord to start at horizontal gird \n
+
     """
+
     # create dict from range 
     ver_dicta = dby_Lindex_col(sheet=sheet,
                                key_index_column=ver_name_text_gird_col,
-                               value_index_cols=[ver_dist_gird_col,ver_length_gird_col])
+                               value_index_cols=[ver_dist_gird_col,ver_length_gird_col]
+                               )
 
     # sort list by number 
     ver_lkey = sorted(list(ver_dicta.keys()),
-                      key=lambda x: int((re.findall('\d+', x ))[0]))
+                      key=lambda x: int((re.findall('\d+', x ))[0])
+                      )
 
-    # check verical or horzontal 
-    ver_c = Convert_length(ver_coord_start[0])
+    try:
+        ver_c = Convert_length(ver_coord_start[0])
+    except:
+        pass
 
     # retrieve of all distance 
     ver_sum_total_dis = Convert_length(sum ([ver_dicta[key][0] for key in ver_lkey ]))
 
     #''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+    
     # create dict from range 
     hor_dicta = dby_Lindex_col(sheet=sheet,
                                key_index_column=hor_name_text_gird_col,
                                value_index_cols=[hor_dist_gird_col,hor_length_gird_col]
                                )
+
     # sort list by number 
     hor_lkey = sorted(list(hor_dicta.keys()),
-                      key=lambda x: int((re.findall('\d+', x ))[0]))
+                      key=lambda x: int((re.findall('\d+', x ))[0])
+                      )
 
-    # check verical or horzontal 
-    hor_c = Convert_length(hor_coord_start[1])
+    try:
+        hor_c = Convert_length(hor_coord_start[1])
+    except:
+        pass
 
     # retrieve of all distance 
     hor_sum_total_dis = Convert_length(sum ([hor_dicta[key][0]  for key in hor_lkey ]))
@@ -159,7 +176,10 @@ def d2grid(ver_name_text_gird_col = "A",
         dis = Convert_length(dis)
         
         # convert unit for length
-        length = Convert_length(length) if type(length)== float else hor_sum_total_dis + Convert_length(hor_coord_start[1])
+        try:
+            length = Convert_length(length) if type(length)== float else hor_sum_total_dis + Convert_length(hor_coord_start[1])
+        except:
+            forms.alert("Chieu_Dai have to parameter, can not str")
 
         dis = ver_c + dis
 
@@ -172,9 +192,9 @@ def d2grid(ver_name_text_gird_col = "A",
         ver_c= dis
         # drawing gird to project 
         create_gird(scoord=scoord,
-                ecoord=ecoord,
-                name_gird=key
-                )
+                    ecoord=ecoord,
+                    name_gird=key
+                    )
 
     for key in hor_lkey:
         # retrieve distance and length 
@@ -184,7 +204,10 @@ def d2grid(ver_name_text_gird_col = "A",
         dis = Convert_length(dis)
         
         # convert unit for length
-        length = Convert_length(length) if type(length)== float else ver_sum_total_dis + Convert_length(ver_coord_start[0])
+        try:
+            length = Convert_length(length) if type(length)== float else ver_sum_total_dis + Convert_length(ver_coord_start[0])
+        except:
+            forms.alert("Chieu_Dai have to parameter(number), can not str")            
 
         dis = hor_c + dis
         

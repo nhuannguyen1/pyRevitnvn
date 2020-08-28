@@ -40,15 +40,17 @@ def dby_Lindex_col (sheet = None,
     """
 
 
-
-    dvalue =  [[sheet.cell_value(row,col2num(index_col)-1)\
-                for index_col in value_index_cols]\
-                for row  in range(start_row,sheet.nrows)\
-                if  sheet.cell_value(row,col2num(key_index_column)-1)\
-                not in value_ignore 
-                ]
+    try: 
+        dvalue =  [[sheet.cell_value(row,col2num(index_col)-1)\
+                    for index_col in value_index_cols]\
+                    for row  in range(start_row,sheet.nrows)\
+                    if  sheet.cell_value(row,col2num(key_index_column)-1)\
+                    not in value_ignore 
+                    ]
     
-    key = LbyRange(sheet=sheet,
-                    index_col=key_index_column
-                    )
-    return dict(zip(key, dvalue))
+        key = LbyRange(sheet=sheet,
+                       index_col=key_index_column
+                       )
+        return dict(zip(key, dvalue))
+    except:
+        return	{}

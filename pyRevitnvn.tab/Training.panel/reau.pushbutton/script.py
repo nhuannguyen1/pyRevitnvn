@@ -2,7 +2,7 @@
 TESTED REVIT API: 2019
 """
 __doc__ = 'automation revit'
-__author__ = 'Nguyen Van Nhuan - pyan.vn'
+__author__ = 'pyan.vn'
 
 import sys
 import clr
@@ -14,7 +14,16 @@ from Autodesk.Revit.UI import *
 from Autodesk.Revit.DB import *
 import Autodesk.Revit.UI.Selection
 from Autodesk.Revit.DB import Transaction 
-from rpw.ui.forms import (Console, FlexForm, Label, ComboBox, TextBox, TextBox, CheckBox, Separator, Button)
+from rpw.ui.forms import (Console, 
+                          FlexForm, 
+                          Label,
+                          ComboBox, 
+                          TextBox, 
+                          TextBox, 
+                          CheckBox, 
+                          Separator, 
+                          Button
+                          )
 from pyrevitnvn.units import Convert_length
 
 clr.AddReference('RevitAPI')
