@@ -1,5 +1,6 @@
 from Autodesk.Revit.UI.Selection import ObjectType
 from pyrevit import forms
+from pyrevitnvn.units import Convert_length
 uidoc = __revit__.ActiveUIDocument
 doc = uidoc.Document
 def retr_loc_ele_from_pick():
