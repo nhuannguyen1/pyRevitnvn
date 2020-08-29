@@ -1,6 +1,8 @@
 from Autodesk.Revit.UI.Selection import ObjectType
 from pyrevit import forms
 from pyrevitnvn.units import Convert_length
+import re
+from pyrevitnvn.units import Convert_From_Internal_Display_Length
 uidoc = __revit__.ActiveUIDocument
 doc = uidoc.Document
 def retr_loc_ele_from_pick():
@@ -46,3 +48,31 @@ def retr_eletype_from_ele(ele):
 
     """
     return doc.GetElement(ele.GetTypeId()) 
+
+def get_parameter_value_by_name(element, parameterName):
+    return element.LookupParameter(parameterName).AsString()
+
+def set_parameter_by_name(element, parameterName, value):
+   return element.LookupParameter(parameterName).Set(value)
+
+def dictfrompara(ele,
+                 para_names
+                 ):
+    return {para_name :Convert_From_Internal_Display_Length(ele.LookupParameter(para_name).AsDouble()) for para_name in para_names}
+
+def typename_from_data(instr = "",
+                 ele = None,
+                 pattern = 'x|mm'
+                 ):
+
+    listparam = list(filter(lambda x: x !="",re.split(pattern, instr)))
+
+    dictele = dictfrompara(ele=ele,
+                           para_names=listparam
+                           ) 
+
+    for param_name in listparam:
+
+        instr = instr.replace(param_name,str(dictele[param_name]))
+
+    return instr
