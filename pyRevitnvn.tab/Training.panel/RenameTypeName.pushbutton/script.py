@@ -36,6 +36,7 @@ pattern = sheet.cell_value(1,1)
 
 @draw(file_loc)
 def run():
+
     #Retrieve element type from pick
     ele = retr_ele_from_pick()
 
@@ -76,4 +77,5 @@ def run():
 
     # commit transaction
     t.Commit()
+
 run()
