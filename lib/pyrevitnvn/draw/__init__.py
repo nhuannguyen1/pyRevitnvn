@@ -20,11 +20,13 @@ class draw:
         """
         drawing gird by parameter from excel 
         """
+        self.form.close()
         self.f()
+        
     def __call__(self,f):
-        self.f  = f
+        self.f  = f 
         def wrapped_f(*args):
             self.fgui()
-            form = FlexForm('DGrid', self.components) 
-            form.show() 
+            self.form = FlexForm('DGrid', self.components) 
+            self.form.show() 
         return wrapped_f 
