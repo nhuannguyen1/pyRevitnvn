@@ -15,6 +15,7 @@ class draw:
         """
         open excel file by input path
         """
+        self.form.close()
         os.startfile(self.filename)
     def run_gird(self,sender, e):
         """

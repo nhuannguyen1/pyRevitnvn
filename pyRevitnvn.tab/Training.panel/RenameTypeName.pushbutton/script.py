@@ -10,7 +10,7 @@ from pyrevitnvn import (
                         retr_eletype_from_ele,
                         familysymbol_by_name
                         )
-from pyrevitnvn.string import typename_from_data
+from pyrevitnvn.string import typename_from_data,pattern_by_user
 from pyrevitnvn import ltype_name_in_Family
 from pyrevitnvn.draw import draw
 
@@ -20,7 +20,7 @@ doc = uidoc.Document
 dir_path = os.path.dirname(os.path.abspath(__file__))
 
 # retrieve fullname excel file 
-file_loc =os.path.join(dir_path,"Create_Grids.xlsx")
+file_loc =os.path.join(dir_path,"infor.xlsx")
 
 # open wb by xlrd 
 workbook = xlrd.open_workbook(filename=file_loc)
@@ -28,7 +28,10 @@ workbook = xlrd.open_workbook(filename=file_loc)
 # retrieve sheet excel  by index
 sheet = workbook.sheet_by_index(0)
 
-tnf = sheet.cell_value(0,1)
+# retrieve value of B1
+type_name_format = sheet.cell_value(0,1)
+
+# retrieve value of B2
 pattern = sheet.cell_value(1,1)
 
 @draw(file_loc)
@@ -37,12 +40,10 @@ def run():
     ele = retr_ele_from_pick()
 
     # retrieve element type from element
-
     eletype = retr_eletype_from_ele(ele)
-    #Type name format 
 
-    #Type name  has been changed 
-    new_name_type = typename_from_data(instr=tnf,
+    # Get name  of type family 
+    new_name_type = typename_from_data(instr=type_name_format,
                                        ele=eletype,
                                        pattern=pattern
                                        )
@@ -65,16 +66,13 @@ def run():
         # Retrieve element of familysymbol 
         symbol = doc.GetElement(familysymbol)
 
-        # Returns or changes the FamilySymbol object that represents the type of the instance.
-        ele.Symbol = symbol
-
     else:
 
         # duplicate tye with  type name has been change 
-        symbol = eletype.Duplicate(new_name_type) 
+        symbol = eletype.Duplicate(new_name_type)
 
-        # referring to new type 
-        ele.Symbol = symbol
+    # Returns or changes the FamilySymbol object that represents the type of the instance.
+    ele.Symbol = symbol
 
     # commit transaction
     t.Commit()
