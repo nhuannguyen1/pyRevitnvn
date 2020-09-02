@@ -30,8 +30,12 @@ from rpw.ui.forms import (Console,
                           Separator, 
                           Button
                           )
-from pyrevitnvn.units import Convert_length,Convert_Display_length_To_Internal
-from pyrevitnvn.reauto import get_edges_lines_corners_main,plot_design_cordninates
+from pyrevitnvn.units import (Convert_length,
+                              Convert_Display_length_To_Internal
+                              )
+from pyrevitnvn.reauto import (get_edges_lines_corners_main,
+                               plot_design_cordninates
+                               )
 
 doc = __revit__.ActiveUIDocument.Document
 tt = Transaction(doc, "Retail Automation")
@@ -104,8 +108,8 @@ lcp_height = Convert_Display_length_To_Internal(float(form_1.values["textbox4"])
 
 sf_dist = Convert_Display_length_To_Internal(float(form_1.values["textbox5"]))
 
-
 rr_lf_dr = form_1.values["checkbox1"]
+
 rr_rt_dr = form_1.values["checkbox2"]
 
 tables_ln = int(form_2.values["textbox6"])
@@ -416,6 +420,6 @@ for i in plot_design_cordninates(list2[0:-1]):
 		str_x = j*int(tables_sp_ln)+corner_x4-(tables_ln*tb_len)-tb_array_cenx-tb_offset+(tb_len/2)+(tables_sp_ln/2)
 		str_loc = XYZ(str_x, i-((ocorner_y1+ocorner_y2)/2), lcp_height) 
 		place_str= doc.Create.NewFamilyInstance(str_loc, second_light, Structure.StructuralType.NonStructural)	
-        
+
 #Stop Transaction
 tt.Commit()
