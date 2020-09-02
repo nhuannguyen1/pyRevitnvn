@@ -55,7 +55,6 @@ def bottom_left_top_right (element_id):
 def rename_view_from_form(
                           In_param_1,
                           In_param_2,
-                          selected_type
                           ):
     """ 
     rename view from from user input
@@ -87,7 +86,7 @@ def rename_view_from_form(
                                         )
 
         # Rename view after create 
-        view.Name = Rename_name_view (In_param_1,
+        view.Name = rename_name_view (In_param_1,
                                       In_param_2
                                       )
 
@@ -104,14 +103,12 @@ class cre_callout(object):
                  X_Left,
                  Y_Up,
                  Y_Bottom,
-                 selected_type
                  ):
 
         self.X_Right = X_Right
         self.X_Left = X_Left
         self.Y_Up = Y_Up
         self.Y_Bottom = Y_Bottom
-        self.selected_type = selected_type
     
     def __call__(self, f):
 
@@ -121,7 +118,7 @@ class cre_callout(object):
 
         return wrapped_f
 
-def Rename_name_view(In_param_1,
+def rename_name_view(In_param_1,
                      In_param_2
                      ):
     """ 
@@ -147,8 +144,6 @@ class SectionTypeSelection(forms.WPFWindow):
 
     def __init__(self):
         forms.WPFWindow.__init__(self, "SectionTypeSelection.xaml")
-        self.combob_selector.DataContext = [vt for vt in FilteredElementCollector(doc).OfClass(ViewFamilyType)]
-        self.selected_type = None
 
     def Button_Click(self, sender, e):
         self.selected_type = self.combob_selector.SelectedItem
@@ -156,13 +151,8 @@ class SectionTypeSelection(forms.WPFWindow):
         self.In_param1 = self.Input_Parameter1.Text
         self.In_param2 = self.Input_Parameter2.Text
         # rename type view 
-        rename_view_from_form(self.In_param1,self.In_param2,self.selected_type)
+        rename_view_from_form(self.In_param1,self.In_param2)
 
     def show_dialog(self):
         self.ShowDialog()
-        if self.selected_type:
-            return self.selected_type
-        else:
-            sys.exit()
-    
 section_type = SectionTypeSelection().show_dialog()
