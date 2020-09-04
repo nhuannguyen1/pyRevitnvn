@@ -11,9 +11,10 @@ doc = rpw.revit.doc  # type: Document
 
 unit_format_options = doc.GetUnits().GetFormatOptions(UnitType.UT_Length)
 
-
 display_unit = unit_format_options.DisplayUnits
+
 symbol_type = unit_format_options.UnitSymbol
+
 if symbol_type == UnitSymbolType.UST_NONE:
     try:
         symbol_type = FormatOptions.GetValidUnitSymbols(display_unit).Item[1]
@@ -29,8 +30,10 @@ def export_config_length(lenght):
     return str(UnitUtils.ConvertToInternalUnits(float(lenght), display_unit))
 
 class CreateSectionOptions(forms.WPFWindow):
+
     def __init__(self):
         forms.WPFWindow.__init__(self, "CreateSectionOptions.xaml")
+
         #self.set_image_source(self.diagram_img, "diagram.png")
         self.tblock_units.Text = "All length in {}".format(symbol)
 
@@ -50,6 +53,7 @@ class CreateSectionOptions(forms.WPFWindow):
         self._config.Y_Bottom = export_config_length(self.tbox_Y_Bottom.Text)
         script.save_config()
         self.Close()
+
     def reset_options(self, sender, e):
         script.reset_config()
         self.Close()

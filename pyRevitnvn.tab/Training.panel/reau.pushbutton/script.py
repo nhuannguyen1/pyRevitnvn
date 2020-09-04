@@ -197,20 +197,12 @@ ocorner_y3=corners[3][1]
 ocorner_x4=corners[2][0]
 ocorner_y4=corners[2][1]
 
-corner_x1=ocorner_x1-(ocorner_x1+ocorner_x4)
-corner_y1=ocorner_y1-((ocorner_y1+ocorner_y2)/2)
-corner_x2=ocorner_x2-(ocorner_x1+ocorner_x4)
-corner_y2=ocorner_y2-((ocorner_y1+ocorner_y2)/2)
-corner_x3=ocorner_x3-(ocorner_x1+ocorner_x4)
-corner_y3=ocorner_y3-((ocorner_y1+ocorner_y2)/2)
-corner_x4=ocorner_x4-(ocorner_x1+ocorner_x4)
-corner_y4=ocorner_y4-((ocorner_y1+ocorner_y2)/2)
 
 #Setting point locations
-pt1 = XYZ(corner_x1, corner_y1, 0)
-pt2 = XYZ(corner_x2, corner_y2, 0)
-pt3 = XYZ(corner_x3, corner_y3, 0)
-pt4 = XYZ(corner_x4, corner_y4, 0)
+pt1 = XYZ(ocorner_x1, ocorner_y1, 0)
+pt2 = XYZ(ocorner_x2, ocorner_y2, 0)
+pt3 = XYZ(ocorner_x3, ocorner_y3, 0)
+pt4 = XYZ(ocorner_x4, ocorner_y4, 0)
 
 tt.Start()
 
@@ -219,19 +211,14 @@ div_stripId = ElementId(2836)
 divider_strip = doc.GetElement(div_stripId)
 
 for i in plot_design_cordninates(list1[0:-2]):
-	dv1_start = XYZ(i-(ocorner_x1+ocorner_x4), corner_y1, 0)
-	dv1_end = XYZ(i-(ocorner_x1+ocorner_x4), corner_y2, 0)
+	dv1_start = XYZ(i-ocorner_x1, ocorner_y1, 0)
+	dv1_end = XYZ(i-ocorner_x1, ocorner_y2, 0)
 	dv1_line = Line.CreateBound(dv1_start, dv1_end) 
 	create_dv1 = doc.Create.NewFamilyInstance(dv1_line, divider_strip, level, Structure.StructuralType.NonStructural)
 
-dv1b_start = XYZ(corner_x3+0.3333, corner_y1, 0)
-dv1b_end = XYZ(corner_x4+0.3333, corner_y2, 0)
-dv1b_line = Line.CreateBound(dv1b_start, dv1b_end) 
-create_dv1b = doc.Create.NewFamilyInstance(dv1b_line, divider_strip, level, Structure.StructuralType.NonStructural)
-	
 for i in plot_design_cordninates(list2[0:-1]):
-	dv2_start = XYZ(corner_x1, i-((ocorner_y1+ocorner_y2)/2), 0)
-	dv2_end = XYZ(corner_x4, i-((ocorner_y1+ocorner_y2)/2), 0)
+	dv2_start = XYZ(ocorner_x1, i-((ocorner_y1)), 0)
+	dv2_end = XYZ(ocorner_x4, i-((ocorner_y1)), 0)
 	dv2_line = Line.CreateBound(dv2_start, dv2_end) 
 	create_dv2 = doc.Create.NewFamilyInstance(dv2_line, divider_strip, level, Structure.StructuralType.NonStructural)
 
@@ -250,6 +237,8 @@ create_floor = doc.Create.NewFloor(profile, floor_type, level, Structure.Structu
 
 tt.Commit()
 
+
+
 tt.Start()
 
 #Shelving walls
@@ -258,12 +247,12 @@ ext_wall_type = doc.GetElement(ext_wall_typeId)
 ext_wall_width = ext_wall_type.Width
 ext_wall_width_hf = ext_wall_width/2
 
-pt1b = XYZ(corner_x1, corner_y1-ext_wall_width_hf, 0)
-pt2b = XYZ(corner_x2, corner_y2+ext_wall_width_hf, 0)
-pt3b = XYZ(corner_x4, corner_y4-ext_wall_width_hf, 0)
-pt4b = XYZ(corner_x3, corner_y3+ext_wall_width_hf, 0)
-pt1c = XYZ(corner_x1-ext_wall_width_hf, corner_y1, 0)
-pt2c = XYZ(corner_x2-ext_wall_width_hf, corner_y2, 0)
+pt1b = XYZ(ocorner_x1, ocorner_y1-ext_wall_width_hf, 0)
+pt2b = XYZ(ocorner_x2, ocorner_y2+ext_wall_width_hf, 0)
+pt3b = XYZ(ocorner_x4, ocorner_y4-ext_wall_width_hf, 0)
+pt4b = XYZ(ocorner_x3, ocorner_y3+ext_wall_width_hf, 0)
+pt1c = XYZ(ocorner_x1-ext_wall_width_hf, ocorner_y1, 0)
+pt2c = XYZ(ocorner_x2-ext_wall_width_hf, ocorner_y2, 0)
 
 shlv_lf_wall = Line.CreateBound(pt3b, pt1b) 
 shlv_rt_wall = Line.CreateBound(pt4b, pt2b) 
@@ -272,18 +261,18 @@ shlv_lf_create = Wall.Create(doc, shlv_lf_wall, ext_wall_type.Id, level.Id, wall
 shlv_rt_create = Wall.Create(doc, shlv_rt_wall, ext_wall_type.Id, level.Id, wall_height, 0, False, False)
 
 #Back walls
-back_md_pt = (corner_y1+corner_y2)/2
+back_md_pt = (ocorner_y1+ocorner_y2)/2
 back_wall = Line.CreateBound(pt1c, pt2c) 
 back_create = Wall.Create(doc, back_wall, ext_wall_type.Id, level.Id, wall_height, 0, False, False)
 		
 #Storefront wall
 sf_wall_type = ElementId(2832)
 
-storefront_lfx_pt = corner_x4-sf_dist
-storefront_rtx_pt = corner_x3-sf_dist
+storefront_lfx_pt = ocorner_x4-sf_dist
+storefront_rtx_pt = ocorner_x3-sf_dist
 
-pt8 = XYZ(storefront_lfx_pt, corner_y4, 0)
-pt9 = XYZ(storefront_rtx_pt, corner_y3, 0)
+pt8 = XYZ(storefront_lfx_pt, ocorner_y4, 0)
+pt9 = XYZ(storefront_rtx_pt, ocorner_y3, 0)
 
 storefront_wall = Line.CreateBound(pt8, pt9) 
 
@@ -301,28 +290,29 @@ tb_array_ceny = (tables_wd*tb_wd)+(tables_wd-1)*(tables_sp_wd-tb_wd)
 shlv_list=[]
 
 for i in range(0,int(tables_ln)):
-	tb_x = (i*tables_sp_ln)+corner_x4-(tables_ln*tb_len)-tb_array_cenx-tb_offset
+	tb_x = (i*tables_sp_ln)+ocorner_x4-(tables_ln*tb_len)-tb_array_cenx-tb_offset
 	for j in range(0,int(tables_wd)):
 		tb_y = (j*tables_sp_wd)+back_md_pt-(tb_array_ceny/2)
 		loc = XYZ(tb_x, tb_y, 0) 
 		place_tables = doc.Create.NewFamilyInstance(loc, table_type, Structure.StructuralType.NonStructural)
 
-	shlv_yoffset = corner_y2-(shlv_depth/2)
+	shlv_yoffset = ocorner_y2-(shlv_depth/2)
 	shlv2_loc = XYZ(tb_x, shlv_yoffset, 0)
 
 	place_shlv2 = shlv_list.append(doc.Create.NewFamilyInstance(shlv2_loc, shlv_type, shlv_rt_create, Structure.StructuralType.NonStructural))
 
 #Place television wall
-vwall_loc = XYZ(corner_x1, back_md_pt, 1.5)
+vwall_loc = XYZ(ocorner_x1, back_md_pt, 1.5)
 place_vwall = doc.Create.NewFamilyInstance(vwall_loc, tv_wall, XYZ(0,1,0), back_create, Structure.StructuralType.NonStructural)
 
 tt.Commit()
 
 #Start Transaction
+
 tt.Start()
 
 #Place Shelves
-shlvy_offset = (corner_y2-corner_y1)/2
+shlvy_offset = (ocorner_y2-ocorner_y1)/2
 
 reference = HostObjectUtils.GetSideFaces(shlv_lf_create, ShellLayerType.Exterior)
 
@@ -339,11 +329,11 @@ for i in shlv_list:
 rear_drId = ElementId(2926)
 rear_dr = doc.GetElement(rear_drId)
 
-rr_lf_offset = corner_y1+1.6667
-rr_rt_offset = corner_y2-1.6667
+rr_lf_offset = ocorner_y1+1.6667
+rr_rt_offset = ocorner_y2-1.6667
 
-rr_lf_loc = XYZ(corner_x1, rr_lf_offset, 0) 
-rr_rt_loc = XYZ(corner_x2, rr_rt_offset, 0) 
+rr_lf_loc = XYZ(ocorner_x1, rr_lf_offset, 0) 
+rr_rt_loc = XYZ(ocorner_x2, rr_rt_offset, 0) 
 
 if rr_lf_dr == True:
 	place_rr_lf = doc.Create.NewFamilyInstance(rr_lf_loc, rear_dr, back_create, Structure.StructuralType.NonStructural)
@@ -380,8 +370,8 @@ lcp_list2 = replace_element(lcp_list2, ed_panel_yloc, [-1])
 lcp_list=[]
 
 #Store Dimensions
-store_len = corner_x1-corner_x4
-store_wd = corner_y2-corner_y1
+store_len = ocorner_x1-ocorner_x4
+store_wd = ocorner_y2-ocorner_y1
 
 for i in lcp_list2:
 	lcp_loc = XYZ((store_len/2)-(sf_dist/2), i-((ocorner_y1+ocorner_y2)/2), lcp_height-12) 
@@ -391,7 +381,7 @@ tt.Commit()
 
 # Get and Set LCP dimension parameters
 
-length = corner_x4-corner_x1-sf_dist-0.895833
+length = ocorner_x4-ocorner_x1-sf_dist-0.895833
 width = list2[1]-0.5
 
 #Start Transaction
@@ -410,14 +400,14 @@ for i in lcp_list:
 #Place primary lights and referenced elements
 for i in plot_design_cordninates(list2[0:-1]):
 	for j in range(0,int(tables_ln)):
-		ttr_x = (j*tables_sp_ln)+corner_x4-(tables_ln*tb_len)-tb_array_cenx-tb_offset+(tb_len/2)
+		ttr_x = (j*tables_sp_ln)+ocorner_x4-(tables_ln*tb_len)-tb_array_cenx-tb_offset+(tb_len/2)
 		ttr_loc = XYZ(ttr_x, i-((ocorner_y1+ocorner_y2)/2), lcp_height) 
 		place_ttr= doc.Create.NewFamilyInstance(ttr_loc, primary_light, Structure.StructuralType.NonStructural)		
 
 #Place secondary lights and referenced elements
 for i in plot_design_cordninates(list2[0:-1]):
 	for j in range(0,int(tables_ln-1)):
-		str_x = j*int(tables_sp_ln)+corner_x4-(tables_ln*tb_len)-tb_array_cenx-tb_offset+(tb_len/2)+(tables_sp_ln/2)
+		str_x = j*int(tables_sp_ln)+ocorner_x4-(tables_ln*tb_len)-tb_array_cenx-tb_offset+(tb_len/2)+(tables_sp_ln/2)
 		str_loc = XYZ(str_x, i-((ocorner_y1+ocorner_y2)/2), lcp_height) 
 		place_str= doc.Create.NewFamilyInstance(str_loc, second_light, Structure.StructuralType.NonStructural)	
 
