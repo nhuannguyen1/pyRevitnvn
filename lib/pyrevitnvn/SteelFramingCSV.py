@@ -8,7 +8,6 @@ class StringProcessing:
         self.ArrReturn = self.Return_Arr_Re.ReturnDataAllRowByIndexpathAll()
         self.Check_Con_To_Case_Expect = self.Return_Arr_Re.ReturnDataAllRowByIndexpath(2)
         self.keys = self.ArrReturn[3]
-
     def Handling_Data_Tr (self,Arr_Index_Element,Arr):
         Arr_Index_Element = list(func(Arr_Index_Element))
         Arr_Element = [Arr[(vt[0]+1):(vt[1])] for vt in Arr_Index_Element]
@@ -16,7 +15,6 @@ class StringProcessing:
         if "" in Arr_Element_El:
             Arr_Element_El.remove("")
         return (Arr_Element_El)
-
     def Handling_Data_Element(self,Arr_Elements):
         Handling_DataS_Tr_Ap = []
         for index_Arr,Arr_Element in enumerate(Arr_Elements,0):
@@ -27,7 +25,6 @@ class StringProcessing:
             else:
              Handling_DataS_Tr_Ap.append(Handling_DataS_Tr_eD)  
         return Handling_DataS_Tr_Ap
-
     def CreateDict(self):
         dictionary_Arr = []
         for i in range(4,len(self.ArrReturn),1):
@@ -37,7 +34,6 @@ class StringProcessing:
             dictionary = dict(zip(self.keys, Handling_Element))
             dictionary_Arr.append(dictionary)
         return dictionary_Arr
-
     def Handling_DataS_Tr_For_Case_Expect(self):
         Handling_DataS_Tr_For_Case_Expected = []
         for ElementStr in self.Check_Con_To_Case_Expect:
@@ -45,7 +41,6 @@ class StringProcessing:
             Value_Check_For_For_Case_Expect = self.Handling_Data_Tr(Arr_Index_Element,ElementStr)
             Handling_DataS_Tr_For_Case_Expected.append(Value_Check_For_For_Case_Expect)
         return Handling_DataS_Tr_For_Case_Expected
-
 # remove Duplicate element from list 
 def Remove(duplicate): 
     final_list = [] 
@@ -53,6 +48,5 @@ def Remove(duplicate):
         if num not in final_list: 
             final_list.append(num) 
     return final_list 
-    
 def func(alist):
     return zip(alist, alist[1:])

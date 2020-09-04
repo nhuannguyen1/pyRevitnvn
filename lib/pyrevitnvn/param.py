@@ -6,29 +6,41 @@ from ConvertUnitRevit import Convert_length
 import rpw
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
-def SetParameterInstance (ElementInstance,ParameterName,ParameterValue):
+def SetParameterInstance (ElementInstance,
+                         ParameterName,
+                         ParameterValue
+                         ):
     ElementInstance = ElementInstance.Symbol
     Parameter = ElementInstance.LookupParameter(ParameterName)
     t = Transaction (doc,"Set parameter")
     t.Start()
     Parameter.Set(ParameterValue)
     t.Commit()
-def SetParameterFamilySymbol (FamilySymbol,ParameterName,ParameterValue):
+
+def set_param_from_symbol (FamilySymbol,
+                           ParameterName,
+                           ParameterValue
+                           ):
+    """ set param from symbol """
+
     Parameter = FamilySymbol.LookupParameter(ParameterName)
     t = Transaction (doc,"Set parameter")
     t.Start()
     Parameter.Set(ParameterValue)
     t.Commit()
-def GetValueName (symbol,
-                  Dict_Arr,
-                  Index_Row,
-                  path_Conf
-                  ):
+
+def get_value_name (symbol,
+                    Dict_Arr,
+                    Index_Row,
+                    path_Conf
+                    ):
+    
     StringProcessing_HD = StringProcessing(path_Conf)
     keys = StringProcessing_HD.keys
     Value_Check_For_For_Case_Expect = StringProcessing_HD.Handling_DataS_Tr_For_Case_Expect()
     for Value_Arr in Value_Check_For_For_Case_Expect:
         if (int(Value_Arr[0]) - 4) == Index_Row:
+            print ("Index_Row",Index_Row)
             try: 
                 Parameter1 = symbol.LookupParameter(Value_Arr[2]).AsDouble()
                 Parameter2 = symbol.LookupParameter(Value_Arr[3]).AsDouble()
