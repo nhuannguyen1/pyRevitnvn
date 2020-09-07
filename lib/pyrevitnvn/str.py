@@ -71,3 +71,4 @@ def Remove(duplicate):
 
 def func(alist):
     return zip(alist, alist[1:])
+

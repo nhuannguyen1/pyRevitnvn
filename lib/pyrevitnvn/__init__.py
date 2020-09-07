@@ -59,7 +59,7 @@ def ltype_name_in_Family(eletype):
     return list type name 
     """
     family = eletype.Family
-    return [Element.Name.__get__(doc.GetElement(familysymbol)) for familysymbol in family.GetFamilySymbolIds()]
+    return [Element.Name.__get__(doc.GetElement(symid)) for symid in family.GetFamilySymbolIds()]
 
 def familysymbol_by_name(eletype,name_type):
     """

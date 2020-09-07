@@ -1,5 +1,11 @@
-from Autodesk.Revit.DB import FilteredElementCollector,Family
+__doc__ = 'Set value for parameter'
+__author__ = 'pyan.vn'
+__title__ = 'Gdfo'
+from Autodesk.Revit.DB import (FilteredElementCollector,
+                               Family
+                               )
 import os,rpw,xlrd
+
 uidoc = rpw.revit.uidoc  # type: UIDocument
 doc = rpw.revit.doc  # type: Document
 
@@ -10,38 +16,41 @@ from pyrevitnvn.str import pro_str
 
 from pyrevitnvn.draw import draw
 
+from pyrevitnvn.excel import (lvalue_by_index_row,
+                              dic_in_arr
+                              )
+
+# retrieve dir path from abspath 
 dir_path = os.path.dirname(os.path.abspath(__file__))
-filename = "Set_Config.csv"
-path_conf = os.path.join(dir_path,filename)
+
+# retrieve fullname excel file 
+path_conf = os.path.join(dir_path,"ex_conf.xlsx")
 
 @draw(filename=path_conf)
 def run():
-
-    opro_str = pro_str(path_conf)
-
-    keys_Arr = opro_str.keys
-
-    le_dict = opro_str.dic_in_arr()
-
-    print (keys_Arr,le_dict)
-
+    # return dict in list from excel 
+    le_dict = dic_in_arr(path=path_conf,
+                         index_row_key=3,
+                         index_row_value_start=4
+                         )
     for index, edict in enumerate(le_dict):
-
+        # list value key 
+        keys = sorted(edict.keys())
+        # filter family project by name family in list excel 
         collectors = [vt for vt in FilteredElementCollector(doc).OfClass(Family)\
-                      if vt.Name == edict.get(keys_Arr[0])
+                      if vt.Name == edict.get(keys[0])
                       ]
-
         for collector in collectors:
-
             for sym_id in collector.GetFamilySymbolIds():
-
-                symbol = doc.GetElement(sym_id) 
-
-                Name_Value = get_value_name(symbol,
+                # get family symbol from id 
+                symbol = doc.GetElement(sym_id)
+                # get new name to input to parameter
+                name_value = get_value_name(symbol,
                                             edict,
-                                            index,
-                                            path_conf
+                                            index
                                             )
-                set_param_from_symbol(symbol,edict.get(keys_Arr[1]),Name_Value)
 
+                #set parameter value to
+                set_param_from_symbol(symbol,edict.get(keys[1]),name_value)
+                
 run() 
