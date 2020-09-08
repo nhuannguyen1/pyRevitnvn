@@ -1,11 +1,12 @@
 from Autodesk.Revit.UI.Selection import ObjectType
 from pyrevit import forms
 from pyrevitnvn.units import Convert_length
-from Autodesk.Revit.DB import Element 
+from Autodesk.Revit.DB import Element,FilteredElementCollector,FillPatternElement 
 import re
 from pyrevitnvn.units import Convert_From_Internal_Display_Length
 uidoc = __revit__.ActiveUIDocument
 doc = uidoc.Document
+import string
 def retr_loc_ele_from_pick():
     """ 
     retrieve loccation element from pick object 
@@ -74,3 +75,48 @@ def familysymbol_by_name(eletype,name_type):
         if FamilySymbolName == name_type:
             return familysymbol
             break
+
+
+def col2num(col):
+    """
+    Return number corresponding to excel-style column \n
+    ex: A--->1,B--->2 
+    """
+    num = 0
+    for c in col:
+        if c in string.ascii_letters:
+            num = num * 26 + (ord(c.upper()) - ord('A')) + 1
+    return num
+
+def pattern_color(name_pattern = "<Solid fill>"):
+    """ 
+    return pattern of fill lcolor by name 
+    """
+    patterns = FilteredElementCollector(doc).OfClass(FillPatternElement)
+
+    for pattern in patterns:
+        if pattern.Name == name_pattern:
+            solidPatternId = pattern.Id
+            break
+    return solidPatternId
+
+def id_sym(ele):
+    """
+    convert elementtype to id 
+    """
+
+    ele_type = ele.GetTypeId()
+    return ele_type.ToString()
+
+def d_by_symid_ele(fele):
+    """ 
+    return dict from FilteredElementCollector
+    id: key of elementtype
+    value: family instace 
+    """
+    # remove duplicate id 
+    lkey_ids = set(map(id_sym,fele))
+    dicta = {}
+    for key_id in lkey_ids:
+        dicta[key_id] = [ele for ele in fele if ele.GetTypeId().ToString() == key_id]
+    return dicta

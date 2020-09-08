@@ -1,5 +1,6 @@
 from pyrevitnvn.units import Convert_From_Internal_Display_Length
 import re
+import string
 def dictfrompara(ele,
                  para_names
                  ):
@@ -34,3 +35,14 @@ def pattern_by_user(pattern = "I-W.(|-|x|F.|)x|,"):
             pattern = pattern.replace('\\\\', '\\')
             print ("patternin",pattern)
     return pattern
+
+def col2num(col):
+    """
+    Return number corresponding to excel-style column \n
+    ex: A--->1,B--->2 
+    """
+    num = 0
+    for c in col:
+        if c in string.ascii_letters:
+            num = num * 26 + (ord(c.upper()) - ord('A')) + 1
+    return num

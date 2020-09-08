@@ -1,22 +1,23 @@
-__doc__ = 'Training Revit at itivs '
-__author__ = 'Nhuan'
-__title__ = 'Test Code'
-# Import commom language runtime
-import xlrd
-import string
-# Import commom language runtime
-# Import Revit API
-from Autodesk.Revit.DB import *
-                        
-from Autodesk.Revit.UI.Selection.Selection import PickObjects
-from Autodesk.Revit.UI.Selection import *
-from Autodesk.Revit.UI import TaskDialog,TaskDialogCommonButtons,TaskDialogResult 
-# doc
+__doc__ = 'Change color of element solid with index color from excel file '
+__author__ = 'nguyenvannhuan90123@gmail.com - pyan.vn'
+__title__ = 'orcolor'
+
+from Autodesk.Revit.DB import (FilteredElementCollector,
+                               FamilyInstance,
+                               Transaction,Color,
+                               OverrideGraphicSettings
+                               )
+from pyrevitnvn import (d_by_symid_ele,
+                        pattern_color
+                        )
+from pyrevitnvn.draw import draw
+from pyrevitnvn.pyan_string import col2num
+
+import os,xlrd
+
 uidoc = __revit__.ActiveUIDocument
 doc = __revit__.ActiveUIDocument.Document
 view = doc.ActiveView
-
-import os
 
 # retrieve dir path from abspath 
 dir_path = os.path.dirname(os.path.abspath(__file__))
@@ -30,77 +31,31 @@ workbook = xlrd.open_workbook(file_loc)
 # retrieve sheet
 sheet = workbook.sheet_by_index(0)
 
-def col2num(col):
-    """
-    Return number corresponding to excel-style column \n
-    ex: A--->1,B--->2 
-    """
-    num = 0
-    for c in col:
-        if c in string.ascii_letters:
-            num = num * 26 + (ord(c.upper()) - ord('A')) + 1
-    return num
-
-def pattern_color(name_pattern = "<Solid fill>"):
-    """ 
-    return pattern of fill lcolor by name 
-    """
-    patterns = FilteredElementCollector(doc).OfClass(FillPatternElement)
-
-    for pattern in patterns:
-        if pattern.Name == name_pattern:
-            solidPatternId = pattern.Id
-            break
-    return solidPatternId
-
-def id_sym(ele):
-    """
-    convert elementtype to id 
-    """
-
-    ele_type = ele.GetTypeId()
-    return ele_type.ToString()
-
-def d_from_idsym_ele(fele):
-    """ 
-    return dict from FilteredElementCollector
-    id: key of elementtype
-    value: family instace 
-    """
-    # list key id 
-    lkey_ids = set(map(id_sym,fele))
-    dicta = {}
-    for key_id in lkey_ids:
-        dicta[key_id] = [ele for ele in fele if ele.GetTypeId().ToString() == key_id]
-    return dicta
-
-def run(col_color_index = "D"):
+@draw(file_loc)
+def run():
 
     # retrieve List color from excel file 
-    lcolor = [sheet.cell_value(row,col2num(col_color_index)-1) for row in range(1,sheet.nrows)]
+    lcolor = [sheet.cell_value(row,col2num("A")-1) for row in range(1,sheet.nrows)]
     
     # Filtered Element Collector family instance 
-    family_instance = FilteredElementCollector(doc).OfClass(FamilyInstance)
+    f_family_ins = FilteredElementCollector(doc).OfClass(FamilyInstance)
 
     # start transaction
-    t = Transaction(doc, "Override Element")
+    t = Transaction(doc, "Change Color Element")
     t.Start()
 
-    # remove duplicate id 
-    lkey_ids = set(map(id_sym,family_instance))
-
     # create dict key: id, value: family instace
-    dic_ele = d_from_idsym_ele(lkey_ids,family_instance)
+    dic_ele = d_by_symid_ele(f_family_ins)
+    index = 0
+    for keyid in list(dic_ele.keys()):
 
-    for index,keyid in enumerate(lkey_ids):
-
-        # get list family instace 
-        ele_ins = dic_ele[keyid]
-
+        if  index >= len(lcolor):
+            index = 0
+            
         # get index of color 
         r,b,g = eval(lcolor[index])
 
-        for ele_in in ele_ins:
+        for ele_in in dic_ele[keyid]:
 
             # get color 
             color_ele = Color(r,b,g)
@@ -115,7 +70,7 @@ def run(col_color_index = "D"):
 
             # Sets graphic overrides for an element in the view.
             view.SetElementOverrides(ele_in.Id, override)
-    
+        index = index + 1
     # commit transaction
     t.Commit()
-run(path = file_loc, col_color_index = "A")
+run()
