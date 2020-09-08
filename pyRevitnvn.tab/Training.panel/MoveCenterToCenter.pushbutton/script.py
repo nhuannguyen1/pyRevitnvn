@@ -2,8 +2,7 @@ from Autodesk.Revit.DB import Transaction
 __doc__ = "Move Center To Center"
 __title__ = "CTC"
 __author__ = "pyan.vn"
-from pyrevitnvn import retr_loc_ele_from_pick
-from pyrevitnvn import forms
+from pyrevitnvn import retr_loc_ele_from_pick,forms
 uidoc = __revit__.ActiveUIDocument
 doc = uidoc.Document
 

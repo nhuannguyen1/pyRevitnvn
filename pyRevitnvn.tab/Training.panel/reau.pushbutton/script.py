@@ -265,13 +265,33 @@ pt2c = XYZ(corner_x2-ext_wall_width_hf, corner_y2, 0)
 shlv_lf_wall = Line.CreateBound(pt3b, pt1b) 
 shlv_rt_wall = Line.CreateBound(pt4b, pt2b) 
 
-shlv_lf_create = Wall.Create(doc, shlv_lf_wall, ext_wall_type.Id, level.Id, wall_height, 0, True, False)
-shlv_rt_create = Wall.Create(doc, shlv_rt_wall, ext_wall_type.Id, level.Id, wall_height, 0, False, False)
+shlv_lf_create = Wall.Create(doc, 
+				 			 shlv_lf_wall, 
+							 ext_wall_type.Id, 
+							 level.Id, wall_height, 
+							 0, 
+							 True, 
+							 False)
+shlv_rt_create = Wall.Create(doc, 
+							 shlv_rt_wall, 
+							 ext_wall_type.Id, 
+							 level.Id, 
+							 wall_height, 
+							 0, 
+							 False, 
+							 False)
 
 #Back walls
 back_md_pt = (corner_y1+corner_y2)/2
 back_wall = Line.CreateBound(pt1c, pt2c) 
-back_create = Wall.Create(doc, back_wall, ext_wall_type.Id, level.Id, wall_height, 0, False, False)
+back_create = Wall.Create(doc, 
+						  back_wall, 
+						  ext_wall_type.Id, 
+						  level.Id, 
+						  wall_height, 
+						  0, 
+						  False, 
+						  False)
 		
 #Storefront wall
 sf_wall_type = ElementId(2832)
@@ -284,7 +304,14 @@ pt9 = XYZ(storefront_rtx_pt, corner_y3, 0)
 
 storefront_wall = Line.CreateBound(pt8, pt9) 
 
-sf_create = Wall.Create(doc, storefront_wall, sf_wall_type, level.Id, lcp_height, 0, False, False)
+sf_create = Wall.Create(doc, 
+						storefront_wall, 
+						sf_wall_type, 
+						level.Id, 
+						lcp_height, 
+						0, 
+						False, 
+						False)
 
 #Place tables & Shelves
 tb_len = table_type.LookupParameter('Length').AsDouble()
@@ -302,16 +329,29 @@ for i in range(0,int(tables_ln)):
 	for j in range(0,int(tables_wd)):
 		tb_y = (j*tables_sp_wd)+back_md_pt-(tb_array_ceny/2)
 		loc = XYZ(tb_x, tb_y, 0) 
-		place_tables = doc.Create.NewFamilyInstance(loc, table_type, Structure.StructuralType.NonStructural)
+		place_tables = doc.Create.NewFamilyInstance(loc, 
+													table_type, 
+													Structure.StructuralType.NonStructural
+													)
 
 	shlv_yoffset = corner_y2-(shlv_depth/2)
 	shlv2_loc = XYZ(tb_x, shlv_yoffset, 0)
 
-	place_shlv2 = shlv_list.append(doc.Create.NewFamilyInstance(shlv2_loc, shlv_type, shlv_rt_create, Structure.StructuralType.NonStructural))
+	place_shlv2 = shlv_list.append(doc.Create.NewFamilyInstance(shlv2_loc, 
+																shlv_type, 
+																shlv_rt_create, 
+																Structure.StructuralType.NonStructural
+																)
+																)
 
 #Place television wall
 vwall_loc = XYZ(corner_x1, back_md_pt, 1.5)
-place_vwall = doc.Create.NewFamilyInstance(vwall_loc, tv_wall, XYZ(0,1,0), back_create, Structure.StructuralType.NonStructural)
+place_vwall = doc.Create.NewFamilyInstance(vwall_loc, 
+										   tv_wall, 
+										   XYZ(0,1,0), 
+										   back_create, 
+										   Structure.StructuralType.NonStructural
+										   )
 
 tt.Commit()
 
@@ -343,15 +383,21 @@ rr_lf_loc = XYZ(corner_x1, rr_lf_offset, 0)
 rr_rt_loc = XYZ(corner_x2, rr_rt_offset, 0) 
 
 if rr_lf_dr == True:
-	place_rr_lf = doc.Create.NewFamilyInstance(rr_lf_loc, rear_dr, back_create, Structure.StructuralType.NonStructural)
+	place_rr_lf = doc.Create.NewFamilyInstance(rr_lf_loc, 
+											   rear_dr, 
+											   back_create, 
+											   Structure.StructuralType.NonStructural)
 	rl_flip_face = place_rr_lf.flipFacing()
 	rl_flip_hand = place_rr_lf.flipHand()	
 
 if rr_rt_dr == True:
-	place_rr_rt = doc.Create.NewFamilyInstance(rr_rt_loc, rear_dr, back_create, Structure.StructuralType.NonStructural)
+	place_rr_rt = doc.Create.NewFamilyInstance(rr_rt_loc, 
+											   rear_dr, 
+											   back_create, 
+											   Structure.StructuralType.NonStructural)
 	rr_flip_face = place_rr_rt.flipFacing()
 
-    #LCP Panels
+#LCP Panels
 lcpId = ElementId(2833)
 lcp = doc.GetElement(lcpId)
 
