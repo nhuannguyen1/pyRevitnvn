@@ -23,7 +23,7 @@ view = doc.ActiveView
 dir_path = os.path.dirname(os.path.abspath(__file__))
 
 # retrieve fullname excel file 
-file_loc =os.path.join(dir_path,"Category_List.xlsx")
+file_loc =os.path.join(dir_path,"lcolor.xlsx")
 
 # retrieve workbook 
 workbook = xlrd.open_workbook(file_loc)
@@ -31,14 +31,21 @@ workbook = xlrd.open_workbook(file_loc)
 # retrieve sheet
 sheet = workbook.sheet_by_index(0)
 
+
+def eval_str(in_str):
+    return eval(in_str)
+
 @draw(file_loc)
 def run():
 
     # retrieve List color from excel file 
     lcolor = [sheet.cell_value(row,col2num("A")-1) for row in range(1,sheet.nrows)]
-    
+
+    lcolor = map(eval_str,lcolor)
+
     # Filtered Element Collector family instance 
     f_family_ins = FilteredElementCollector(doc).OfClass(FamilyInstance)
+
 
     # start transaction
     t = Transaction(doc, "Change Color Element")
