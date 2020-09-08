@@ -46,19 +46,22 @@ def run():
 
     # create dict key: id, value: family instace
     dic_ele = d_by_symid_ele(f_family_ins)
+
+    # start index value 
     index = 0
     for keyid in list(dic_ele.keys()):
 
+        # check index and retrieve index 
         if  index >= len(lcolor):
             index = 0
             
         # get index of color 
         r,b,g = eval(lcolor[index])
+         # get color 
+        color_ele = Color(r,b,g)
 
         for ele_in in dic_ele[keyid]:
 
-            # get color 
-            color_ele = Color(r,b,g)
             # Settings to override display of elements in a view.
             override = OverrideGraphicSettings()
 
@@ -70,7 +73,10 @@ def run():
 
             # Sets graphic overrides for an element in the view.
             view.SetElementOverrides(ele_in.Id, override)
-        index = index + 1
+
+        index =+ 1 
+
     # commit transaction
     t.Commit()
+    
 run()
