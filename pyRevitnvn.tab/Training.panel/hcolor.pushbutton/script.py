@@ -7,11 +7,11 @@ from Autodesk.Revit.DB import (FilteredElementCollector,
                                Transaction,Color,
                                OverrideGraphicSettings
                                )
-from pyrevitnvn import (d_by_symid_ele,
+from pyrevitnvn import (dict_by_familyinstance,
                         pattern_color
                         )
 from pyrevitnvn.draw import draw
-from pyrevitnvn.pyan_string import col2num
+from pyrevitnvn.pyan_string import col2num,eval_str
 
 import os,xlrd
 
@@ -31,44 +31,40 @@ workbook = xlrd.open_workbook(file_loc)
 # retrieve sheet
 sheet = workbook.sheet_by_index(0)
 
-
-def eval_str(in_str):
-    return eval(in_str)
-
 @draw(file_loc)
 def run():
 
     # retrieve List color from excel file 
     lcolor = [sheet.cell_value(row,col2num("A")-1) for row in range(1,sheet.nrows)]
 
+    # eval ele in list
     lcolor = map(eval_str,lcolor)
 
     # Filtered Element Collector family instance 
     f_family_ins = FilteredElementCollector(doc).OfClass(FamilyInstance)
+    
+    # create dict key: id, value: family instaces
+    dic_ele = dict_by_familyinstance(f_family_ins)
 
+    # start index value 
+    index = 0
 
     # start transaction
     t = Transaction(doc, "Change Color Element")
     t.Start()
 
-    # create dict key: id, value: family instace
-    dic_ele = d_by_symid_ele(f_family_ins)
-
-    # start index value 
-    index = 0
     for keyid in list(dic_ele.keys()):
 
-        # check index and retrieve index 
-        if  index >= len(lcolor):
+        if index >= len(lcolor):
             index = 0
-            
+        
         # get index of color 
-        r,b,g = eval(lcolor[index])
-         # get color 
+        r,b,g = lcolor[index]
+
+        # get color
         color_ele = Color(r,b,g)
 
         for ele_in in dic_ele[keyid]:
-
             # Settings to override display of elements in a view.
             override = OverrideGraphicSettings()
 
@@ -80,10 +76,10 @@ def run():
 
             # Sets graphic overrides for an element in the view.
             view.SetElementOverrides(ele_in.Id, override)
-
-        index =+ 1 
-
+            
+        index = index + 1
     # commit transaction
-    t.Commit()
+    t.Commit() 
+
     
 run()

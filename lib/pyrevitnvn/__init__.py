@@ -108,7 +108,7 @@ def id_sym(ele):
     ele_type = ele.GetTypeId()
     return ele_type.ToString()
 
-def d_by_symid_ele(fele):
+def dict_by_familyinstance(fele):
     """ 
     return dict from FilteredElementCollector
     id: key of elementtype

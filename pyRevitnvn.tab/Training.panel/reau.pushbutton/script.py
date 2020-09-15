@@ -1,35 +1,23 @@
 """
-TESTED REVIT API: 2019
+TESTED REVIT API: 2018
 """
-__doc__ = 'automation revit'
-__author__ = 'pyan.vn'
 
+import sys
+import clr
 import math
 import rpw
-from Autodesk.Revit.DB import (ElementId,
-                               XYZ,
-                               Line,
-                               Structure,
-                               CurveArray,
-                               Wall,
-                               HostObjectUtils,
-                               ShellLayerType,
-                               Plane,
-                               ElementTransformUtils
-                               
-                               )
+import Autodesk
+
+from Autodesk.Revit.UI import *
+from Autodesk.Revit.DB import *
 import Autodesk.Revit.UI.Selection
 from Autodesk.Revit.DB import Transaction 
-from rpw.ui.forms import (Console, 
-                          FlexForm, 
-                          Label,
-                          ComboBox, 
-                          TextBox, 
-                          TextBox, 
-                          CheckBox, 
-                          Separator, 
-                          Button
-                          )
+from rpw.ui.forms import (Console, FlexForm, Label, ComboBox, TextBox, TextBox, CheckBox, Separator, Button)
+
+clr.AddReference('RevitAPI')
+clr.AddReference('RevitAPIUI')
+clr.AddReference("RevitNodes")
+
 from pyrevitnvn.units import (Convert_length,
                               Convert_Display_length_To_Internal
                               )
@@ -37,15 +25,16 @@ from pyrevitnvn.reauto import (get_edges_lines_corners_main,
                                plot_design_cordninates
                                )
 
+
 doc = __revit__.ActiveUIDocument.Document
 tt = Transaction(doc, "Retail Automation")
 
 #UI form organization
 components_1 = [Label('SUITE EXTENTS'),
               Label('Bays Length'),
-			  TextBox('textbox1', Text="4000, 5000, 6000, 7000, 4000, 5000, 4500"),
+			  TextBox('textbox1', Text="7000, 8000, 6000, 9000, 5000, 5000, 7000"),
               Label('Bays Width'),
-			  TextBox('textbox2', Text="2000, 4000, 4000, 5000, 4000"),  
+			  TextBox('textbox2', Text="7000,7000,7000,7000,7000"),  
               Label('Wall Heights'),
 			  TextBox('textbox3', Text="7000"),
               Label('Ceiling Heights'),
@@ -55,37 +44,35 @@ components_1 = [Label('SUITE EXTENTS'),
 			  CheckBox('checkbox1', 'Rear Left Door'),
 			  CheckBox('checkbox2', 'Rear Right Door'),
 			  Separator(),
-			  Button('Go')
-              ]
+			  Button('Go')]
 
 components_2 = [Label('FURNITURE & FIXTURES'), 
 			  Label('Shelving Type:'),
-			  ComboBox("combobox1", {"Small": "2000x1200x300mm", "Medium": "2000x2000x300mm", "Large": "2000x2500x300mm"}), 
+			  ComboBox("combobox1", {"Small": "1200_Width", "Medium": "1800_Width", "Large": "2400_Width"}), 
 			  Label('Table Type:'),
-			  ComboBox("combobox2", {"Small": "1200x760x760mm", "Medium": "1800x760x760mm", "Large": "2500x750x750mm"}), 
+			  ComboBox("combobox2", {"Small": "1200_Width", "Medium": "1800_Width", "Large": "2400_Width"}), 
               Label('#Tables Length'),
-			  TextBox('textbox6', Text="4"),              
+			  TextBox('textbox6', Text="6"),              
               Label('Tables Lengthwise Spacing'),
 			  TextBox('textbox7', Text="7000"),
               Label('#Tables Width'),
 			  TextBox('textbox8', Text="4"),
               Label('Tables Widthwise Spacing'),
-			  TextBox('textbox9', Text="5000"),
-			  Separator(),
+			  TextBox('textbox9', Text="7000"),
 			  Button('Go')]
 
 components_3 = [Label('FURNITURE & FIXTURES'), 
               Label('Tables Offset From Front'),
-			  TextBox('textbox10', Text="5000"),
+			  TextBox('textbox10', Text="6000"),
 			  Label('Back Television Family:'),
-			  ComboBox("combobox3", {"Small": "2540", "Medium": "3810", "Large": "5080"}), 
+			  ComboBox("combobox3", {"Small": "100 IN Diagonal", "Medium": "150 IN Diagonal", "Large": "200 IN Diagonal"}), 
 			  Label('Primary Lighting Fixture:'),
-			  ComboBox("combobox4", {"Linear Short": "1200 - 120V", "Linear Long": "900 - 120V", "Pendant": "Pendant"}), 
+			  ComboBox("combobox4", {"Linear Short": "Linear 36 IN", "Linear Long": "Linear 48 IN", "Pendant": "Pendant"}), 
 			  Label('Secondary Light Fixture:'),
-			  ComboBox("combobox5", {"Linear Short": "1200 - 120V", "Linear Long": "900 - 120V", "Pendant": "Pendant"}), 
+			  ComboBox("combobox5", {"Linear Short": "Linear 36 IN", "Linear Long": "Linear 48 IN", "Pendant": "Pendant"}), 
 			  Separator(),
-			  Button('Go')
-              ]
+			  Button('Go')]
+
 
 form_1 = FlexForm("Retail Layout", components_1)
 form_2 = FlexForm("Retail Layout", components_2)
@@ -102,17 +89,21 @@ tvType = form_3.values["combobox3"]
 primLight = form_3.values["combobox4"]
 secLight = form_3.values["combobox5"]
 
+
+
 wall_height = Convert_Display_length_To_Internal(float(form_1.values["textbox3"]))
 
 lcp_height = Convert_Display_length_To_Internal(float(form_1.values["textbox4"]))
 
 sf_dist = Convert_Display_length_To_Internal(float(form_1.values["textbox5"]))
 
+
+
+
 rr_lf_dr = form_1.values["checkbox1"]
-
 rr_rt_dr = form_1.values["checkbox2"]
-
 tables_ln = int(form_2.values["textbox6"])
+
 
 tables_sp_ln = Convert_Display_length_To_Internal(float(form_2.values["textbox7"]))
 
@@ -122,46 +113,47 @@ tables_sp_wd = Convert_Display_length_To_Internal(float(form_2.values["textbox9"
 
 tb_offset = Convert_Display_length_To_Internal(float(form_3.values["textbox10"]))
 
+
 #Identify Shelving to Place
-if shelvingType == "2000x1200x300mm":
+if shelvingType == "1200_Width":
 	shelvingTypeId = ElementId(37980)
-elif shelvingType == "2000x2000x300mm":
+elif shelvingType == "1800_Width":
 	shelvingTypeId = ElementId(37953)
-elif shelvingType == "2000x2500x300mm":
+elif shelvingType == "2400_Width":
 	shelvingTypeId = ElementId(2918)
 shlv_type = doc.GetElement(shelvingTypeId)
 
 #Identify Tables to Place
-if tableType == "1200x760x760mm":
+if tableType == "1200_Width":
 	tableTypeId = ElementId(38007)
-elif tableType == "1800x760x760mm":
+elif tableType == "1800_Width":
 	tableTypeId = ElementId(2916)
-elif tableType == "2500x750x750mm":
+elif tableType == "2400_Width":
 	tableTypeId = ElementId(38033)
 table_type = doc.GetElement(tableTypeId)
 
 #Identify Television to Place
-if tvType == "2540":
+if tvType == "100 IN Diagonal":
 	tvTypeId = ElementId(38063)
-elif tvType == "3810":
+elif tvType == "150 IN Diagonal":
 	tvTypeId = ElementId(38073)
-elif tvType == "5080":
+elif tvType == "200 IN Diagonal":
 	tvTypeId = ElementId(2921)
 tv_wall = doc.GetElement(tvTypeId)
 
 #Identify Primary Light Fixture to Place
-if primLight == "1200 - 120V":
+if primLight == "Linear 36 IN":
 	primLightId = ElementId(2920)
-elif primLight == "900 - 120V":
+elif primLight == "Linear 48 IN":
 	primLightId = ElementId(38126)
 elif primLight == "Pendant":
 	primLightId = ElementId(2923)
 primary_light = doc.GetElement(primLightId)
 
 #Identify Secondary Light Fixture to Place
-if secLight == "1200 - 120V":
+if secLight == "Linear 36 IN":
 	secLightId = ElementId(2920)
-elif secLight == "900 - 120V":
+elif secLight == "Linear 48 IN":
 	secLightId = ElementId(38126)
 elif secLight == "Pendant":
 	secLightId = ElementId(2923)
@@ -179,15 +171,119 @@ string_list1 = form_1.values["textbox1"]
 
 string_list2 = form_1.values["textbox2"]
 
-list1_tp = [float(i) for i in string_list1.split(',')]
-list2_tp = [float(i) for i in string_list2.split(',')]
+list1_tp = [i for i in string_list1.split(',')]
+list2_tp = [i for i in string_list2.split(',')]
 
 list1 = list(map(Convert_length,list1_tp))
-list2 = list(map(Convert_length,list2_tp))
+list2 = list(map(Convert_length,list2_tp))  
+	
+def plot_design_cordninates(list_values):
+    """
+    :param list_values: a list of grid spacings, i.e. [1,3,5], the spacing is 1, 3, 5
+    :return: A list of where the ith grid spacing is, i.e [1,4,9] (first line is at 1, second at 4, etc)
+    """
+    new_list_cor = []
+    sum_val = 0
+    for i in list_values:
+        sum_val += i
+        new_list_cor.append(sum_val)
+    return new_list_cor
+
+
+# Helper function to make points
+def make_point_from_coords(x, y, z=None):
+    if z is None:
+        return [x, y]
+    return [x, y, z]
+
+def get_corr_lines(far_pos, grid_line_spacing):
+    """
+    Gets the corner_lines position
+    :param far_pos: The position that is the farthest, either front to back or left to right
+    :param grid_line_spacing: The list that contains the grid line spacing of the of the dimension not stated above
+            (i.e. far_pos is back to front and list is left to right)
+    :return: corrlines_x, corr_lines_y
+    """
+    corr_lines_x = []
+    corr_lines_y = []
+    corr_x = [0, 0]
+    corr_y = [0, far_pos]
+    corr_lines_x.append(corr_x)
+    corr_lines_y.append(corr_y)
+    for x in plot_design_cordninates(grid_line_spacing):
+        corr_x = [x, x]
+        corr_y = [0, far_pos]
+        corr_lines_x.append(corr_x)
+        corr_lines_y.append(corr_y)
+
+    return corr_lines_x, corr_lines_y
+
+
+def get_edges_lines_corners_single_iteration(corr_linesA_x, corr_linesA_y, do_3d=False):
+    """
+    Helper function do remove duplication
+    :param corr_linesA_x: corner lines along x dimension
+    :param corr_linesA_y: corner lines along y dimension
+    :param do_3d: boolean, should add 3d points (z=0) or not
+    :return: plot_edges, plot_lines, corner_points
+    """
+    if do_3d:
+        z = 0
+    else:
+        z = None
+
+    plot_edges = []
+    corner_points = []
+    plot_lines = []
+    i = 0
+    for x, y in zip(corr_linesA_x, corr_linesA_y):
+        point_a = make_point_from_coords(x[0], y[0], z)
+        point_b = make_point_from_coords(x[1], y[1], z)
+
+        if i == 0 or i == len(corr_linesA_x) - 1:
+            # Corners
+            plot_edges.append([point_a, point_b])
+            corner_points.append(point_a)
+            corner_points.append(point_b)
+        else:
+            plot_lines.append([point_a, point_b])
+        i += 1
+    return plot_edges, plot_lines, corner_points
+
+
+# This is the main function - it returns the edges, lines, corners 
+def get_edges_lines_corners_main(grid_spacing_front_to_back, grid_spacing_left_to_right, do_3d=False):
+    """
+
+    :param grid_spacing_front_to_back:
+    :param grid_spacing_left_to_right:
+    :param do_3d: boolean, should add 3d points (z=0) or not
+    :return: plot_edges, plot_lines, corners
+    """
+    corr_linesX_x, corr_linesX_y = get_corr_lines(sum(grid_spacing_left_to_right), grid_spacing_front_to_back)
+
+    corr_linesY_y, corr_linesY_x = get_corr_lines(sum(grid_spacing_front_to_back), grid_spacing_left_to_right)
+
+    plot_edges, plot_lines, corner_points = get_edges_lines_corners_single_iteration(corr_linesX_x,
+                                                                                     corr_linesX_y, do_3d)
+
+    plot_edges_y, plot_lines_y, corner_points_y = get_edges_lines_corners_single_iteration(corr_linesY_x,
+                                                                                           corr_linesY_y, do_3d)
+    # Concatenate two lists
+    plot_edges = plot_edges + plot_edges_y
+    plot_lines = plot_lines + plot_lines_y
+    corner_points = corner_points + corner_points_y
+    corners = []
+    for m in corner_points:
+        if m not in corners:
+            corners.append(m)
+    return plot_edges, plot_lines, corners
+
 
 # 3D plot edges, plot lines and corners
 edges, lines, corners = get_edges_lines_corners_main(list1, list2, do_3d=False)
- 
+fl, line_pts, pts = get_edges_lines_corners_main(list1, list2, do_3d=True)   
+
 ocorner_x1=corners[0][0]
 ocorner_y1=corners[0][1]
 ocorner_x2=corners[1][0]
@@ -218,12 +314,16 @@ tt.Start()
 div_stripId = ElementId(2836)
 divider_strip = doc.GetElement(div_stripId)
 
-
 for i in plot_design_cordninates(list1[0:-2]):
 	dv1_start = XYZ(i-(ocorner_x1+ocorner_x4), corner_y1, 0)
 	dv1_end = XYZ(i-(ocorner_x1+ocorner_x4), corner_y2, 0)
 	dv1_line = Line.CreateBound(dv1_start, dv1_end) 
 	create_dv1 = doc.Create.NewFamilyInstance(dv1_line, divider_strip, level, Structure.StructuralType.NonStructural)
+
+dv1b_start = XYZ(corner_x3+0.3333, corner_y1, 0)
+dv1b_end = XYZ(corner_x4+0.3333, corner_y2, 0)
+dv1b_line = Line.CreateBound(dv1b_start, dv1b_end) 
+create_dv1b = doc.Create.NewFamilyInstance(dv1b_line, divider_strip, level, Structure.StructuralType.NonStructural)
 	
 for i in plot_design_cordninates(list2[0:-1]):
 	dv2_start = XYZ(corner_x1, i-((ocorner_y1+ocorner_y2)/2), 0)
@@ -237,15 +337,14 @@ floor_type = doc.GetElement(floor_typeId)
 
 profile = CurveArray()
 
-profile.Append(Line.CreateBound(pt1, pt2))
-profile.Append(Line.CreateBound(pt2, pt3))
-profile.Append(Line.CreateBound(pt3, pt4))
-profile.Append(Line.CreateBound(pt4, pt1))
+profile.Append(Line.CreateBound(pt1, pt2));
+profile.Append(Line.CreateBound(pt2, pt3));
+profile.Append(Line.CreateBound(pt3, pt4));
+profile.Append(Line.CreateBound(pt4, pt1));
 
 create_floor = doc.Create.NewFloor(profile, floor_type, level, Structure.StructuralType.NonStructural)
 
 tt.Commit()
-
 
 tt.Start()
 
@@ -265,33 +364,13 @@ pt2c = XYZ(corner_x2-ext_wall_width_hf, corner_y2, 0)
 shlv_lf_wall = Line.CreateBound(pt3b, pt1b) 
 shlv_rt_wall = Line.CreateBound(pt4b, pt2b) 
 
-shlv_lf_create = Wall.Create(doc, 
-				 			 shlv_lf_wall, 
-							 ext_wall_type.Id, 
-							 level.Id, wall_height, 
-							 0, 
-							 True, 
-							 False)
-shlv_rt_create = Wall.Create(doc, 
-							 shlv_rt_wall, 
-							 ext_wall_type.Id, 
-							 level.Id, 
-							 wall_height, 
-							 0, 
-							 False, 
-							 False)
+shlv_lf_create = Wall.Create(doc, shlv_lf_wall, ext_wall_type.Id, level.Id, wall_height, 0, True, False)
+shlv_rt_create = Wall.Create(doc, shlv_rt_wall, ext_wall_type.Id, level.Id, wall_height, 0, False, False)
 
 #Back walls
 back_md_pt = (corner_y1+corner_y2)/2
 back_wall = Line.CreateBound(pt1c, pt2c) 
-back_create = Wall.Create(doc, 
-						  back_wall, 
-						  ext_wall_type.Id, 
-						  level.Id, 
-						  wall_height, 
-						  0, 
-						  False, 
-						  False)
+back_create = Wall.Create(doc, back_wall, ext_wall_type.Id, level.Id, wall_height, 0, False, False)
 		
 #Storefront wall
 sf_wall_type = ElementId(2832)
@@ -304,14 +383,7 @@ pt9 = XYZ(storefront_rtx_pt, corner_y3, 0)
 
 storefront_wall = Line.CreateBound(pt8, pt9) 
 
-sf_create = Wall.Create(doc, 
-						storefront_wall, 
-						sf_wall_type, 
-						level.Id, 
-						lcp_height, 
-						0, 
-						False, 
-						False)
+sf_create = Wall.Create(doc, storefront_wall, sf_wall_type, level.Id, lcp_height, 0, False, False)
 
 #Place tables & Shelves
 tb_len = table_type.LookupParameter('Length').AsDouble()
@@ -329,29 +401,16 @@ for i in range(0,int(tables_ln)):
 	for j in range(0,int(tables_wd)):
 		tb_y = (j*tables_sp_wd)+back_md_pt-(tb_array_ceny/2)
 		loc = XYZ(tb_x, tb_y, 0) 
-		place_tables = doc.Create.NewFamilyInstance(loc, 
-													table_type, 
-													Structure.StructuralType.NonStructural
-													)
+		place_tables = doc.Create.NewFamilyInstance(loc, table_type, Structure.StructuralType.NonStructural)
 
 	shlv_yoffset = corner_y2-(shlv_depth/2)
 	shlv2_loc = XYZ(tb_x, shlv_yoffset, 0)
 
-	place_shlv2 = shlv_list.append(doc.Create.NewFamilyInstance(shlv2_loc, 
-																shlv_type, 
-																shlv_rt_create, 
-																Structure.StructuralType.NonStructural
-																)
-																)
+	place_shlv2 = shlv_list.append(doc.Create.NewFamilyInstance(shlv2_loc, shlv_type, shlv_rt_create, Structure.StructuralType.NonStructural))
 
 #Place television wall
 vwall_loc = XYZ(corner_x1, back_md_pt, 1.5)
-place_vwall = doc.Create.NewFamilyInstance(vwall_loc, 
-										   tv_wall, 
-										   XYZ(0,1,0), 
-										   back_create, 
-										   Structure.StructuralType.NonStructural
-										   )
+place_vwall = doc.Create.NewFamilyInstance(vwall_loc, tv_wall, XYZ(0,1,0), back_create, Structure.StructuralType.NonStructural)
 
 tt.Commit()
 
@@ -383,21 +442,15 @@ rr_lf_loc = XYZ(corner_x1, rr_lf_offset, 0)
 rr_rt_loc = XYZ(corner_x2, rr_rt_offset, 0) 
 
 if rr_lf_dr == True:
-	place_rr_lf = doc.Create.NewFamilyInstance(rr_lf_loc, 
-											   rear_dr, 
-											   back_create, 
-											   Structure.StructuralType.NonStructural)
+	place_rr_lf = doc.Create.NewFamilyInstance(rr_lf_loc, rear_dr, back_create, Structure.StructuralType.NonStructural)
 	rl_flip_face = place_rr_lf.flipFacing()
 	rl_flip_hand = place_rr_lf.flipHand()	
 
 if rr_rt_dr == True:
-	place_rr_rt = doc.Create.NewFamilyInstance(rr_rt_loc, 
-											   rear_dr, 
-											   back_create, 
-											   Structure.StructuralType.NonStructural)
+	place_rr_rt = doc.Create.NewFamilyInstance(rr_rt_loc, rear_dr, back_create, Structure.StructuralType.NonStructural)
 	rr_flip_face = place_rr_rt.flipFacing()
 
-#LCP Panels
+    #LCP Panels
 lcpId = ElementId(2833)
 lcp = doc.GetElement(lcpId)
 
@@ -431,7 +484,7 @@ for i in lcp_list2:
 	create_lcp = lcp_list.append(doc.Create.NewFamilyInstance(lcp_loc, lcp, Structure.StructuralType.NonStructural))
 
 tt.Commit()
-"""
+
 # Get and Set LCP dimension parameters
 
 length = corner_x4-corner_x1-sf_dist-0.895833
@@ -466,4 +519,3 @@ for i in plot_design_cordninates(list2[0:-1]):
 
 #Stop Transaction
 tt.Commit()
-"""

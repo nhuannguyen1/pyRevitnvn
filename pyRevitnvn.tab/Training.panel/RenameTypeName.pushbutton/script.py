@@ -10,7 +10,7 @@ from pyrevitnvn import (
                         retr_eletype_from_ele,
                         familysymbol_by_name
                         )
-from pyrevitnvn.string import typename_from_data,pattern_by_user
+from pyrevitnvn.pyan_string import typename_from_data,pattern_by_user
 from pyrevitnvn import ltype_name_in_Family
 from pyrevitnvn.draw import draw
 
